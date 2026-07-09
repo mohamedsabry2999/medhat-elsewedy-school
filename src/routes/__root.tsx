@@ -80,19 +80,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "تعليم فني متطور يربط الدراسة بسوق العمل في تكنولوجيا الطباعة الرقمية والأوفست.",
+          "أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر. مناهج معتمدة دوليًا باعتماد الغرفة الألمانية AHK Cairo وتدريب داخل بيئة صناعية حقيقية.",
       },
       { property: "og:title", content: "الرئيسية — مدرسة مدحت السويدي للتكنولوجيا التطبيقية" },
       {
         property: "og:description",
-        content: "تعليم فني متطور يربط الدراسة بسوق العمل في تكنولوجيا الطباعة الرقمية والأوفست.",
+        content: "أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر. مناهج معتمدة دوليًا باعتماد الغرفة الألمانية AHK Cairo وتدريب داخل بيئة صناعية حقيقية.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "الرئيسية — مدرسة مدحت السويدي للتكنولوجيا التطبيقية" },
-      { name: "twitter:description", content: "تعليم فني متطور يربط الدراسة بسوق العمل في تكنولوجيا الطباعة الرقمية والأوفست." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7316afde-f273-4e49-b5a9-3c7af407491e/id-preview-a42b22fa--df98ee36-2949-4d2a-9b1c-068f09d10efd.lovable.app-1783581459327.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7316afde-f273-4e49-b5a9-3c7af407491e/id-preview-a42b22fa--df98ee36-2949-4d2a-9b1c-068f09d10efd.lovable.app-1783581459327.png" },
+      { name: "twitter:description", content: "أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر. مناهج معتمدة دوليًا باعتماد الغرفة الألمانية AHK Cairo وتدريب داخل بيئة صناعية حقيقية." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/4CMQCcvJ6Tg98o3LvVdF4VYsnuo1/social-images/social-1783589790110-ChatGPT_Image_Jul_9,_2026,_12_36_00_PM.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/4CMQCcvJ6Tg98o3LvVdF4VYsnuo1/social-images/social-1783589790110-ChatGPT_Image_Jul_9,_2026,_12_36_00_PM.webp" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -102,7 +102,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Tajawal:wght@400;500;700;900&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
   shellComponent: RootShell,
