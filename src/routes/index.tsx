@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Award, Factory, Users, Wrench, ShieldCheck, GraduationCap,
   Printer, Palette, TrendingUp, ArrowLeft, Calendar, CheckCircle2, ClipboardList, UserCheck, Megaphone,
-  BadgeCheck, Globe2, Bus, HeartPulse, Shirt, Gift, Briefcase, Rocket, Building2, Lightbulb, Sparkles,
+  BadgeCheck, Globe2, Bus, HeartPulse, Shirt, Gift, Briefcase, Rocket, Lightbulb, Sparkles,
 } from "lucide-react";
 import { IMG, PROGRAMS, NEWS, FAQS, ACCREDITATIONS, CERTIFICATES, BENEFITS } from "@/lib/site-data";
 
