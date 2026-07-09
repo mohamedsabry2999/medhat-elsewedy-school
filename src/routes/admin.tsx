@@ -1,17 +1,21 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
-  LayoutDashboard, ClipboardList, Newspaper, Images, Settings, Search, Download, Plus, Home, LogOut,
+  LayoutDashboard, ClipboardList, Newspaper, Images, Settings, Search, Download, Plus, Home, LogOut, Eye, Trash2,
 } from "lucide-react";
-import { listRegistrations, updateStatus, type Registration, type RegistrationStatus } from "@/lib/registrations-store";
-import { NEWS } from "@/lib/site-data";
+import {
+  listRegistrations, updateStatus, deleteRegistration, exportRegistrationsCSV,
+  type Registration, type RegistrationStatus,
+} from "@/lib/registrations-store";
+import { NEWS, VISIT_DAYS, VISIT_SLOTS } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin")({
@@ -21,13 +25,14 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-const STATUSES: RegistrationStatus[] = ["جديد", "تم التواصل", "مؤكد", "حضر", "لم يحضر"];
+const STATUSES: RegistrationStatus[] = ["جديد", "تم التواصل", "مؤكد", "حضر", "لم يحضر", "ملغي"];
 const STATUS_COLORS: Record<RegistrationStatus, string> = {
   "جديد": "bg-blue-100 text-blue-700",
   "تم التواصل": "bg-amber-100 text-amber-700",
   "مؤكد": "bg-green-100 text-green-700",
   "حضر": "bg-emerald-100 text-emerald-700",
   "لم يحضر": "bg-red-100 text-red-700",
+  "ملغي": "bg-gray-200 text-gray-700",
 };
 
 const SECTIONS = [
@@ -48,7 +53,8 @@ function AdminPage() {
     total: regs.length,
     new: regs.filter((r) => r.status === "جديد").length,
     confirmed: regs.filter((r) => r.status === "مؤكد").length,
-    news: NEWS.length,
+    attended: regs.filter((r) => r.status === "حضر").length,
+    missed: regs.filter((r) => r.status === "لم يحضر").length,
   };
 
   return (
@@ -123,11 +129,12 @@ function StatCard({ label, value, tone }: { label: string; value: number | strin
 function Overview({ stats, regs }: { stats: any; regs: Registration[] }) {
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="عدد طلبات التسجيل" value={stats.total} tone="text-brand" />
-        <StatCard label="الطلبات الجديدة" value={stats.new} tone="text-blue-600" />
-        <StatCard label="الزيارات المؤكدة" value={stats.confirmed} tone="text-green-600" />
-        <StatCard label="عدد الأخبار" value={stats.news} tone="text-[var(--accent-red)]" />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <StatCard label="إجمالي التسجيلات" value={stats.total} tone="text-brand" />
+        <StatCard label="طلبات جديدة" value={stats.new} tone="text-blue-600" />
+        <StatCard label="زيارات مؤكدة" value={stats.confirmed} tone="text-green-600" />
+        <StatCard label="حضر" value={stats.attended} tone="text-emerald-600" />
+        <StatCard label="لم يحضر" value={stats.missed} tone="text-red-600" />
       </div>
 
       <Card>
@@ -142,7 +149,8 @@ function Overview({ stats, regs }: { stats: any; regs: Registration[] }) {
                 <TableRow>
                   <TableHead className="text-right">الاسم</TableHead>
                   <TableHead className="text-right">المحافظة</TableHead>
-                  <TableHead className="text-right">موعد الزيارة</TableHead>
+                  <TableHead className="text-right">اليوم</TableHead>
+                  <TableHead className="text-right">التاريخ</TableHead>
                   <TableHead className="text-right">الحالة</TableHead>
                 </TableRow>
               </TableHeader>
@@ -151,6 +159,7 @@ function Overview({ stats, regs }: { stats: any; regs: Registration[] }) {
                   <TableRow key={r.id}>
                     <TableCell className="font-semibold">{r.studentName}</TableCell>
                     <TableCell>{r.governorate}</TableCell>
+                    <TableCell>{r.visitDay}</TableCell>
                     <TableCell>{r.visitDate}</TableCell>
                     <TableCell><Badge className={STATUS_COLORS[r.status]}>{r.status}</Badge></TableCell>
                   </TableRow>
@@ -166,28 +175,66 @@ function Overview({ stats, regs }: { stats: any; regs: Registration[] }) {
 
 function RegistrationsTab({ regs, onChange }: { regs: Registration[]; onChange: () => void }) {
   const [q, setQ] = useState("");
-  const [filter, setFilter] = useState<string>("الكل");
-  const filtered = regs.filter((r) => {
-    const matchesQ = !q || [r.studentName, r.nationalId, r.governorate, r.whatsapp].some((v) => v.includes(q));
-    const matchesF = filter === "الكل" || r.status === filter;
-    return matchesQ && matchesF;
-  });
+  const [statusFilter, setStatusFilter] = useState<string>("الكل");
+  const [dayFilter, setDayFilter] = useState<string>("الكل");
+  const [slotFilter, setSlotFilter] = useState<string>("الكل");
+  const [detail, setDetail] = useState<Registration | null>(null);
+
+  const filtered = useMemo(() => regs.filter((r) => {
+    const matchesQ = !q || [r.studentName, r.nationalId, r.guardianPhone, r.whatsapp].some((v) => v?.includes(q));
+    const matchesS = statusFilter === "الكل" || r.status === statusFilter;
+    const matchesD = dayFilter === "الكل" || r.visitDay === dayFilter;
+    const matchesT = slotFilter === "الكل" || r.timeSlot === slotFilter;
+    return matchesQ && matchesS && matchesD && matchesT;
+  }), [regs, q, statusFilter, dayFilter, slotFilter]);
+
+  const doExport = () => {
+    const csv = exportRegistrationsCSV(filtered);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `registrations-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("تم تصدير البيانات");
+  };
+
+  const doDelete = (id: string) => {
+    deleteRegistration(id);
+    toast.success("تم حذف التسجيل");
+    onChange();
+  };
 
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="بحث بالاسم أو الرقم القومي..." className="pr-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="بحث بالاسم أو الرقم القومي أو الهاتف..." className="pr-9" />
         </div>
-        <Select value={filter} onValueChange={setFilter}>
-          <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-36"><SelectValue placeholder="الحالة" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="الكل">كل الحالات</SelectItem>
             {STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
           </SelectContent>
         </Select>
-        <Button variant="outline" onClick={() => toast.info("سيتم تفعيل التصدير قريباً")}><Download className="h-4 w-4 ml-1" /> تصدير</Button>
+        <Select value={dayFilter} onValueChange={setDayFilter}>
+          <SelectTrigger className="w-32"><SelectValue placeholder="اليوم" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="الكل">كل الأيام</SelectItem>
+            {VISIT_DAYS.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={slotFilter} onValueChange={setSlotFilter}>
+          <SelectTrigger className="w-56"><SelectValue placeholder="الفترة" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="الكل">كل الفترات</SelectItem>
+            {VISIT_SLOTS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Button variant="outline" onClick={doExport}><Download className="h-4 w-4 ml-1" /> تصدير CSV</Button>
       </div>
 
       <Card>
@@ -197,12 +244,16 @@ function RegistrationsTab({ regs, onChange }: { regs: Registration[]; onChange: 
               <TableHeader>
                 <TableRow>
                   <TableHead className="text-right">الطالب</TableHead>
+                  <TableHead className="text-right">ولي الأمر</TableHead>
                   <TableHead className="text-right">واتساب</TableHead>
                   <TableHead className="text-right">المحافظة</TableHead>
+                  <TableHead className="text-right">الإدارة</TableHead>
                   <TableHead className="text-right">المجموع</TableHead>
                   <TableHead className="text-right">الحضور</TableHead>
-                  <TableHead className="text-right">الموعد</TableHead>
+                  <TableHead className="text-right">اليوم</TableHead>
+                  <TableHead className="text-right">الفترة</TableHead>
                   <TableHead className="text-right">الحالة</TableHead>
+                  <TableHead className="text-right">إجراءات</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -212,27 +263,69 @@ function RegistrationsTab({ regs, onChange }: { regs: Registration[]; onChange: 
                       <div className="font-semibold">{r.studentName}</div>
                       <div className="text-xs text-muted-foreground">{r.nationalId}</div>
                     </TableCell>
+                    <TableCell dir="ltr" className="text-right">{r.guardianPhone}</TableCell>
                     <TableCell dir="ltr" className="text-right">{r.whatsapp}</TableCell>
                     <TableCell>{r.governorate}</TableCell>
+                    <TableCell className="max-w-[140px] truncate">{r.eduDept}</TableCell>
                     <TableCell>{r.score}</TableCell>
                     <TableCell>{r.attendees}</TableCell>
-                    <TableCell>{r.visitDate}</TableCell>
+                    <TableCell>{r.visitDay}</TableCell>
+                    <TableCell className="text-xs max-w-[180px]">{r.timeSlot}</TableCell>
                     <TableCell>
                       <Select value={r.status} onValueChange={(v) => { updateStatus(r.id, v as RegistrationStatus); toast.success("تم تحديث الحالة"); onChange(); }}>
-                        <SelectTrigger className={cn("h-8 w-32 border-0", STATUS_COLORS[r.status])}><SelectValue /></SelectTrigger>
+                        <SelectTrigger className={cn("h-8 w-28 border-0 text-xs", STATUS_COLORS[r.status])}><SelectValue /></SelectTrigger>
                         <SelectContent>{STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                       </Select>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <Button size="icon" variant="ghost" onClick={() => setDetail(r)} title="عرض التفاصيل"><Eye className="h-4 w-4" /></Button>
+                        <Button size="icon" variant="ghost" className="text-red-600 hover:text-red-700" onClick={() => doDelete(r.id)} title="حذف"><Trash2 className="h-4 w-4" /></Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
                 {filtered.length === 0 && (
-                  <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-10">لا توجد نتائج</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={11} className="text-center text-muted-foreground py-10">لا توجد نتائج</TableCell></TableRow>
                 )}
               </TableBody>
             </Table>
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={!!detail} onOpenChange={(o) => !o && setDetail(null)}>
+        <DialogContent className="max-w-lg" dir="rtl">
+          <DialogHeader><DialogTitle className="text-brand">تفاصيل التسجيل</DialogTitle></DialogHeader>
+          {detail && (
+            <div className="grid gap-3 text-sm">
+              <Row k="اسم الطالب" v={detail.studentName} />
+              <Row k="الرقم القومي" v={detail.nationalId} />
+              <Row k="ولي الأمر" v={detail.guardianPhone} />
+              <Row k="واتساب" v={detail.whatsapp} />
+              <Row k="المحافظة" v={detail.governorate} />
+              <Row k="الإدارة التعليمية" v={detail.eduDept} />
+              <Row k="المجموع" v={detail.score} />
+              <Row k="عدد الحضور" v={String(detail.attendees)} />
+              <Row k="يوم الزيارة" v={detail.visitDay} />
+              <Row k="التاريخ" v={detail.visitDate} />
+              <Row k="الفترة" v={detail.timeSlot} />
+              <Row k="الحالة" v={detail.status} />
+              <Row k="ملاحظات" v={detail.notes || "—"} />
+              <Row k="تاريخ التسجيل" v={new Date(detail.createdAt).toLocaleString("ar-EG")} />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+function Row({ k, v }: { k: string; v: string }) {
+  return (
+    <div className="grid grid-cols-[140px_1fr] gap-3 border-b pb-2">
+      <div className="text-muted-foreground">{k}</div>
+      <div className="font-semibold text-brand break-words">{v}</div>
     </div>
   );
 }
