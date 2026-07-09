@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { IMG, PROGRAMS, NEWS, FAQS, ACCREDITATIONS, CERTIFICATES, BENEFITS } from "@/lib/site-data";
 import { useMediaByPosition } from "@/lib/media-store";
+import { SmartImage } from "@/components/ui/SmartImage";
+
 import ahkLogo from "@/assets/ahk-cairo.png.asset.json";
 import moeLogo from "@/assets/moe-egypt.png.asset.json";
 import elsewedyLogo from "@/assets/elsewedy-printhouse.png.asset.json";
@@ -58,13 +60,14 @@ function Hero() {
   const heroMain = useMediaByPosition("Hero Main Image");
   const heroSide = useMediaByPosition("Hero Side Image");
   const mainImg = heroMain[0]?.imageUrl ?? IMG.hero1;
-  const mainFocal = heroMain[0] ? `${heroMain[0].focalX}% ${heroMain[0].focalY}%` : "50% 50%";
-  const sideImgs = [
-    heroSide[0]?.imageUrl ?? IMG.hero1,
-    heroSide[1]?.imageUrl ?? IMG.hero2,
-    heroSide[2]?.imageUrl ?? IMG.students[0],
-    heroSide[3]?.imageUrl ?? IMG.students[3],
+  const mainFocal = heroMain[0] ? `${heroMain[0].focalX}% ${heroMain[0].focalY}%` : "50% 30%";
+  const sideSlots: Array<{ src: string; focalX: number; focalY: number; alt: string }> = [
+    { src: heroSide[0]?.imageUrl ?? IMG.hero1, focalX: heroSide[0]?.focalX ?? 50, focalY: heroSide[0]?.focalY ?? 40, alt: "تدريب" },
+    { src: heroSide[1]?.imageUrl ?? IMG.hero2, focalX: heroSide[1]?.focalX ?? 50, focalY: heroSide[1]?.focalY ?? 40, alt: "ورشة" },
+    { src: heroSide[2]?.imageUrl ?? IMG.students[0], focalX: heroSide[2]?.focalX ?? 50, focalY: heroSide[2]?.focalY ?? 22, alt: "طالب" },
+    { src: heroSide[3]?.imageUrl ?? IMG.students[3], focalX: heroSide[3]?.focalX ?? 50, focalY: heroSide[3]?.focalY ?? 22, alt: "طالبة" },
   ];
+
   return (
     <section className="relative overflow-hidden bg-brand text-white">
       <div className="absolute inset-0 opacity-25 bg-cover" style={{ backgroundImage: `url(${mainImg})`, backgroundPosition: mainFocal }} />
@@ -97,11 +100,21 @@ function Hero() {
           </div>
         </div>
         <div className="hidden lg:grid grid-cols-2 gap-4">
-          <img src={sideImgs[0]} alt="تدريب" className="rounded-2xl object-cover h-64 w-full shadow-2xl" />
-          <img src={sideImgs[1]} alt="ورشة" className="rounded-2xl object-cover h-64 w-full shadow-2xl mt-8" />
-          <img src={sideImgs[2]} alt="طالب" className="rounded-2xl object-cover h-64 w-full shadow-2xl" />
-          <img src={sideImgs[3]} alt="طالبة" className="rounded-2xl object-cover h-64 w-full shadow-2xl mt-8" />
+          {sideSlots.map((s, i) => (
+            <div key={i} className={i % 2 === 1 ? "mt-8" : ""}>
+              <SmartImage
+                src={s.src}
+                alt={s.alt}
+                focalX={s.focalX}
+                focalY={s.focalY}
+                imageType="student_portrait"
+                aspectRatio="4 / 5"
+                className="rounded-2xl shadow-2xl"
+              />
+            </div>
+          ))}
         </div>
+
       </div>
     </section>
   );
@@ -566,9 +579,10 @@ function NewsSection() {
           {NEWS.slice(0, 3).map((n) => (
             <Link key={n.slug} to="/news/$slug" params={{ slug: n.slug }} className="group">
               <Card className="overflow-hidden h-full pt-0">
-                <div className="h-44 overflow-hidden">
-                  <img src={n.image} alt={n.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform" />
+                <div className="h-44 overflow-hidden relative">
+                  <SmartImage src={n.image} alt={n.title} imageType="article_cover" fill imgClassName="group-hover:scale-105 transition-transform" />
                 </div>
+
                 <CardContent className="p-5">
                   <Badge variant="secondary" className="text-[11px]">{n.category}</Badge>
                   <h3 className="mt-3 font-bold text-brand line-clamp-2">{n.title}</h3>
@@ -595,10 +609,11 @@ function GalleryTeaser() {
         <SectionTitle eyebrow="معرض الصور" title="لحظات من داخل المدرسة" />
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {imgs.map((src, i) => (
-            <div key={i} className="aspect-square overflow-hidden rounded-xl">
-              <img src={src} alt="" className="h-full w-full object-cover hover:scale-105 transition-transform" />
+            <div key={i} className="aspect-square overflow-hidden rounded-xl relative">
+              <SmartImage src={src} alt="" imageType="student_portrait" fill imgClassName="hover:scale-105 transition-transform" />
             </div>
           ))}
+
         </div>
         <div className="text-center mt-8">
           <Button asChild variant="outline"><Link to="/gallery">المعرض الكامل</Link></Button>

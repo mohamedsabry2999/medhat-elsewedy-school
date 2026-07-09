@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, CalendarCheck } from "lucide-react";
 import { getArticle, listPublishedArticles, type Article } from "@/lib/articles-store";
 import { SITE_URL, SITE_NAME } from "@/lib/seo";
+import { SmartImage } from "@/components/ui/SmartImage";
+
 
 export const Route = createFileRoute("/news/$slug")({
   head: ({ params }) => {
@@ -82,14 +84,17 @@ function NewsDetail() {
         <div className="mt-2 text-sm text-muted-foreground">
           {item.date}{item.author ? ` • ${item.author}` : ""}
         </div>
-        <div className="mt-6 rounded-2xl overflow-hidden" style={{ aspectRatio: "16 / 9" }}>
-          <img
+        <div className="mt-6 rounded-2xl overflow-hidden relative" style={{ aspectRatio: "16 / 9" }}>
+          <SmartImage
             src={item.image}
             alt={item.title}
-            className="w-full h-full object-cover"
-            style={{ objectPosition: `${item.focalX ?? 50}% ${item.focalY ?? 50}%` }}
+            focalX={item.focalX}
+            focalY={item.focalY}
+            imageType="article_cover"
+            fill
           />
         </div>
+
         {item.excerpt && (
           <p className="mt-6 text-lg text-brand font-semibold leading-9">{item.excerpt}</p>
         )}
@@ -112,9 +117,10 @@ function NewsDetail() {
               {related.map((r) => (
                 <Link key={r.slug} to="/news/$slug" params={{ slug: r.slug }}>
                   <Card className="overflow-hidden h-full pt-0">
-                    <div className="w-full overflow-hidden" style={{ aspectRatio: "16 / 9" }}>
-                      <img src={r.image} alt={r.title} className="h-full w-full object-cover" style={{ objectPosition: `${r.focalX ?? 50}% ${r.focalY ?? 50}%` }} />
+                    <div className="w-full overflow-hidden relative" style={{ aspectRatio: "16 / 9" }}>
+                      <SmartImage src={r.image} alt={r.title} focalX={r.focalX} focalY={r.focalY} imageType="article_cover" fill />
                     </div>
+
                     <CardContent className="p-4">
                       <div className="font-bold text-brand text-sm line-clamp-2">{r.title}</div>
                       <div className="mt-1 text-xs text-muted-foreground">{r.date}</div>
