@@ -433,7 +433,7 @@ function CertificatesSection() {
               <div className="p-7 grid grid-cols-[auto_minmax(0,1fr)] gap-5 items-start">
                 <div className="shrink-0 h-24 w-24 rounded-2xl bg-gradient-to-br from-secondary/60 to-white border border-brand/10 grid place-items-center p-3 shadow-inner">
                   {c.logo ? (
-                    <img src={c.logo} alt="" className="max-h-full max-w-full object-contain" />
+                    <img src={c.logo} alt={c.logoAlt} className="max-h-full max-w-full object-contain" />
                   ) : (
                     <c.icon className="h-10 w-10 text-brand" strokeWidth={1.5} />
                   )}
