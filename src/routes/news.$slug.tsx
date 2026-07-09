@@ -6,16 +6,32 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CalendarCheck } from "lucide-react";
 import { getArticle, listPublishedArticles, type Article } from "@/lib/articles-store";
+import { SITE_URL, SITE_NAME } from "@/lib/seo";
 
 export const Route = createFileRoute("/news/$slug")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `${params.slug} — مدرسة مدحت السويدي` },
-      { name: "description", content: "تفاصيل الخبر من مدرسة مدحت السويدي للتكنولوجيا التطبيقية." },
-    ],
-  }),
+  head: ({ params }) => {
+    const url = `${SITE_URL}/news/${params.slug}`;
+    const title = `خبر ${decodeURIComponent(params.slug)} — ${SITE_NAME}`;
+    const description = `اقرأ آخر أخبار وفعاليات مدرسة مدحت السويدي للتكنولوجيا التطبيقية.`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:url", content: url },
+        { property: "og:type", content: "article" },
+        { property: "og:locale", content: "ar_EG" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   component: NewsDetail,
 });
+
 
 function NewsDetail() {
   const { slug } = Route.useParams();
