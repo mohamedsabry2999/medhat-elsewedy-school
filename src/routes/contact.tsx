@@ -99,20 +99,21 @@ function ContactPage() {
       <section className="py-12 bg-secondary/50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1 space-y-4">
-            <InfoCard icon={Phone} title="الهاتف" value={CONTACT.phone} />
+            <InfoCard icon={Phone} title="الهاتف" value={settings.phone} />
             <InfoCard
               icon={MessageCircle}
               title="واتساب"
-              value={CONTACT.whatsapp}
+              value={settings.phone}
               action={
                 <Button asChild size="sm" className="bg-green-600 hover:bg-green-700 text-white mt-2">
-                  <a href={`https://wa.me/${CONTACT.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">فتح واتساب</a>
+                  <a href={`https://wa.me/2${settings.phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">فتح واتساب</a>
                 </Button>
               }
             />
-            <InfoCard icon={Mail} title="البريد الإلكتروني" value={CONTACT.email} />
+            <InfoCard icon={Mail} title="البريد الإلكتروني" value={settings.email} />
             <InfoCard icon={Clock} title="مواعيد العمل" value={CONTACT.hours} />
           </div>
+
 
           <Card className="lg:col-span-2">
             <CardContent className="p-6 md:p-8">
