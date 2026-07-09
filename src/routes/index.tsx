@@ -60,13 +60,14 @@ function Hero() {
   const heroMain = useMediaByPosition("Hero Main Image");
   const heroSide = useMediaByPosition("Hero Side Image");
   const mainImg = heroMain[0]?.imageUrl ?? IMG.hero1;
-  const mainFocal = heroMain[0] ? `${heroMain[0].focalX}% ${heroMain[0].focalY}%` : "50% 50%";
-  const sideImgs = [
-    heroSide[0]?.imageUrl ?? IMG.hero1,
-    heroSide[1]?.imageUrl ?? IMG.hero2,
-    heroSide[2]?.imageUrl ?? IMG.students[0],
-    heroSide[3]?.imageUrl ?? IMG.students[3],
+  const mainFocal = heroMain[0] ? `${heroMain[0].focalX}% ${heroMain[0].focalY}%` : "50% 30%";
+  const sideSlots: Array<{ src: string; focalX: number; focalY: number; alt: string }> = [
+    { src: heroSide[0]?.imageUrl ?? IMG.hero1, focalX: heroSide[0]?.focalX ?? 50, focalY: heroSide[0]?.focalY ?? 40, alt: "تدريب" },
+    { src: heroSide[1]?.imageUrl ?? IMG.hero2, focalX: heroSide[1]?.focalX ?? 50, focalY: heroSide[1]?.focalY ?? 40, alt: "ورشة" },
+    { src: heroSide[2]?.imageUrl ?? IMG.students[0], focalX: heroSide[2]?.focalX ?? 50, focalY: heroSide[2]?.focalY ?? 22, alt: "طالب" },
+    { src: heroSide[3]?.imageUrl ?? IMG.students[3], focalX: heroSide[3]?.focalX ?? 50, focalY: heroSide[3]?.focalY ?? 22, alt: "طالبة" },
   ];
+
   return (
     <section className="relative overflow-hidden bg-brand text-white">
       <div className="absolute inset-0 opacity-25 bg-cover" style={{ backgroundImage: `url(${mainImg})`, backgroundPosition: mainFocal }} />
