@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, CalendarCheck } from "lucide-react";
 import { getArticle, listPublishedArticles, type Article } from "@/lib/articles-store";
 import { SITE_URL, SITE_NAME } from "@/lib/seo";
+import { SmartImage } from "@/components/ui/SmartImage";
+
 
 export const Route = createFileRoute("/news/$slug")({
   head: ({ params }) => {
