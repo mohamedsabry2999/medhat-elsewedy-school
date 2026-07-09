@@ -117,9 +117,10 @@ function NewsDetail() {
               {related.map((r) => (
                 <Link key={r.slug} to="/news/$slug" params={{ slug: r.slug }}>
                   <Card className="overflow-hidden h-full pt-0">
-                    <div className="w-full overflow-hidden" style={{ aspectRatio: "16 / 9" }}>
-                      <img src={r.image} alt={r.title} className="h-full w-full object-cover" style={{ objectPosition: `${r.focalX ?? 50}% ${r.focalY ?? 50}%` }} />
+                    <div className="w-full overflow-hidden relative" style={{ aspectRatio: "16 / 9" }}>
+                      <SmartImage src={r.image} alt={r.title} focalX={r.focalX} focalY={r.focalY} imageType="article_cover" fill />
                     </div>
+
                     <CardContent className="p-4">
                       <div className="font-bold text-brand text-sm line-clamp-2">{r.title}</div>
                       <div className="mt-1 text-xs text-muted-foreground">{r.date}</div>
