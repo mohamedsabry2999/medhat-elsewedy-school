@@ -10,6 +10,9 @@ import {
   BadgeCheck, Globe2, Bus, HeartPulse, Shirt, Gift, Briefcase, Rocket, Lightbulb, Sparkles,
 } from "lucide-react";
 import { IMG, PROGRAMS, NEWS, FAQS, ACCREDITATIONS, CERTIFICATES, BENEFITS } from "@/lib/site-data";
+import ahkLogo from "@/assets/ahk-cairo.png.asset.json";
+import moeLogo from "@/assets/moe-egypt.png.asset.json";
+import elsewedyLogo from "@/assets/elsewedy-printhouse.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
