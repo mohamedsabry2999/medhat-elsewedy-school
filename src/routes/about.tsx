@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Target, Eye, Flag, Factory, GraduationCap, Handshake } from "lucide-react";
+import { Eye, Flag, Target, Factory, GraduationCap, Handshake } from "lucide-react";
 import { IMG } from "@/lib/site-data";
 
 export const Route = createFileRoute("/about")({
