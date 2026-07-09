@@ -200,7 +200,6 @@ async function markSync(id: string, ok: boolean, error?: string) {
 export const submitRegistration = createServerFn({ method: "POST" })
   .inputValidator((raw) => submitSchema.parse(raw))
   .handler(async ({ data }) => {
-    const publicClient = serverPublicClient();
     const insertPayload = {
       student_name: data.studentName,
       national_id: data.nationalId,
@@ -218,10 +217,13 @@ export const submitRegistration = createServerFn({ method: "POST" })
       source: "website",
     };
 
-    const { data: inserted, error } = await publicClient
+    // Insert via admin client: Zod already validated inputs, and the anon role
+    // has no SELECT policy so `.select().single()` after INSERT would fail RLS.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: inserted, error } = await supabaseAdmin
       .from("registrations")
       .insert(insertPayload)
-      .select("id, registration_code, visit_day, time_slot, visit_date")
+      .select("*")
       .single();
 
     if (error || !inserted) {
@@ -229,17 +231,9 @@ export const submitRegistration = createServerFn({ method: "POST" })
       throw new Error("تعذر حفظ التسجيل، يرجى المحاولة لاحقًا.");
     }
 
-    // Fire-and-forget sync. Failure should NOT block the visitor's success message.
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: full } = await supabaseAdmin
-      .from("registrations")
-      .select("*")
-      .eq("id", inserted.id)
-      .single();
-    if (full) {
-      const result = await pushToSheet("create", full as Registration);
-      await markSync(full.id, result.ok, result.ok ? undefined : result.error);
-    }
+    const full = inserted as Registration;
+    const result = await pushToSheet("create", full);
+    await markSync(full.id, result.ok, result.ok ? undefined : result.error);
 
     return {
       id: inserted.id,
