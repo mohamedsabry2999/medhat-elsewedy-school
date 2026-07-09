@@ -76,19 +76,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "مدرسة مدحت السويدي للتكنولوجيا التطبيقية" },
+      { title: "الرئيسية — مدرسة مدحت السويدي للتكنولوجيا التطبيقية" },
       {
         name: "description",
         content:
-          "مدرسة مدحت السويدي للتكنولوجيا التطبيقية — تعليم فني متطور يربط الدراسة بسوق العمل في مجالات الطباعة الرقمية والأوفست.",
+          "تعليم فني متطور يربط الدراسة بسوق العمل في تكنولوجيا الطباعة الرقمية والأوفست.",
       },
-      { property: "og:title", content: "مدرسة مدحت السويدي للتكنولوجيا التطبيقية" },
+      { property: "og:title", content: "الرئيسية — مدرسة مدحت السويدي للتكنولوجيا التطبيقية" },
       {
         property: "og:description",
-        content: "تعليم فني متطور يربط الدراسة بسوق العمل — تدريب عملي داخل بيئة صناعية حقيقية.",
+        content: "تعليم فني متطور يربط الدراسة بسوق العمل في تكنولوجيا الطباعة الرقمية والأوفست.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "الرئيسية — مدرسة مدحت السويدي للتكنولوجيا التطبيقية" },
+      { name: "twitter:description", content: "تعليم فني متطور يربط الدراسة بسوق العمل في تكنولوجيا الطباعة الرقمية والأوفست." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7316afde-f273-4e49-b5a9-3c7af407491e/id-preview-a42b22fa--df98ee36-2949-4d2a-9b1c-068f09d10efd.lovable.app-1783581459327.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7316afde-f273-4e49-b5a9-3c7af407491e/id-preview-a42b22fa--df98ee36-2949-4d2a-9b1c-068f09d10efd.lovable.app-1783581459327.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
