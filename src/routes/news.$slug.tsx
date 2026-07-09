@@ -84,14 +84,17 @@ function NewsDetail() {
         <div className="mt-2 text-sm text-muted-foreground">
           {item.date}{item.author ? ` • ${item.author}` : ""}
         </div>
-        <div className="mt-6 rounded-2xl overflow-hidden" style={{ aspectRatio: "16 / 9" }}>
-          <img
+        <div className="mt-6 rounded-2xl overflow-hidden relative" style={{ aspectRatio: "16 / 9" }}>
+          <SmartImage
             src={item.image}
             alt={item.title}
-            className="w-full h-full object-cover"
-            style={{ objectPosition: `${item.focalX ?? 50}% ${item.focalY ?? 50}%` }}
+            focalX={item.focalX}
+            focalY={item.focalY}
+            imageType="article_cover"
+            fill
           />
         </div>
+
         {item.excerpt && (
           <p className="mt-6 text-lg text-brand font-semibold leading-9">{item.excerpt}</p>
         )}
