@@ -141,8 +141,15 @@ function toDb(g: Partial<GalleryImage> & { id?: string }) {
     image_alt: g.imageAlt ?? g.title ?? "",
     status: g.status === "مخفية" ? "hidden" : "published",
     position: g.order ?? 0,
+    focal_x: g.focalX ?? 50,
+    focal_y: g.focalY ?? 30,
+    mobile_focal_x: g.mobileFocalX ?? null,
+    mobile_focal_y: g.mobileFocalY ?? null,
+    image_type: g.imageType ?? "auto",
+    crop_mode: g.cropMode ?? "cover",
   };
 }
+
 
 export function saveGallery(item: GalleryImage) {
   const isSeed = item.id.startsWith("g-seed-");
