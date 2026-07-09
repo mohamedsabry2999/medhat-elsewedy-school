@@ -88,21 +88,27 @@ function Hero() {
 
 function TrustBadges() {
   const badges = [
-    { icon: Award, t: "أول مدرسة متخصصة في تكنولوجيا الطباعة في مصر" },
-    { icon: BadgeCheck, t: "اعتماد الغرفة الألمانية AHK Cairo" },
-    { icon: Factory, t: "تدريب داخل مصانع دار مدحت السويدي للطباعة" },
-    { icon: Globe2, t: "مناهج معتمدة دوليًا" },
-    { icon: ShieldCheck, t: "مدرسة حكومية تابعة لوزارة التربية والتعليم والتعليم الفني" },
+    { icon: Award, t: "أول مدرسة متخصصة", s: "في تكنولوجيا الطباعة بمصر" },
+    { icon: BadgeCheck, t: "اعتماد ألماني", s: "الغرفة الألمانية AHK Cairo" },
+    { icon: Factory, t: "تدريب صناعي", s: "داخل دار مدحت السويدي للطباعة" },
+    { icon: Globe2, t: "مناهج دولية", s: "معتمدة على مستوى متقدم" },
+    { icon: ShieldCheck, t: "مدرسة حكومية", s: "تابعة لوزارة التعليم الفني" },
   ];
   return (
     <section className="bg-white border-b">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {badges.map((b) => (
-          <div key={b.t} className="flex items-center gap-3 rounded-xl border bg-secondary/40 p-3">
-            <div className="h-9 w-9 shrink-0 rounded-lg bg-brand text-white grid place-items-center">
-              <b.icon className="h-4 w-4" />
+          <div key={b.t} className="group relative flex items-center gap-4 rounded-2xl border border-brand/10 bg-gradient-to-br from-white to-secondary/40 p-4 shadow-sm hover:shadow-lg hover:border-[var(--accent-red)]/40 transition-all">
+            <div className="relative shrink-0">
+              <div className="absolute inset-0 rounded-2xl bg-[var(--accent-red)]/10 blur-md group-hover:bg-[var(--accent-red)]/20 transition-colors" />
+              <div className="relative h-14 w-14 rounded-2xl bg-gradient-to-br from-brand to-[color-mix(in_oklab,var(--brand)_70%,black)] text-white grid place-items-center shadow-md">
+                <b.icon className="h-6 w-6" strokeWidth={2} />
+              </div>
             </div>
-            <div className="text-xs font-bold text-brand leading-5">{b.t}</div>
+            <div className="min-w-0">
+              <div className="text-sm font-extrabold text-brand leading-tight">{b.t}</div>
+              <div className="text-[11px] text-muted-foreground mt-1 leading-5">{b.s}</div>
+            </div>
           </div>
         ))}
       </div>
