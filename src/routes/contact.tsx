@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Phone, Mail, MapPin, Clock, MessageCircle, Navigation, Info } from "lucide-react";
 import { CONTACT, BRANCHES } from "@/lib/site-data";
+import { useSiteSettings } from "@/lib/settings-store";
+
 import { z } from "zod";
 
 export const Route = createFileRoute("/contact")({
