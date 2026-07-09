@@ -42,12 +42,22 @@ function GalleryPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {list.map((g) => (
               <figure key={g.id} className="group relative aspect-square overflow-hidden rounded-xl">
-                <img src={g.src} alt={g.title} className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                <SmartImage
+                  src={g.src}
+                  alt={g.title}
+                  focalX={g.focalX}
+                  focalY={g.focalY}
+                  imageType={g.imageType as SmartImageType}
+                  cropMode={g.cropMode}
+                  fill
+                  imgClassName="group-hover:scale-110 transition-transform duration-500"
+                />
                 <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand/90 to-transparent text-white text-xs p-3 opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="font-bold">{g.title}</div>
                   {g.description && <div className="text-white/80 mt-1">{g.description}</div>}
                 </figcaption>
               </figure>
+
             ))}
           </div>
           {list.length === 0 && <div className="text-center py-16 text-muted-foreground">لا توجد صور في هذا التصنيف حالياً.</div>}
