@@ -579,9 +579,10 @@ function NewsSection() {
           {NEWS.slice(0, 3).map((n) => (
             <Link key={n.slug} to="/news/$slug" params={{ slug: n.slug }} className="group">
               <Card className="overflow-hidden h-full pt-0">
-                <div className="h-44 overflow-hidden">
-                  <img src={n.image} alt={n.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform" />
+                <div className="h-44 overflow-hidden relative">
+                  <SmartImage src={n.image} alt={n.title} imageType="article_cover" fill imgClassName="group-hover:scale-105 transition-transform" />
                 </div>
+
                 <CardContent className="p-5">
                   <Badge variant="secondary" className="text-[11px]">{n.category}</Badge>
                   <h3 className="mt-3 font-bold text-brand line-clamp-2">{n.title}</h3>
