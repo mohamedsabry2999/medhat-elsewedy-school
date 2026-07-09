@@ -1,11 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Lock, ShieldCheck } from "lucide-react";
 import { loginAdmin, isAdminAuthed } from "@/lib/admin-auth";
+import { ensureAdminUser } from "@/lib/admin-bootstrap.functions";
 import { IMG } from "@/lib/site-data";
 
 export const Route = createFileRoute("/admin-login")({
@@ -20,28 +22,36 @@ export const Route = createFileRoute("/admin-login")({
 
 function AdminLoginPage() {
   const navigate = useNavigate();
+  const bootstrap = useServerFn(ensureAdminUser);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (isAdminAuthed()) navigate({ to: "/admin", replace: true });
+    let alive = true;
+    isAdminAuthed().then((ok) => { if (alive && ok) navigate({ to: "/admin", replace: true }); });
+    return () => { alive = false; };
   }, [navigate]);
 
-  const submit = (e: import("react").FormEvent) => {
+  const submit = async (e: import("react").FormEvent) => {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
-    setTimeout(() => {
-      const ok = loginAdmin(email, password);
-      setSubmitting(false);
+    try {
+      await bootstrap();
+      const ok = await loginAdmin(email, password);
       if (!ok) {
         setError("بيانات الدخول غير صحيحة أو لا تملك صلاحية الوصول");
         return;
       }
       navigate({ to: "/admin", replace: true });
-    }, 300);
+    } catch (err) {
+      console.error(err);
+      setError("تعذر الاتصال بالخادم، حاول مرة أخرى.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
