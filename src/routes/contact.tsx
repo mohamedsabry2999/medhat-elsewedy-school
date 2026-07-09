@@ -34,10 +34,18 @@ const schema = z.object({
 
 function ContactPage() {
   const settings = useSiteSettings();
-  const branches = BRANCHES.map((b, i) => ({
-    ...b,
-    address: i === 0 ? settings.branch1 : settings.branch2,
-  }));
+  const dbBranches = useBranches();
+  const branches = dbBranches.map((b, i) => {
+    const meta = BRANCHES[i] ?? BRANCHES[0];
+    return {
+      ...meta,
+      id: b.id,
+      name: b.name,
+      address: b.address,
+      usage: b.usage,
+    };
+  });
+
   const [form, setForm] = useState({ name: "", phone: "", subject: "", message: "" });
   const [sending, setSending] = useState(false);
 
