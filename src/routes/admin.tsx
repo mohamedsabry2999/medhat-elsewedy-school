@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
-  LayoutDashboard, ClipboardList, Newspaper, Images, Settings, Search, Download, Plus, Home, LogOut, Eye, Trash2, Pencil, Star, EyeOff, Save, RefreshCw, CheckCircle2, AlertTriangle, Clock, Link2,
+  LayoutDashboard, ClipboardList, Newspaper, Images, Settings, Search, Download, Plus, Home, LogOut, Eye, Trash2, Pencil, Star, EyeOff, Save, RefreshCw, CheckCircle2, AlertTriangle, Clock, Link2, ImageIcon,
 } from "lucide-react";
 import {
   listRegistrations, updateRegistrationStatus, cancelRegistration, resyncRegistration, resyncAllPending,
