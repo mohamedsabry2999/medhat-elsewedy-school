@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { pageSeo } from "@/lib/seo";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,14 +17,19 @@ import moeLogo from "@/assets/moe-egypt.png.asset.json";
 import elsewedyLogo from "@/assets/elsewedy-printhouse.png.asset.json";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "الرئيسية — مدرسة مدحت السويدي للتكنولوجيا التطبيقية" },
-      { name: "description", content: "أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر. مناهج معتمدة دوليًا باعتماد الغرفة الألمانية AHK Cairo وتدريب داخل بيئة صناعية حقيقية." },
-    ],
-  }),
+  head: () => {
+    const seo = pageSeo({
+      title: "مدرسة مدحت السويدي للتكنولوجيا التطبيقية | MEAT — طباعة وتغليف",
+      description:
+        "أول مدرسة تكنولوجيا تطبيقية متخصصة في الطباعة والتغليف بمصر. مناهج معتمدة دوليًا باعتماد AHK Cairo، تدريب داخل بيئة صناعية حقيقية، وشراكة مع دار مدحت السويدي للطباعة.",
+      path: "/",
+      image: "https://medhat-elsewedy-school.lovable.app/og-image.jpg",
+    });
+    return { ...seo };
+  },
   component: Home,
 });
+
 
 function Home() {
   return (

@@ -7,16 +7,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Star } from "lucide-react";
 import { usePublishedArticles, ARTICLE_CATEGORIES } from "@/lib/articles-store";
+import { pageSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/news/")({
-  head: () => ({
-    meta: [
-      { title: "الأخبار — مدرسة مدحت السويدي" },
-      { name: "description", content: "أحدث أخبار المدرسة والفعاليات والزيارات." },
-    ],
-  }),
+  head: () => {
+    const seo = pageSeo({
+      title: "أخبار مدرسة مدحت السويدي — الفعاليات والزيارات والإنجازات",
+      description:
+        "آخر أخبار مدرسة مدحت السويدي للتكنولوجيا التطبيقية: الفعاليات، الزيارات الصناعية، والإنجازات الطلابية والأكاديمية.",
+      path: "/news",
+    });
+    return { ...seo };
+  },
   component: NewsPage,
 });
+
 
 function NewsPage() {
   const [cat, setCat] = useState<string>("الكل");

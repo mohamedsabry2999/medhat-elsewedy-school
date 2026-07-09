@@ -76,23 +76,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "الرئيسية — مدرسة مدحت السويدي للتكنولوجيا التطبيقية" },
+      { name: "theme-color", content: "#0a2540" },
+      { title: "مدرسة مدحت السويدي للتكنولوجيا التطبيقية | MEAT" },
       {
         name: "description",
         content:
-          "أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر. مناهج معتمدة دوليًا باعتماد الغرفة الألمانية AHK Cairo وتدريب داخل بيئة صناعية حقيقية.",
+          "أول مدرسة تكنولوجيا تطبيقية متخصصة في الطباعة والتغليف في مصر — مناهج معتمدة دوليًا باعتماد AHK Cairo، بالتعاون مع وزارة التربية والتعليم والتعليم الفني.",
       },
-      { property: "og:title", content: "الرئيسية — مدرسة مدحت السويدي للتكنولوجيا التطبيقية" },
-      {
-        property: "og:description",
-        content: "أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر. مناهج معتمدة دوليًا باعتماد الغرفة الألمانية AHK Cairo وتدريب داخل بيئة صناعية حقيقية.",
-      },
+      { property: "og:site_name", content: "مدرسة مدحت السويدي للتكنولوجيا التطبيقية" },
       { property: "og:type", content: "website" },
+      { property: "og:locale", content: "ar_EG" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "الرئيسية — مدرسة مدحت السويدي للتكنولوجيا التطبيقية" },
-      { name: "twitter:description", content: "أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر. مناهج معتمدة دوليًا باعتماد الغرفة الألمانية AHK Cairo وتدريب داخل بيئة صناعية حقيقية." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/4CMQCcvJ6Tg98o3LvVdF4VYsnuo1/social-images/social-1783589790110-ChatGPT_Image_Jul_9,_2026,_12_36_00_PM.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/4CMQCcvJ6Tg98o3LvVdF4VYsnuo1/social-images/social-1783589790110-ChatGPT_Image_Jul_9,_2026,_12_36_00_PM.webp" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -103,7 +97,42 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Tajawal:wght@400;500;700;900&display=swap",
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "EducationalOrganization",
+          name: "مدرسة مدحت السويدي للتكنولوجيا التطبيقية",
+          alternateName: "Medhat Elsewedy Applied Technology School",
+          url: "https://medhat-elsewedy-school.lovable.app",
+          logo: "https://medhat-elsewedy-school.lovable.app/og-image.jpg",
+          image: "https://medhat-elsewedy-school.lovable.app/og-image.jpg",
+          description:
+            "أول مدرسة تكنولوجيا تطبيقية متخصصة في الطباعة والتغليف في مصر، معتمدة من AHK Cairo وبالتعاون مع وزارة التربية والتعليم والتعليم الفني.",
+          telephone: "+201050360883",
+          email: "school@elsewedyprint.com",
+          address: [
+            { "@type": "PostalAddress", streetAddress: "الحي الخامس عشر", addressLocality: "العاشر من رمضان", addressRegion: "الشرقية", addressCountry: "EG" },
+            { "@type": "PostalAddress", streetAddress: "المنطقة الصناعية A6", addressLocality: "العاشر من رمضان", addressRegion: "الشرقية", addressCountry: "EG" },
+          ],
+          areaServed: "EG",
+          inLanguage: "ar",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "مدرسة مدحت السويدي للتكنولوجيا التطبيقية",
+          url: "https://medhat-elsewedy-school.lovable.app",
+          inLanguage: "ar",
+        }),
+      },
+    ],
   }),
+
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,

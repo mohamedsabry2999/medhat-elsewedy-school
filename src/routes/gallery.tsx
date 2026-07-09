@@ -4,16 +4,21 @@ import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { usePublishedGallery } from "@/lib/gallery-store";
 import { GALLERY_CATEGORIES } from "@/lib/site-data";
+import { pageSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/gallery")({
-  head: () => ({
-    meta: [
-      { title: "معرض الصور — مدرسة مدحت السويدي" },
-      { name: "description", content: "صور من داخل المدرسة والتدريب العملي والفعاليات." },
-    ],
-  }),
+  head: () => {
+    const seo = pageSeo({
+      title: "معرض صور مدرسة مدحت السويدي — تدريب عملي وفعاليات",
+      description:
+        "لقطات من داخل مدرسة مدحت السويدي: الورش، المعامل، التدريب الميداني بالمصانع، والفعاليات الطلابية.",
+      path: "/gallery",
+    });
+    return { ...seo };
+  },
   component: GalleryPage,
 });
+
 
 function GalleryPage() {
   const [cat, setCat] = useState("الكل");

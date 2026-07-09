@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 
-const BASE_URL = "https://highschool-heartbeat.lovable.app";
+const BASE_URL = "https://medhat-elsewedy-school.lovable.app";
 
 const STATIC_PATHS = [
   { path: "/", priority: "1.0", changefreq: "weekly" as const },
