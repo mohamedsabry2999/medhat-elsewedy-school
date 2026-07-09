@@ -1,36 +1,23 @@
-// Simple client-side admin auth (no backend). Suitable for now; swap for
-// Lovable Cloud auth later without changing call sites.
+// Admin auth backed by Supabase. RLS uses public.is_admin() which checks JWT email.
+import { supabase } from "@/integrations/supabase/client";
 
-const KEY = "meat_admin_session_v1";
 const ALLOWED_EMAIL = "mohamedsabryabdelfatah@gmail.com";
-const ADMIN_PASSWORD = "meat2026"; // change here to rotate
 
-export function loginAdmin(email: string, password: string): boolean {
-  const ok =
-    email.trim().toLowerCase() === ALLOWED_EMAIL &&
-    password === ADMIN_PASSWORD;
-  if (!ok) return false;
-  if (typeof window !== "undefined") {
-    window.localStorage.setItem(
-      KEY,
-      JSON.stringify({ email: ALLOWED_EMAIL, at: Date.now() }),
-    );
-  }
+export async function loginAdmin(email: string, password: string): Promise<boolean> {
+  if (email.trim().toLowerCase() !== ALLOWED_EMAIL) return false;
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: ALLOWED_EMAIL,
+    password,
+  });
+  if (error || !data.session) return false;
   return true;
 }
 
-export function logoutAdmin() {
-  if (typeof window !== "undefined") window.localStorage.removeItem(KEY);
+export async function logoutAdmin(): Promise<void> {
+  await supabase.auth.signOut();
 }
 
-export function isAdminAuthed(): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    if (!raw) return false;
-    const s = JSON.parse(raw) as { email?: string };
-    return s.email === ALLOWED_EMAIL;
-  } catch {
-    return false;
-  }
+export async function isAdminAuthed(): Promise<boolean> {
+  const { data } = await supabase.auth.getUser();
+  return (data.user?.email ?? "").toLowerCase() === ALLOWED_EMAIL;
 }
