@@ -31,8 +31,14 @@ const schema = z.object({
 });
 
 function ContactPage() {
+  const settings = useSiteSettings();
+  const branches = BRANCHES.map((b, i) => ({
+    ...b,
+    address: i === 0 ? settings.branch1 : settings.branch2,
+  }));
   const [form, setForm] = useState({ name: "", phone: "", subject: "", message: "" });
   const [sending, setSending] = useState(false);
+
   const submit = (e: import("react").FormEvent) => {
     e.preventDefault();
     const p = schema.safeParse(form);
