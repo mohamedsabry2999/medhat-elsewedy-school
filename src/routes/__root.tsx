@@ -87,6 +87,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "ar_EG" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:title", content: "مدرسة مدحت السويدي للتكنولوجيا التطبيقية | MEAT" },
+      { name: "twitter:title", content: "مدرسة مدحت السويدي للتكنولوجيا التطبيقية | MEAT" },
+      { property: "og:description", content: "أول مدرسة تكنولوجيا تطبيقية متخصصة في الطباعة والتغليف في مصر — مناهج معتمدة دوليًا باعتماد AHK Cairo، بالتعاون مع وزارة التربية والتعليم والتعليم الفني." },
+      { name: "twitter:description", content: "أول مدرسة تكنولوجيا تطبيقية متخصصة في الطباعة والتغليف في مصر — مناهج معتمدة دوليًا باعتماد AHK Cairo، بالتعاون مع وزارة التربية والتعليم والتعليم الفني." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/4CMQCcvJ6Tg98o3LvVdF4VYsnuo1/social-images/social-1783596425361-ChatGPT_Image_Jul_9,_2026,_12_36_00_PM.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/4CMQCcvJ6Tg98o3LvVdF4VYsnuo1/social-images/social-1783596425361-ChatGPT_Image_Jul_9,_2026,_12_36_00_PM.webp" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
