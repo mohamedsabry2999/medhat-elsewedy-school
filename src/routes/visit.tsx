@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { CheckCircle2, Info } from "lucide-react";
 import { submitRegistration } from "@/lib/registrations.functions";
-import { VISIT_DAYS, VISIT_SLOTS, BRANCHES } from "@/lib/site-data";
+import { VISIT_SLOTS, BRANCHES } from "@/lib/site-data";
 import { z } from "zod";
 
 export const Route = createFileRoute("/visit")({
@@ -39,6 +39,29 @@ const schema = z.object({
   visitLocation: z.string().min(1, "اختر مقر الزيارة"),
   notes: z.string().max(500).optional().default(""),
 });
+
+const DAY_MAP: Record<number, string> = { 0: "الأحد", 1: "الإثنين", 2: "الثلاثاء", 3: "الأربعاء", 4: "الخميس", 5: "الجمعة", 6: "السبت" };
+const ALLOWED_DOW = new Set([6, 1, 3]); // Sat, Mon, Wed
+function buildVisitDates(): { value: string; label: string; day: string }[] {
+  const out: { value: string; label: string; day: string }[] = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const end = new Date(2026, 7, 31); // Aug 31, 2026
+  const cur = new Date(today);
+  while (cur <= end) {
+    if (ALLOWED_DOW.has(cur.getDay())) {
+      const y = cur.getFullYear();
+      const m = String(cur.getMonth() + 1).padStart(2, "0");
+      const d = String(cur.getDate()).padStart(2, "0");
+      const iso = `${y}-${m}-${d}`;
+      const day = DAY_MAP[cur.getDay()];
+      out.push({ value: iso, label: `${day} — ${iso}`, day });
+    }
+    cur.setDate(cur.getDate() + 1);
+  }
+  return out;
+}
+const VISIT_DATES = buildVisitDates();
 
 const GOVS = ["القاهرة","الجيزة","القليوبية","الإسكندرية","الشرقية","الدقهلية","المنوفية","الغربية","بني سويف","الفيوم","المنيا","أسيوط","سوهاج","قنا","الأقصر","أسوان","البحيرة","كفر الشيخ","دمياط","بورسعيد","الإسماعيلية","السويس","شمال سيناء","جنوب سيناء","البحر الأحمر","مطروح","الوادي الجديد"];
 
@@ -122,10 +145,20 @@ function VisitPage() {
                     <SelectContent>{[1,2,3].map((n) => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}</SelectContent>
                   </Select>
                 </Field>
-                <Field label="يوم الزيارة">
-                  <Select value={form.visitDay} onValueChange={(v) => upd("visitDay", v)}>
-                    <SelectTrigger><SelectValue placeholder="اختر اليوم" /></SelectTrigger>
-                    <SelectContent>{VISIT_DAYS.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
+                <Field label="تاريخ الزيارة">
+                  <Select
+                    value={form.visitDate}
+                    onValueChange={(v) => {
+                      const found = VISIT_DATES.find((d) => d.value === v);
+                      setForm((f) => ({ ...f, visitDate: v, visitDay: found?.day ?? "" }));
+                    }}
+                  >
+                    <SelectTrigger><SelectValue placeholder="اختر تاريخ الزيارة" /></SelectTrigger>
+                    <SelectContent className="max-h-72">
+                      {VISIT_DATES.map((d) => (
+                        <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                 </Field>
                 <Field label="الفترة الزمنية">
@@ -134,14 +167,11 @@ function VisitPage() {
                     <SelectContent>{VISIT_SLOTS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                   </Select>
                 </Field>
-                <Field label="مقر الزيارة">
+                <Field label="مقر الزيارة" className="md:col-span-2">
                   <Select value={form.visitLocation} onValueChange={(v) => upd("visitLocation", v)}>
                     <SelectTrigger><SelectValue placeholder="اختر مقر الزيارة" /></SelectTrigger>
                     <SelectContent>{BRANCHES.map((b) => <SelectItem key={b.name} value={b.name}>{b.name}</SelectItem>)}</SelectContent>
                   </Select>
-                </Field>
-                <Field label="تاريخ الزيارة">
-                  <Input type="date" value={form.visitDate} onChange={(e) => upd("visitDate", e.target.value)} />
                 </Field>
                 <Field label="ملاحظات إضافية" className="md:col-span-2">
                   <Textarea value={form.notes} onChange={(e) => upd("notes", e.target.value)} placeholder="أي ملاحظات..." rows={4} />
