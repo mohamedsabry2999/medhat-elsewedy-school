@@ -105,11 +105,18 @@
   }
   html {
     font-family: var(--font-sans);
+    overflow-x: clip;
   }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    overflow-x: clip;
+    min-width: 320px;
+  }
+  img, video {
+    max-width: 100%;
+    height: auto;
   }
 }
 
