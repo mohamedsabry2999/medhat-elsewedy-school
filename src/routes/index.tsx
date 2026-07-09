@@ -189,6 +189,35 @@ function AccreditationSection() {
   );
 }
 
+function PartnersStrip() {
+  const partners = [
+    { src: moeLogo.url, alt: "وزارة التربية والتعليم والتعليم الفني", label: "وزارة التربية والتعليم والتعليم الفني", sub: "الجهة الرسمية المشرفة" },
+    { src: ahkLogo.url, alt: "الغرفة الألمانية AHK Cairo", label: "الغرفة الألمانية AHK Cairo", sub: "اعتماد مهني دولي" },
+    { src: elsewedyLogo.url, alt: "دار مدحت السويدي للطباعة", label: "دار مدحت السويدي للطباعة", sub: "الشريك الصناعي" },
+  ];
+  return (
+    <section className="py-14 bg-white border-y border-brand/10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-8">
+          <div className="text-[var(--accent-red)] font-bold text-sm mb-2">شركاؤنا وجهات الاعتماد</div>
+          <h2 className="text-xl md:text-2xl font-extrabold text-brand">دعم رسمي واعتماد دولي وشراكة صناعية</h2>
+        </div>
+        <div className="grid gap-5 sm:grid-cols-3">
+          {partners.map((p) => (
+            <div key={p.label} className="group bg-gradient-to-br from-secondary/40 to-white rounded-2xl border border-brand/10 p-6 flex flex-col items-center text-center shadow-sm hover:shadow-lg transition-all">
+              <div className="h-24 w-full flex items-center justify-center mb-4">
+                <img src={p.src} alt={p.alt} className="max-h-24 max-w-[75%] object-contain group-hover:scale-105 transition-transform" loading="lazy" />
+              </div>
+              <div className="font-extrabold text-brand text-sm leading-6">{p.label}</div>
+              <div className="text-xs text-muted-foreground mt-1">{p.sub}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function WhySection() {
   const items = [
     { icon: Factory, title: "تدريب داخل بيئة صناعية حقيقية", desc: "معامل حديثة وتدريب داخل مصانع الشريك الصناعي دار مدحت السويدي للطباعة." },
