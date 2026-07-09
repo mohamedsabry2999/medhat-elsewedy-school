@@ -806,12 +806,23 @@ function GalleryTab() {
         {filtered.map((g) => (
           <Card key={g.id} className="overflow-hidden pt-0">
             <div className="aspect-square overflow-hidden bg-secondary/50 relative">
-              {g.src && <img src={g.src} alt={g.title} className="w-full h-full object-cover" />}
+              {g.src && (
+                <SmartImage
+                  src={g.src}
+                  alt={g.title}
+                  focalX={g.focalX}
+                  focalY={g.focalY}
+                  imageType={g.imageType as never}
+                  cropMode={g.cropMode}
+                  fill
+                />
+              )}
               <Badge className={cn(
-                "absolute top-2 right-2",
+                "absolute top-2 right-2 z-10",
                 g.status === "منشورة" ? "bg-green-600 text-white" : "bg-gray-600 text-white",
               )}>{g.status}</Badge>
             </div>
+
             <CardContent className="p-3 space-y-2">
               <div className="font-bold text-brand text-sm line-clamp-1">{g.title || "بدون عنوان"}</div>
               <Badge variant="secondary" className="text-xs">{g.category}</Badge>
