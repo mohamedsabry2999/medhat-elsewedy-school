@@ -5,16 +5,21 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Factory, Briefcase } from "lucide-react";
 import { PROGRAMS } from "@/lib/site-data";
+import { pageSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/programs")({
-  head: () => ({
-    meta: [
-      { title: "التخصصات — مدرسة مدحت السويدي" },
-      { name: "description", content: "التخصصات الدراسية بالمدرسة: الطباعة الرقمية، الأوفست، والتخصصات المستقبلية." },
-    ],
-  }),
+  head: () => {
+    const seo = pageSeo({
+      title: "التخصصات الفنية — تكنولوجيا الطباعة والتغليف | MEAT",
+      description:
+        "تخصصات مدرسة مدحت السويدي: طباعة أوفست، طباعة رقمية، تشطيبات ما بعد الطباعة، وتخصصات التغليف — مسارات دراسية مصممة لسوق العمل الحقيقي.",
+      path: "/programs",
+    });
+    return { ...seo };
+  },
   component: ProgramsPage,
 });
+
 
 function ProgramsPage() {
   return (

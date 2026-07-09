@@ -3,16 +3,34 @@ import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Eye, Flag, Target, Factory, GraduationCap, Handshake, BadgeCheck } from "lucide-react";
 import { IMG, CERTIFICATES } from "@/lib/site-data";
+import { pageSeo, breadcrumbJsonLd } from "@/lib/seo";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "عن المدرسة — مدرسة مدحت السويدي للتكنولوجيا التطبيقية" },
-      { name: "description", content: "نشأة المدرسة، الرؤية، الرسالة، الأهداف، والشراكة الصناعية." },
-    ],
-  }),
+  head: () => {
+    const seo = pageSeo({
+      title: "عن مدرسة مدحت السويدي — نشأة، رؤية، وشراكة صناعية",
+      description:
+        "نشأة مدرسة مدحت السويدي للتكنولوجيا التطبيقية، رؤيتها ورسالتها، وشراكتها الصناعية مع دار مدحت السويدي للطباعة لتأهيل فنيين محترفين لسوق العمل.",
+      path: "/about",
+    });
+    return {
+      ...seo,
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(
+            breadcrumbJsonLd([
+              { name: "الرئيسية", path: "/" },
+              { name: "عن المدرسة", path: "/about" },
+            ]),
+          ),
+        },
+      ],
+    };
+  },
   component: AboutPage,
 });
+
 
 function AboutPage() {
   return (

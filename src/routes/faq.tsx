@@ -2,16 +2,26 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { FAQS } from "@/lib/site-data";
+import { pageSeo, faqJsonLd } from "@/lib/seo";
 
 export const Route = createFileRoute("/faq")({
-  head: () => ({
-    meta: [
-      { title: "الأسئلة الشائعة — مدرسة مدحت السويدي" },
-      { name: "description", content: "إجابات على أهم الأسئلة حول الدراسة والقبول." },
-    ],
-  }),
+  head: () => {
+    const seo = pageSeo({
+      title: "الأسئلة الشائعة — مدرسة مدحت السويدي للتكنولوجيا التطبيقية",
+      description:
+        "إجابات على أهم أسئلة أولياء الأمور والطلاب حول التقديم، المصروفات، مدة الدراسة، شهادة AHK، وفرص العمل بعد التخرج.",
+      path: "/faq",
+    });
+    return {
+      ...seo,
+      scripts: [
+        { type: "application/ld+json", children: JSON.stringify(faqJsonLd(FAQS)) },
+      ],
+    };
+  },
   component: FaqPage,
 });
+
 
 function FaqPage() {
   return (

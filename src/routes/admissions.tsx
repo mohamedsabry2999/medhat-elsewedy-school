@@ -3,16 +3,21 @@ import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, GraduationCap, Info } from "lucide-react";
+import { pageSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/admissions")({
-  head: () => ({
-    meta: [
-      { title: "شروط الالتحاق بالمدرسة — مدرسة مدحت السويدي" },
-      { name: "description", content: "شروط ومتطلبات الالتحاق بمدرسة مدحت السويدي للتكنولوجيا التطبيقية." },
-    ],
-  }),
+  head: () => {
+    const seo = pageSeo({
+      title: "شروط القبول والتقديم 2026 — مدرسة مدحت السويدي",
+      description:
+        "شروط الالتحاق بمدرسة مدحت السويدي للتكنولوجيا التطبيقية 2026: المتطلبات، الاختبارات، المصروفات الحكومية، وخطوات التقديم عبر وزارة التربية والتعليم.",
+      path: "/admissions",
+    });
+    return { ...seo };
+  },
   component: AdmissionsPage,
 });
+
 
 const REQUIREMENTS = [
   "الحصول على شهادة الإعدادية الحديثة.",

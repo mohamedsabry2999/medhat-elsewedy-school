@@ -15,15 +15,21 @@ import { useBranches } from "@/lib/branches-store";
 
 import { z } from "zod";
 
+import { pageSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "تواصل معنا — مدرسة مدحت السويدي" },
-      { name: "description", content: "قنوات التواصل مع المدرسة وفروعها بمدينة العاشر من رمضان." },
-    ],
-  }),
+  head: () => {
+    const seo = pageSeo({
+      title: "تواصل مع مدرسة مدحت السويدي — الفروع وأرقام التواصل",
+      description:
+        "قنوات التواصل مع مدرسة مدحت السويدي للتكنولوجيا التطبيقية: هاتف 01050360883، بريد school@elsewedyprint.com، وعناوين الفرعين بمدينة العاشر من رمضان.",
+      path: "/contact",
+    });
+    return { ...seo };
+  },
   component: ContactPage,
 });
+
 
 const schema = z.object({
   name: z.string().trim().min(2, "الاسم مطلوب").max(120),

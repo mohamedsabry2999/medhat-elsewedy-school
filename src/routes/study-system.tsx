@@ -3,16 +3,21 @@ import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Wrench, Factory, Globe2, Users, Lightbulb, ClipboardCheck, Briefcase, GraduationCap, BadgeCheck } from "lucide-react";
+import { pageSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/study-system")({
-  head: () => ({
-    meta: [
-      { title: "نظام الدراسة — مدرسة مدحت السويدي" },
-      { name: "description", content: "نظام الساعات المعتمدة، مناهج معتمدة دوليًا، تدريب عملي وميداني، وتقييمات إلكترونية شهرية." },
-    ],
-  }),
+  head: () => {
+    const seo = pageSeo({
+      title: "نظام الدراسة بالساعات المعتمدة — التعليم المزدوج | MEAT",
+      description:
+        "نظام الساعات المعتمدة داخل مدرسة مدحت السويدي: تعليم مزدوج نظري وعملي، تدريب ميداني بالمصانع، تقييمات إلكترونية دورية، ومناهج معتمدة من AHK Cairo.",
+      path: "/study-system",
+    });
+    return { ...seo };
+  },
   component: StudySystemPage,
 });
+
 
 function StudySystemPage() {
   return (
