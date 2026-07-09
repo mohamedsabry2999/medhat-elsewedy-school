@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
-  LayoutDashboard, ClipboardList, Newspaper, Images, Settings, Search, Download, Plus, Home, LogOut, Eye, Trash2, Pencil, Star, EyeOff, Save, RefreshCw, CheckCircle2, AlertTriangle, Clock, Link2,
+  LayoutDashboard, ClipboardList, Newspaper, Images, Settings, Search, Download, Plus, Home, LogOut, Eye, Trash2, Pencil, Star, EyeOff, Save, RefreshCw, CheckCircle2, AlertTriangle, Clock, Link2, ImageIcon,
 } from "lucide-react";
 import {
   listRegistrations, updateRegistrationStatus, cancelRegistration, resyncRegistration, resyncAllPending,
@@ -35,6 +35,7 @@ import { useBranches, saveBranch, createBranch, deleteBranch, type Branch } from
 import { VISIT_DAYS, VISIT_SLOTS, GALLERY_CATEGORIES } from "@/lib/site-data";
 import { isAdminAuthed, logoutAdmin } from "@/lib/admin-auth";
 import { FocalPointPicker } from "@/components/admin/FocalPointPicker";
+import { MediaLibraryTab } from "@/components/admin/MediaLibraryTab";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin")({
@@ -81,6 +82,7 @@ const SECTIONS = [
   { id: "registrations", label: "التسجيلات والندوات", icon: ClipboardList },
   { id: "articles", label: "إدارة المقالات", icon: Newspaper },
   { id: "gallery", label: "معرض الصور", icon: Images },
+  { id: "media", label: "مكتبة الصور والوسائط", icon: ImageIcon },
   { id: "settings", label: "إعدادات الموقع", icon: Settings },
 ] as const;
 
@@ -179,6 +181,7 @@ function AdminPage() {
           {section === "registrations" && <RegistrationsTab regs={regs} onChange={refreshRegs} />}
           {section === "articles" && <ArticlesTab />}
           {section === "gallery" && <GalleryTab />}
+          {section === "media" && <MediaLibraryTab />}
           {section === "settings" && <SettingsTab />}
         </div>
       </div>

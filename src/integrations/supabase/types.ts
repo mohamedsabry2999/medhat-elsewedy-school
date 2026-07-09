@@ -152,6 +152,84 @@ export type Database = {
         }
         Relationships: []
       }
+      media_assets: {
+        Row: {
+          alt_text: string
+          aspect_ratio: string
+          caption: string
+          category: string
+          created_at: string
+          crop_settings: Json
+          description: string
+          display_position: string
+          file_size: number
+          focal_x: number
+          focal_y: number
+          height: number
+          id: string
+          image_url: string
+          mime_type: string
+          sort_order: number
+          status: string
+          storage_path: string
+          thumbnail_url: string
+          title: string
+          updated_at: string
+          usage_locations: string[]
+          width: number
+        }
+        Insert: {
+          alt_text?: string
+          aspect_ratio?: string
+          caption?: string
+          category?: string
+          created_at?: string
+          crop_settings?: Json
+          description?: string
+          display_position?: string
+          file_size?: number
+          focal_x?: number
+          focal_y?: number
+          height?: number
+          id?: string
+          image_url?: string
+          mime_type?: string
+          sort_order?: number
+          status?: string
+          storage_path: string
+          thumbnail_url?: string
+          title?: string
+          updated_at?: string
+          usage_locations?: string[]
+          width?: number
+        }
+        Update: {
+          alt_text?: string
+          aspect_ratio?: string
+          caption?: string
+          category?: string
+          created_at?: string
+          crop_settings?: Json
+          description?: string
+          display_position?: string
+          file_size?: number
+          focal_x?: number
+          focal_y?: number
+          height?: number
+          id?: string
+          image_url?: string
+          mime_type?: string
+          sort_order?: number
+          status?: string
+          storage_path?: string
+          thumbnail_url?: string
+          title?: string
+          updated_at?: string
+          usage_locations?: string[]
+          width?: number
+        }
+        Relationships: []
+      }
       registrations: {
         Row: {
           attendees: number
