@@ -220,23 +220,6 @@ export const submitRegistration = createServerFn({ method: "POST" })
     // Insert via admin client: Zod already validated inputs, and the anon role
     // has no SELECT policy so `.select().single()` after INSERT would fail RLS.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    // Diagnostic: attempt raw fetch as service role to confirm creds path.
-    try {
-      const rr = await fetch(`${process.env.SUPABASE_URL}/rest/v1/registrations`, {
-        method: "POST",
-        headers: {
-          apikey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-          Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY!}`,
-          "Content-Type": "application/json",
-          Prefer: "return=representation",
-        },
-        body: JSON.stringify(insertPayload),
-      });
-      console.log("[submitRegistration] raw fetch status:", rr.status, "body:", (await rr.text()).slice(0, 200));
-    } catch (e) {
-      console.log("[submitRegistration] raw fetch err:", (e as Error).message);
-    }
-
     const { data: inserted, error } = await supabaseAdmin
       .from("registrations")
       .insert(insertPayload)
