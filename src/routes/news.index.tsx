@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Search, Star } from "lucide-react";
 import { usePublishedArticles, ARTICLE_CATEGORIES } from "@/lib/articles-store";
 import { pageSeo } from "@/lib/seo";
+import { SmartImage } from "@/components/ui/SmartImage";
+
 
 export const Route = createFileRoute("/news/")({
   head: () => {
