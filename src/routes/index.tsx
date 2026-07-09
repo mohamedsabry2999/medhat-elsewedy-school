@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import {
-  Award, Factory, Users, Target, Wrench, ShieldCheck, GraduationCap,
+  Award, Factory, Users, Wrench, ShieldCheck, GraduationCap,
   Printer, Palette, TrendingUp, ArrowLeft, Calendar, CheckCircle2, ClipboardList, UserCheck, Megaphone,
 } from "lucide-react";
 import { IMG, PROGRAMS, NEWS, FAQS } from "@/lib/site-data";
