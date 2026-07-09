@@ -63,7 +63,7 @@ function ContactPage() {
             <p className="mt-3 text-muted-foreground text-sm">لكل فرع استخدام مختلف — يرجى التأكد من مقر الزيارة المحدد في رسالة التأكيد قبل الحضور.</p>
           </div>
           <div className="grid gap-5 md:grid-cols-2">
-            {BRANCHES.map((b) => (
+            {branches.map((b) => (
               <Card key={b.id} className="border-brand/10">
                 <CardContent className="p-6 space-y-4">
                   <div className="flex items-start gap-3">
