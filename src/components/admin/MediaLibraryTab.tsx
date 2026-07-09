@@ -103,9 +103,25 @@ export function MediaLibraryTab() {
           <h2 className="font-extrabold text-brand text-xl">مكتبة الصور والوسائط</h2>
           <p className="text-sm text-muted-foreground">إدارة كاملة لصور الموقع — رفع، قص، نقطة تركيز، وتحديد مكان الظهور.</p>
         </div>
-        <Button className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white" onClick={openNew}>
-          <Plus className="h-4 w-4 ml-1" /> إضافة صورة
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={async () => {
+            const items = [
+              { url: IMG.hero1, title: "Hero — تدريب على ماكينة الطباعة", altText: "طالب من مدرسة مدحت السويدي أثناء التدريب العملي على ماكينة الطباعة", category: "الهيرو / أعلى الموقع", displayPosition: "Hero Main Image", usageLocations: ["الصفحة الرئيسية — Hero"] },
+              { url: IMG.hero2, title: "Hero — ورشة الطباعة", altText: "ورشة الطباعة داخل مدرسة مدحت السويدي للتكنولوجيا التطبيقية", category: "الورش والمعامل", displayPosition: "Hero Side Image", usageLocations: ["الصفحة الرئيسية — Hero"] },
+              ...IMG.students.map((url, i) => ({ url, title: `طالب ${i + 1}`, altText: "طالب من مدرسة مدحت السويدي للتكنولوجيا التطبيقية", category: "صور الطلاب", usageLocations: ["الصفحة الرئيسية — معرض مختصر"] })),
+              ...GALLERY.map((g) => ({ url: g.src, title: g.caption, altText: g.caption, category: g.category, usageLocations: ["معرض الصور العام"] })),
+              ...NEWS.map((n) => ({ url: n.image, title: `صورة مقال: ${n.title}`, altText: n.title, category: "الأخبار", usageLocations: ["صورة مقال"] })),
+            ];
+            const n = await importSiteImages(items);
+            if (n > 0) toast.success(`تم استيراد ${n} صورة من صور الموقع الحالية`);
+            else toast.info("كل صور الموقع مستوردة بالفعل");
+          }}>
+            <Download className="h-4 w-4 ml-1" /> استيراد صور الموقع الحالية
+          </Button>
+          <Button className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white" onClick={openNew}>
+            <Plus className="h-4 w-4 ml-1" /> إضافة صورة
+          </Button>
+        </div>
       </div>
 
       <Card>
