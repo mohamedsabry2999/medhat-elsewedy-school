@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
-import { GALLERY, GALLERY_CATEGORIES } from "@/lib/site-data";
+import { usePublishedGallery } from "@/lib/gallery-store";
+import { GALLERY_CATEGORIES } from "@/lib/site-data";
 
 export const Route = createFileRoute("/gallery")({
   head: () => ({
@@ -16,7 +17,11 @@ export const Route = createFileRoute("/gallery")({
 
 function GalleryPage() {
   const [cat, setCat] = useState("الكل");
-  const list = cat === "الكل" ? GALLERY : GALLERY.filter((g) => g.category === cat);
+  const all = usePublishedGallery();
+  const list = useMemo(
+    () => (cat === "الكل" ? all : all.filter((g) => g.category === cat)),
+    [all, cat],
+  );
   return (
     <SiteLayout>
       <PageHeader eyebrow="معرض الصور" title="لحظات من داخل المدرسة" />
@@ -28,11 +33,12 @@ function GalleryPage() {
             ))}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {list.map((g, i) => (
-              <figure key={i} className="group relative aspect-square overflow-hidden rounded-xl">
-                <img src={g.src} alt={g.caption} className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" />
+            {list.map((g) => (
+              <figure key={g.id} className="group relative aspect-square overflow-hidden rounded-xl">
+                <img src={g.src} alt={g.title} className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" />
                 <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand/90 to-transparent text-white text-xs p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {g.caption}
+                  <div className="font-bold">{g.title}</div>
+                  {g.description && <div className="text-white/80 mt-1">{g.description}</div>}
                 </figcaption>
               </figure>
             ))}
