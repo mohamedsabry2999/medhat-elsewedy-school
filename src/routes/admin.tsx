@@ -82,6 +82,7 @@ const SECTIONS = [
   { id: "registrations", label: "التسجيلات والندوات", icon: ClipboardList },
   { id: "articles", label: "إدارة المقالات", icon: Newspaper },
   { id: "gallery", label: "معرض الصور", icon: Images },
+  { id: "media", label: "مكتبة الصور والوسائط", icon: ImageIcon },
   { id: "settings", label: "إعدادات الموقع", icon: Settings },
 ] as const;
 
