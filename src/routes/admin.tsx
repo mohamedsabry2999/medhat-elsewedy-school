@@ -30,6 +30,8 @@ import {
   type GalleryImage,
 } from "@/lib/gallery-store";
 import { readSettings, saveSettings, type SiteSettings } from "@/lib/settings-store";
+import { useBranches, saveBranch, createBranch, deleteBranch, type Branch } from "@/lib/branches-store";
+
 import { VISIT_DAYS, VISIT_SLOTS, GALLERY_CATEGORIES } from "@/lib/site-data";
 import { isAdminAuthed, logoutAdmin } from "@/lib/admin-auth";
 import { FocalPointPicker } from "@/components/admin/FocalPointPicker";
@@ -939,14 +941,18 @@ function SettingsTab() {
           <div className="grid gap-4">
             <SField label="رقم الهاتف" value={s.phone} onChange={(v) => setS({ ...s, phone: v })} dir="ltr" />
             <SField label="البريد الإلكتروني" value={s.email} onChange={(v) => setS({ ...s, email: v })} dir="ltr" />
-            <SField label="عنوان فرع الحي الخامس عشر" value={s.branch1} onChange={(v) => setS({ ...s, branch1: v })} textarea />
-            <SField label="عنوان فرع المنطقة الصناعية" value={s.branch2} onChange={(v) => setS({ ...s, branch2: v })} textarea />
+            <SField label="رقم واتساب (رابط كامل)" value={s.whatsapp} onChange={(v) => setS({ ...s, whatsapp: v })} dir="ltr" />
+            <SField label="وصف الفوتر" value={s.footerDescription} onChange={(v) => setS({ ...s, footerDescription: v })} textarea />
+            <SField label="نص الدعوة الرئيسية" value={s.mainCta} onChange={(v) => setS({ ...s, mainCta: v })} />
             <div className="grid gap-4 md:grid-cols-3">
               <SField label="فيسبوك" value={s.facebook} onChange={(v) => setS({ ...s, facebook: v })} dir="ltr" />
               <SField label="انستجرام" value={s.instagram} onChange={(v) => setS({ ...s, instagram: v })} dir="ltr" />
               <SField label="يوتيوب" value={s.youtube} onChange={(v) => setS({ ...s, youtube: v })} dir="ltr" />
             </div>
           </div>
+
+          <BranchesEditor />
+
 
           <div className="flex justify-end">
             <Button className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white" onClick={save}>
@@ -958,6 +964,73 @@ function SettingsTab() {
     </div>
   );
 }
+
+function BranchesEditor() {
+  const branches = useBranches();
+  const [drafts, setDrafts] = useState<Record<string, Branch>>({});
+  const getVal = (b: Branch): Branch => drafts[b.id] ?? b;
+  const update = (b: Branch, patch: Partial<Branch>) =>
+    setDrafts((d) => ({ ...d, [b.id]: { ...getVal(b), ...patch } }));
+
+  return (
+    <div className="border-t pt-5 space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="font-bold text-brand">فروع المدرسة</h3>
+          <p className="text-sm text-muted-foreground">تظهر تلقائيًا في صفحة تواصل معنا والفوتر.</p>
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() =>
+            createBranch({
+              name: "فرع جديد",
+              address: "",
+              usage: "",
+              position: branches.length + 1,
+            })
+          }
+        >
+          + إضافة فرع
+        </Button>
+      </div>
+      <div className="grid gap-4">
+        {branches.map((b) => {
+          const v = getVal(b);
+          return (
+            <div key={b.id} className="rounded-lg border p-4 space-y-3">
+              <SField label="اسم الفرع" value={v.name} onChange={(x) => update(b, { name: x })} />
+              <SField label="العنوان" value={v.address} onChange={(x) => update(b, { address: x })} textarea />
+              <SField label="الاستخدام / وصف الفرع" value={v.usage} onChange={(x) => update(b, { usage: x })} textarea />
+              <div className="flex justify-between items-center">
+                <Button
+                  variant="ghost"
+                  className="text-red-600"
+                  onClick={() => {
+                    if (confirm("حذف هذا الفرع؟")) deleteBranch(b.id);
+                  }}
+                >
+                  حذف
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    saveBranch(v);
+                    toast.success("تم حفظ الفرع");
+                  }}
+                >
+                  حفظ الفرع
+                </Button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+
 
 function SyncSettingsPanel() {
   const load = useServerFn(getSyncSettings);

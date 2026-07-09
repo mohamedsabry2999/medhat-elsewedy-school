@@ -14,6 +14,144 @@ export type Database = {
   }
   public: {
     Tables: {
+      articles: {
+        Row: {
+          author: string
+          body: string
+          category: string
+          created_at: string
+          excerpt: string
+          featured: boolean
+          focal_x: number
+          focal_y: number
+          id: string
+          image: string
+          image_alt: string
+          og_image: string
+          published_at: string
+          seo_description: string
+          seo_title: string
+          slug: string
+          status: string
+          thumbnail: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author?: string
+          body?: string
+          category?: string
+          created_at?: string
+          excerpt?: string
+          featured?: boolean
+          focal_x?: number
+          focal_y?: number
+          id?: string
+          image?: string
+          image_alt?: string
+          og_image?: string
+          published_at?: string
+          seo_description?: string
+          seo_title?: string
+          slug: string
+          status?: string
+          thumbnail?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          body?: string
+          category?: string
+          created_at?: string
+          excerpt?: string
+          featured?: boolean
+          focal_x?: number
+          focal_y?: number
+          id?: string
+          image?: string
+          image_alt?: string
+          og_image?: string
+          published_at?: string
+          seo_description?: string
+          seo_title?: string
+          slug?: string
+          status?: string
+          thumbnail?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      branches: {
+        Row: {
+          address: string
+          created_at: string
+          id: string
+          name: string
+          position: number
+          updated_at: string
+          usage: string
+        }
+        Insert: {
+          address: string
+          created_at?: string
+          id?: string
+          name: string
+          position?: number
+          updated_at?: string
+          usage?: string
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          id?: string
+          name?: string
+          position?: number
+          updated_at?: string
+          usage?: string
+        }
+        Relationships: []
+      }
+      gallery_images: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          image_alt: string
+          image_url: string
+          position: number
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image_alt?: string
+          image_url: string
+          position?: number
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image_alt?: string
+          image_url?: string
+          position?: number
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       registrations: {
         Row: {
           attendees: number
@@ -86,6 +224,45 @@ export type Database = {
           visit_day?: string
           visit_location?: string
           whatsapp?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          email: string
+          facebook_url: string
+          footer_description: string
+          id: number
+          instagram_url: string
+          main_cta: string
+          phone: string
+          updated_at: string
+          whatsapp_url: string
+          youtube_url: string
+        }
+        Insert: {
+          email?: string
+          facebook_url?: string
+          footer_description?: string
+          id?: number
+          instagram_url?: string
+          main_cta?: string
+          phone?: string
+          updated_at?: string
+          whatsapp_url?: string
+          youtube_url?: string
+        }
+        Update: {
+          email?: string
+          facebook_url?: string
+          footer_description?: string
+          id?: number
+          instagram_url?: string
+          main_cta?: string
+          phone?: string
+          updated_at?: string
+          whatsapp_url?: string
+          youtube_url?: string
         }
         Relationships: []
       }

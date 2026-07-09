@@ -1,5 +1,7 @@
-// Articles CMS store (localStorage). Merges with seed NEWS for public display.
+// Articles CMS store — Supabase-backed with realtime.
+// Preserves the previous sync-looking API (used by admin and public pages).
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { NEWS, NEWS_CATEGORIES, type NewsItem } from "./site-data";
 
 export type ArticleStatus = "منشور" | "مسودة";
@@ -11,17 +13,64 @@ export type Article = {
   body: string;
   category: string;
   image: string;
-  thumbnail?: string; // optional cropped thumb (data URL)
-  focalX?: number; // 0-100
-  focalY?: number; // 0-100
+  thumbnail?: string;
+  focalX?: number;
+  focalY?: number;
   date: string; // YYYY-MM-DD
   status: ArticleStatus;
   featured?: boolean;
   author?: string;
   createdAt: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: string;
+  imageAlt?: string;
 };
 
-const KEY = "meat_articles_v1";
+type DBRow = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  body: string;
+  category: string;
+  image: string;
+  thumbnail: string | null;
+  focal_x: number;
+  focal_y: number;
+  status: string;
+  featured: boolean;
+  author: string;
+  published_at: string;
+  seo_title: string;
+  seo_description: string;
+  og_image: string;
+  image_alt: string;
+  created_at: string;
+};
+
+function fromRow(r: DBRow): Article {
+  return {
+    slug: r.slug,
+    title: r.title,
+    excerpt: r.excerpt,
+    body: r.body,
+    category: r.category,
+    image: r.image,
+    thumbnail: r.thumbnail ?? undefined,
+    focalX: Number(r.focal_x),
+    focalY: Number(r.focal_y),
+    date: r.published_at,
+    status: r.status === "published" ? "منشور" : "مسودة",
+    featured: r.featured,
+    author: r.author,
+    createdAt: r.created_at,
+    seoTitle: r.seo_title,
+    seoDescription: r.seo_description,
+    ogImage: r.og_image,
+    imageAlt: r.image_alt,
+  };
+}
 
 function seed(): Article[] {
   return NEWS.map((n: NewsItem) => ({
@@ -41,108 +90,138 @@ function seed(): Article[] {
   }));
 }
 
-function read(): Article[] {
-  if (typeof window === "undefined") return seed();
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    if (!raw) {
-      const s = seed();
-      window.localStorage.setItem(KEY, JSON.stringify(s));
-      return s;
-    }
-    return JSON.parse(raw) as Article[];
-  } catch {
-    return seed();
+let cache: Article[] = [];
+let loaded = false;
+const listeners = new Set<() => void>();
+function notify() { listeners.forEach((l) => l()); }
+
+async function refetch() {
+  const { data, error } = await supabase
+    .from("articles")
+    .select("*")
+    .order("published_at", { ascending: false });
+  if (!error && data) {
+    cache = (data as DBRow[]).map(fromRow);
+    loaded = true;
+    notify();
   }
 }
 
-function write(list: Article[]) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(KEY, JSON.stringify(list));
-  window.dispatchEvent(new CustomEvent("meat:articles-changed"));
+let subscribed = false;
+function ensureSubscribed() {
+  if (subscribed || typeof window === "undefined") return;
+  subscribed = true;
+  refetch();
+  supabase
+    .channel("articles-changes")
+    .on("postgres_changes", { event: "*", schema: "public", table: "articles" }, () => refetch())
+    .subscribe();
+}
+
+function currentList(): Article[] {
+  if (!loaded || cache.length === 0) return seed();
+  return cache;
 }
 
 export function listArticles(): Article[] {
-  return read().sort((a, b) => (a.date < b.date ? 1 : -1));
+  return [...currentList()].sort((a, b) => (a.date < b.date ? 1 : -1));
 }
-
 export function listPublishedArticles(): Article[] {
   return listArticles().filter((a) => a.status === "منشور");
 }
-
 export function getArticle(slug: string): Article | undefined {
-  return read().find((a) => a.slug === slug);
+  return currentList().find((a) => a.slug === slug);
 }
 
 function slugify(t: string): string {
-  const base = t
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^\p{L}\p{N}\-]+/gu, "")
-    .slice(0, 60);
+  const base = t.trim().toLowerCase().replace(/\s+/g, "-")
+    .replace(/[^\p{L}\p{N}\-]+/gu, "").slice(0, 60);
   return base || `article-${Date.now()}`;
 }
 
-export function saveArticle(a: Omit<Article, "createdAt"> & { createdAt?: string }): Article {
-  const list = read();
-  const idx = list.findIndex((x) => x.slug === a.slug);
-  const rec: Article = {
-    ...a,
-    createdAt: a.createdAt ?? new Date().toISOString(),
+function toDb(a: Partial<Article> & { slug: string }) {
+  return {
+    slug: a.slug,
+    title: a.title ?? "",
+    excerpt: a.excerpt ?? "",
+    body: a.body ?? "",
+    category: a.category ?? "",
+    image: a.image ?? "",
+    thumbnail: a.thumbnail ?? null,
+    focal_x: a.focalX ?? 50,
+    focal_y: a.focalY ?? 50,
+    status: a.status === "منشور" ? "published" : "draft",
+    featured: !!a.featured,
+    author: a.author ?? "إدارة المدرسة",
+    published_at: a.date ?? new Date().toISOString().slice(0, 10),
+    seo_title: a.seoTitle ?? "",
+    seo_description: a.seoDescription ?? "",
+    og_image: a.ogImage ?? "",
+    image_alt: a.imageAlt ?? "",
   };
-  if (idx >= 0) list[idx] = rec;
-  else list.push(rec);
-  write(list);
+}
+
+export function saveArticle(a: Omit<Article, "createdAt"> & { createdAt?: string }): Article {
+  const rec: Article = { ...a, createdAt: a.createdAt ?? new Date().toISOString() };
+  supabase.from("articles").upsert(toDb(rec), { onConflict: "slug" }).then(({ error }) => {
+    if (error) console.error("saveArticle", error);
+  });
+  const idx = cache.findIndex((x) => x.slug === rec.slug);
+  if (idx >= 0) cache[idx] = rec; else cache = [rec, ...cache];
+  loaded = true;
+  notify();
   return rec;
 }
 
 export function createArticle(data: Omit<Article, "slug" | "createdAt">): Article {
-  const list = read();
   let slug = slugify(data.title);
+  const existing = new Set(cache.map((x) => x.slug));
   let i = 1;
-  while (list.some((x) => x.slug === slug)) slug = `${slugify(data.title)}-${i++}`;
+  while (existing.has(slug)) slug = `${slugify(data.title)}-${i++}`;
   return saveArticle({ ...data, slug });
 }
 
 export function deleteArticle(slug: string) {
-  write(read().filter((a) => a.slug !== slug));
+  supabase.from("articles").delete().eq("slug", slug).then(({ error }) => {
+    if (error) console.error("deleteArticle", error);
+  });
+  cache = cache.filter((a) => a.slug !== slug);
+  notify();
 }
 
 export function toggleStatus(slug: string) {
-  write(
-    read().map((a) =>
-      a.slug === slug ? { ...a, status: a.status === "منشور" ? "مسودة" : "منشور" } : a,
-    ),
-  );
+  const a = cache.find((x) => x.slug === slug);
+  if (!a) return;
+  const next: ArticleStatus = a.status === "منشور" ? "مسودة" : "منشور";
+  saveArticle({ ...a, status: next });
 }
 
 export function toggleFeatured(slug: string) {
-  write(read().map((a) => (a.slug === slug ? { ...a, featured: !a.featured } : a)));
+  const a = cache.find((x) => x.slug === slug);
+  if (!a) return;
+  saveArticle({ ...a, featured: !a.featured });
 }
 
 export function usePublishedArticles(): Article[] {
-  const [list, setList] = useState<Article[]>([]);
+  const [list, setList] = useState<Article[]>(() => listPublishedArticles());
   useEffect(() => {
-    setList(listPublishedArticles());
+    ensureSubscribed();
     const on = () => setList(listPublishedArticles());
-    window.addEventListener("meat:articles-changed", on);
-    window.addEventListener("storage", on);
-    return () => {
-      window.removeEventListener("meat:articles-changed", on);
-      window.removeEventListener("storage", on);
-    };
+    listeners.add(on);
+    on();
+    return () => { listeners.delete(on); };
   }, []);
   return list;
 }
 
 export function useArticles(): Article[] {
-  const [list, setList] = useState<Article[]>([]);
+  const [list, setList] = useState<Article[]>(() => listArticles());
   useEffect(() => {
-    setList(listArticles());
+    ensureSubscribed();
     const on = () => setList(listArticles());
-    window.addEventListener("meat:articles-changed", on);
-    return () => window.removeEventListener("meat:articles-changed", on);
+    listeners.add(on);
+    on();
+    return () => { listeners.delete(on); };
   }, []);
   return list;
 }
