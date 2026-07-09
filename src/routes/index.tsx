@@ -32,6 +32,7 @@ function Home() {
       <StudySystem />
       <ProgramsSection />
       <BenefitsSection />
+      <GraduatesFuture />
       <CertificatesSection />
       <AdmissionSteps />
       <SeminarCTA />
