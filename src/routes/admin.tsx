@@ -113,7 +113,7 @@ function AdminPage() {
           <Button asChild variant="outline" size="sm" className="w-full bg-white/5 border-white/20 text-white hover:bg-white/10">
             <Link to="/"><Home className="h-4 w-4 ml-1" /> عرض الموقع</Link>
           </Button>
-          <Button size="sm" variant="ghost" className="w-full text-white/70 hover:text-white hover:bg-white/10" onClick={() => toast.info("تسجيل الخروج (عرض)")}>
+          <Button size="sm" variant="ghost" className="w-full text-white/70 hover:text-white hover:bg-white/10" onClick={handleLogout}>
             <LogOut className="h-4 w-4 ml-1" /> تسجيل الخروج
           </Button>
         </div>
