@@ -9,9 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Plus, Search, Pencil, Trash2, Eye, EyeOff, Save, Upload, ImageIcon } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Eye, EyeOff, Save, Upload, ImageIcon, Download } from "lucide-react";
 import { FocalPointPicker } from "@/components/admin/FocalPointPicker";
 import { cn } from "@/lib/utils";
+import { IMG, GALLERY, NEWS } from "@/lib/site-data";
 import {
   useMediaLibrary,
   createMediaAsset,
@@ -19,6 +20,7 @@ import {
   deleteMediaAsset,
   toggleMediaStatus,
   uploadMediaFile,
+  importSiteImages,
   suggestPreset,
   MEDIA_CATEGORIES,
   USAGE_LOCATIONS,
