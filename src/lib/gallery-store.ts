@@ -15,6 +15,12 @@ export type GalleryImage = {
   order: number;
   createdAt: string;
   imageAlt?: string;
+  focalX: number;
+  focalY: number;
+  mobileFocalX?: number | null;
+  mobileFocalY?: number | null;
+  imageType: string;
+  cropMode: "cover" | "contain";
 };
 
 type DBRow = {
@@ -27,9 +33,22 @@ type DBRow = {
   status: string;
   position: number;
   created_at: string;
+  focal_x?: number | string | null;
+  focal_y?: number | string | null;
+  mobile_focal_x?: number | string | null;
+  mobile_focal_y?: number | string | null;
+  image_type?: string | null;
+  crop_mode?: string | null;
 };
 
+function defaultFocalForCategory(category: string): { x: number; y: number; type: string } {
+  if (category === "صور الطلاب") return { x: 50, y: 25, type: "student_portrait" };
+  if (category === "الاعتمادات والشهادات") return { x: 50, y: 50, type: "logo" };
+  return { x: 50, y: 40, type: "auto" };
+}
+
 function fromRow(r: DBRow): GalleryImage {
+  const d = defaultFocalForCategory(r.category);
   return {
     id: r.id,
     title: r.title,
@@ -40,22 +59,38 @@ function fromRow(r: DBRow): GalleryImage {
     order: r.position,
     createdAt: r.created_at,
     imageAlt: r.image_alt,
+    focalX: r.focal_x != null ? Number(r.focal_x) : d.x,
+    focalY: r.focal_y != null ? Number(r.focal_y) : d.y,
+    mobileFocalX: r.mobile_focal_x != null ? Number(r.mobile_focal_x) : null,
+    mobileFocalY: r.mobile_focal_y != null ? Number(r.mobile_focal_y) : null,
+    imageType: r.image_type || d.type,
+    cropMode: (r.crop_mode as "cover" | "contain") || "cover",
   };
 }
 
 function seed(): GalleryImage[] {
-  return GALLERY.map((g: GalleryItem, i) => ({
-    id: `g-seed-${i}`,
-    title: g.caption,
-    description: "",
-    category: g.category,
-    src: g.src,
-    status: "منشورة" as GalleryStatus,
-    order: i,
-    createdAt: new Date().toISOString(),
-    imageAlt: g.caption,
-  }));
+  return GALLERY.map((g: GalleryItem, i) => {
+    const d = defaultFocalForCategory(g.category);
+    return {
+      id: `g-seed-${i}`,
+      title: g.caption,
+      description: "",
+      category: g.category,
+      src: g.src,
+      status: "منشورة" as GalleryStatus,
+      order: i,
+      createdAt: new Date().toISOString(),
+      imageAlt: g.caption,
+      focalX: d.x,
+      focalY: d.y,
+      mobileFocalX: null,
+      mobileFocalY: null,
+      imageType: d.type,
+      cropMode: "cover" as const,
+    };
+  });
 }
+
 
 let cache: GalleryImage[] = [];
 let loaded = false;
