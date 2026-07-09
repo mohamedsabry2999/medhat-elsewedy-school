@@ -39,7 +39,9 @@ export function Footer() {
           <ul className="space-y-3 text-sm text-white/80">
             <li className="flex gap-2" dir="ltr"><Phone className="h-4 w-4 mt-0.5" /> {s.phone}</li>
             <li className="flex gap-2"><Mail className="h-4 w-4 mt-0.5" /> {s.email}</li>
-            <li className="flex gap-2"><MapPin className="h-4 w-4 mt-0.5" /> <span>{shortAddress}</span></li>
+            {branches.map((b) => (
+              <li key={b.id} className="flex gap-2"><MapPin className="h-4 w-4 mt-0.5 shrink-0" /> <span><strong className="text-white">{b.name}:</strong> {b.address}</span></li>
+            ))}
           </ul>
           <div className="flex gap-3 mt-4">
             {s.facebook && (
@@ -51,7 +53,11 @@ export function Footer() {
             {s.youtube && (
               <a href={s.youtube} target="_blank" rel="noreferrer" aria-label="YouTube" className="h-9 w-9 grid place-items-center rounded-full bg-white/10 hover:bg-white/20"><Youtube className="h-4 w-4" /></a>
             )}
+            {s.whatsapp && (
+              <a href={s.whatsapp} target="_blank" rel="noreferrer" aria-label="WhatsApp" className="h-9 w-9 grid place-items-center rounded-full bg-white/10 hover:bg-white/20"><MessageCircle className="h-4 w-4" /></a>
+            )}
           </div>
+
         </div>
       </div>
       <div className="border-t border-white/10">
