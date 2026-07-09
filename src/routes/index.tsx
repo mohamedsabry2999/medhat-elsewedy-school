@@ -10,6 +10,9 @@ import {
   BadgeCheck, Globe2, Bus, HeartPulse, Shirt, Gift, Briefcase, Rocket, Lightbulb, Sparkles,
 } from "lucide-react";
 import { IMG, PROGRAMS, NEWS, FAQS, ACCREDITATIONS, CERTIFICATES, BENEFITS } from "@/lib/site-data";
+import ahkLogo from "@/assets/ahk-cairo.png.asset.json";
+import moeLogo from "@/assets/moe-egypt.png.asset.json";
+import elsewedyLogo from "@/assets/elsewedy-printhouse.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -28,6 +31,7 @@ function Home() {
       <TrustBadges />
       <QuickStats />
       <AccreditationSection />
+      <PartnersStrip />
       <WhySection />
       <StudySystem />
       <ProgramsSection />
@@ -179,6 +183,35 @@ function AccreditationSection() {
               </div>
             );
           })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PartnersStrip() {
+  const partners = [
+    { src: moeLogo.url, alt: "وزارة التربية والتعليم والتعليم الفني", label: "وزارة التربية والتعليم والتعليم الفني", sub: "الجهة الرسمية المشرفة" },
+    { src: ahkLogo.url, alt: "الغرفة الألمانية AHK Cairo", label: "الغرفة الألمانية AHK Cairo", sub: "اعتماد مهني دولي" },
+    { src: elsewedyLogo.url, alt: "دار مدحت السويدي للطباعة", label: "دار مدحت السويدي للطباعة", sub: "الشريك الصناعي" },
+  ];
+  return (
+    <section className="py-14 bg-white border-y border-brand/10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-8">
+          <div className="text-[var(--accent-red)] font-bold text-sm mb-2">شركاؤنا وجهات الاعتماد</div>
+          <h2 className="text-xl md:text-2xl font-extrabold text-brand">دعم رسمي واعتماد دولي وشراكة صناعية</h2>
+        </div>
+        <div className="grid gap-5 sm:grid-cols-3">
+          {partners.map((p) => (
+            <div key={p.label} className="group bg-gradient-to-br from-secondary/40 to-white rounded-2xl border border-brand/10 p-6 flex flex-col items-center text-center shadow-sm hover:shadow-lg transition-all">
+              <div className="h-24 w-full flex items-center justify-center mb-4">
+                <img src={p.src} alt={p.alt} className="max-h-24 max-w-[75%] object-contain group-hover:scale-105 transition-transform" loading="lazy" />
+              </div>
+              <div className="font-extrabold text-brand text-sm leading-6">{p.label}</div>
+              <div className="text-xs text-muted-foreground mt-1">{p.sub}</div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -378,23 +411,26 @@ function CertificatesSection() {
     {
       icon: GraduationCap,
       title: "دبلوم المدارس الثانوية الفنية للتكنولوجيا التطبيقية",
-      desc: "دبلوم معتمد من مدارس التكنولوجيا التطبيقية يؤهل الطالب لاستكمال مساره الأكاديمي والمهني.",
+      desc: "دبلوم رسمي معتمد من وزارة التربية والتعليم والتعليم الفني يؤهل الطالب لاستكمال مساره الأكاديمي والمهني.",
       tag: "دبلوم رسمي",
-      logo: IMG.logo,
+      logo: moeLogo.url,
+      logoAlt: "وزارة التربية والتعليم والتعليم الفني",
     },
     {
       icon: Globe2,
       title: "اعتماد الغرفة الألمانية AHK Cairo",
       desc: "اعتماد مهني دولي يعزز فرص الخريجين في سوق العمل المحلي والإقليمي والدولي.",
       tag: "اعتماد دولي",
-      logo: null,
+      logo: ahkLogo.url,
+      logoAlt: "الغرفة الألمانية العربية للصناعة والتجارة AHK Cairo",
     },
     {
       icon: Factory,
       title: "شهادة خبرة من دار مدحت السويدي للطباعة",
-      desc: "إثبات خبرة عملية حقيقية من خلال التدريب داخل الشريك الصناعي دار مدحت السويدي.",
+      desc: "إثبات خبرة عملية حقيقية من خلال التدريب داخل الشريك الصناعي دار مدحت السويدي للطباعة.",
       tag: "خبرة صناعية",
-      logo: IMG.logo,
+      logo: elsewedyLogo.url,
+      logoAlt: "دار مدحت السويدي للطباعة",
     },
     {
       icon: BadgeCheck,
@@ -402,6 +438,7 @@ function CertificatesSection() {
       desc: "مناهج حديثة ومتطورة تواكب احتياجات الصناعة والتقنيات الحديثة على مستوى متقدم.",
       tag: "مناهج دولية",
       logo: null,
+      logoAlt: "",
     },
   ];
   return (
@@ -426,7 +463,7 @@ function CertificatesSection() {
               <div className="p-7 grid grid-cols-[auto_minmax(0,1fr)] gap-5 items-start">
                 <div className="shrink-0 h-24 w-24 rounded-2xl bg-gradient-to-br from-secondary/60 to-white border border-brand/10 grid place-items-center p-3 shadow-inner">
                   {c.logo ? (
-                    <img src={c.logo} alt="" className="max-h-full max-w-full object-contain" />
+                    <img src={c.logo} alt={c.logoAlt} className="max-h-full max-w-full object-contain" />
                   ) : (
                     <c.icon className="h-10 w-10 text-brand" strokeWidth={1.5} />
                   )}
