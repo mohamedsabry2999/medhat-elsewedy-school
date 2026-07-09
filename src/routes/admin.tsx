@@ -181,6 +181,7 @@ function AdminPage() {
           {section === "registrations" && <RegistrationsTab regs={regs} onChange={refreshRegs} />}
           {section === "articles" && <ArticlesTab />}
           {section === "gallery" && <GalleryTab />}
+          {section === "media" && <MediaLibraryTab />}
           {section === "settings" && <SettingsTab />}
         </div>
       </div>
