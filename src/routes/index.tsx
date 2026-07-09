@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Award, Factory, Users, Wrench, ShieldCheck, GraduationCap,
   Printer, Palette, TrendingUp, ArrowLeft, Calendar, CheckCircle2, ClipboardList, UserCheck, Megaphone,
-  BadgeCheck, Globe2, Bus, HeartPulse, Shirt, Gift, Briefcase,
+  BadgeCheck, Globe2, Bus, HeartPulse, Shirt, Gift, Briefcase, Rocket, Lightbulb, Sparkles,
 } from "lucide-react";
 import { IMG, PROGRAMS, NEWS, FAQS, ACCREDITATIONS, CERTIFICATES, BENEFITS } from "@/lib/site-data";
 
@@ -32,6 +32,7 @@ function Home() {
       <StudySystem />
       <ProgramsSection />
       <BenefitsSection />
+      <GraduatesFuture />
       <CertificatesSection />
       <AdmissionSteps />
       <SeminarCTA />
@@ -87,21 +88,27 @@ function Hero() {
 
 function TrustBadges() {
   const badges = [
-    { icon: Award, t: "أول مدرسة متخصصة في تكنولوجيا الطباعة في مصر" },
-    { icon: BadgeCheck, t: "اعتماد الغرفة الألمانية AHK Cairo" },
-    { icon: Factory, t: "تدريب داخل مصانع دار مدحت السويدي للطباعة" },
-    { icon: Globe2, t: "مناهج معتمدة دوليًا" },
-    { icon: ShieldCheck, t: "مدرسة حكومية تابعة لوزارة التربية والتعليم والتعليم الفني" },
+    { icon: Award, t: "أول مدرسة متخصصة", s: "في تكنولوجيا الطباعة بمصر" },
+    { icon: BadgeCheck, t: "اعتماد ألماني", s: "الغرفة الألمانية AHK Cairo" },
+    { icon: Factory, t: "تدريب صناعي", s: "داخل دار مدحت السويدي للطباعة" },
+    { icon: Globe2, t: "مناهج دولية", s: "معتمدة على مستوى متقدم" },
+    { icon: ShieldCheck, t: "مدرسة حكومية", s: "تابعة لوزارة التعليم الفني" },
   ];
   return (
     <section className="bg-white border-b">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {badges.map((b) => (
-          <div key={b.t} className="flex items-center gap-3 rounded-xl border bg-secondary/40 p-3">
-            <div className="h-9 w-9 shrink-0 rounded-lg bg-brand text-white grid place-items-center">
-              <b.icon className="h-4 w-4" />
+          <div key={b.t} className="group relative flex items-center gap-4 rounded-2xl border border-brand/10 bg-gradient-to-br from-white to-secondary/40 p-4 shadow-sm hover:shadow-lg hover:border-[var(--accent-red)]/40 transition-all">
+            <div className="relative shrink-0">
+              <div className="absolute inset-0 rounded-2xl bg-[var(--accent-red)]/10 blur-md group-hover:bg-[var(--accent-red)]/20 transition-colors" />
+              <div className="relative h-14 w-14 rounded-2xl bg-gradient-to-br from-brand to-[color-mix(in_oklab,var(--brand)_70%,black)] text-white grid place-items-center shadow-md">
+                <b.icon className="h-6 w-6" strokeWidth={2} />
+              </div>
             </div>
-            <div className="text-xs font-bold text-brand leading-5">{b.t}</div>
+            <div className="min-w-0">
+              <div className="text-sm font-extrabold text-brand leading-tight">{b.t}</div>
+              <div className="text-[11px] text-muted-foreground mt-1 leading-5">{b.s}</div>
+            </div>
           </div>
         ))}
       </div>
@@ -148,24 +155,30 @@ function SectionTitle({ eyebrow, title, subtitle }: { eyebrow?: string; title: s
 }
 
 function AccreditationSection() {
+  const icons = [BadgeCheck, Globe2, Factory, Award, ShieldCheck];
   return (
-    <section className="py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="py-20 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-secondary/40 via-white to-white pointer-events-none" />
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionTitle
           eyebrow="الاعتماد والثقة"
           title="مناهج معتمدة دوليًا باعتماد الغرفة الألمانية AHK Cairo"
           subtitle="مناهج معتمدة دوليًا بالتعاون مع وزارة التربية والتعليم والتعليم الفني، وباعتماد الغرفة الألمانية AHK Cairo، بما يدعم تأهيل الطلاب لسوق العمل المحلي والإقليمي والدولي."
         />
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-          {ACCREDITATIONS.map((a) => (
-            <Card key={a.title} className="border-brand/10">
-              <CardContent className="p-5">
-                <BadgeCheck className="h-6 w-6 text-[var(--accent-red)] mb-3" />
-                <div className="font-bold text-brand text-sm leading-6">{a.title}</div>
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-5">
+          {ACCREDITATIONS.map((a, i) => {
+            const Ico = icons[i] ?? BadgeCheck;
+            return (
+              <div key={a.title} className="group relative bg-white rounded-2xl border border-brand/10 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden">
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[var(--accent-red)] to-brand" />
+                <div className="relative h-14 w-14 mb-4 rounded-2xl bg-gradient-to-br from-brand/5 to-[var(--accent-red)]/10 grid place-items-center ring-1 ring-brand/10">
+                  <Ico className="h-7 w-7 text-brand" strokeWidth={1.75} />
+                </div>
+                <div className="font-extrabold text-brand text-sm leading-6">{a.title}</div>
                 <p className="mt-2 text-xs text-muted-foreground leading-6">{a.desc}</p>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -297,24 +310,61 @@ function BenefitsSection() {
   );
 }
 
-function CertificatesSection() {
+function GraduatesFuture() {
+  const items = [
+    {
+      icon: Briefcase,
+      title: "فرص العمل المباشرة",
+      desc: "العمل داخل المؤسسات والمطابع والشركات المتخصصة في الطباعة والتغليف والصناعات المرتبطة بها.",
+    },
+    {
+      icon: GraduationCap,
+      title: "استكمال الدراسة",
+      desc: "متابعة الدراسة في الكليات التكنولوجية وكليات التعليم الصناعي والمسارات الأكاديمية المرتبطة بالتخصص.",
+    },
+    {
+      icon: Rocket,
+      title: "ريادة الأعمال",
+      desc: "تأهيل الطلاب لإطلاق مشروعاتهم الخاصة أو العمل الحر في المجالات الفنية والتقنية المرتبطة بالطباعة.",
+    },
+    {
+      icon: Lightbulb,
+      title: "الخبرة المهنية",
+      desc: "الخريج يكتسب خبرة عملية حقيقية من خلال التدريب العملي والميداني داخل بيئة صناعية متخصصة.",
+    },
+  ];
   return (
-    <section className="py-20 bg-brand text-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <div className="text-[var(--accent-red)] font-bold text-sm mb-2">الشهادات والاعتمادات</div>
-          <h2 className="text-2xl md:text-4xl font-extrabold">شهادات معتمدة تفتح أبواب المستقبل</h2>
-          <p className="mt-3 text-white/80 leading-8">
-            يحصل خريجو المدرسة على شهادة الدبلوم الفني “فني طباعة” لمدارس التكنولوجيا التطبيقية،
-            والتي تؤهلهم للالتحاق بالكليات التكنولوجية وكليات التعليم الصناعي، كما يحصل الطلاب على شهادة خبرة من دار مدحت السويدي للطباعة.
+    <section className="relative py-24 overflow-hidden bg-brand text-white">
+      <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "28px 28px" }} />
+      <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-[var(--accent-red)]/20 blur-3xl" />
+      <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-white/5 blur-3xl" />
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-2 text-[var(--accent-red)] font-bold text-sm mb-3">
+            <Sparkles className="h-4 w-4" /> مستقبل الخريجين
+          </div>
+          <h2 className="text-3xl md:text-5xl font-extrabold leading-tight">
+            فرص ومستقبل خريجي <span className="text-[var(--accent-red)]">مدرسة مدحت السويدي</span>
+          </h2>
+          <p className="mt-4 text-white/80 leading-8">
+            بعد تخرج الطلاب من مدرسة مدحت السويدي للتكنولوجيا التطبيقية، تتوفر أمامهم عدة مسارات مهنية وأكاديمية تؤهلهم لبناء مستقبل قوي في مجالات الطباعة والصناعات المرتبطة بها.
           </p>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-          {CERTIFICATES.map((c) => (
-            <div key={c.title} className="bg-white/5 border border-white/10 rounded-xl p-5">
-              <BadgeCheck className="h-6 w-6 text-[var(--accent-red)] mb-3" />
-              <div className="font-bold text-sm leading-6">{c.title}</div>
-              <p className="mt-2 text-xs text-white/75 leading-6">{c.desc}</p>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {items.map((it, i) => (
+            <div key={it.title} className="group relative bg-white/[0.04] backdrop-blur-sm border border-white/10 rounded-3xl p-7 pt-14 overflow-hidden hover:bg-white/[0.07] hover:border-[var(--accent-red)]/40 transition-all">
+              <div
+                className="absolute -top-6 -left-2 text-[9rem] font-black leading-none select-none pointer-events-none bg-gradient-to-b from-white/10 to-transparent bg-clip-text text-transparent"
+                aria-hidden
+              >
+                {String(i + 1).padStart(2, "0")}
+              </div>
+              <div className="relative h-16 w-16 rounded-2xl bg-gradient-to-br from-[var(--accent-red)] to-[color-mix(in_oklab,var(--accent-red)_60%,black)] grid place-items-center shadow-lg shadow-[var(--accent-red)]/30 mb-5">
+                <it.icon className="h-8 w-8 text-white" strokeWidth={1.75} />
+              </div>
+              <h3 className="relative text-lg font-extrabold mb-2">{it.title}</h3>
+              <p className="relative text-sm text-white/75 leading-7">{it.desc}</p>
+              <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-[var(--accent-red)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
           ))}
         </div>
@@ -322,6 +372,82 @@ function CertificatesSection() {
     </section>
   );
 }
+
+function CertificatesSection() {
+  const items = [
+    {
+      icon: GraduationCap,
+      title: "دبلوم المدارس الثانوية الفنية للتكنولوجيا التطبيقية",
+      desc: "دبلوم معتمد من مدارس التكنولوجيا التطبيقية يؤهل الطالب لاستكمال مساره الأكاديمي والمهني.",
+      tag: "دبلوم رسمي",
+      logo: IMG.logo,
+    },
+    {
+      icon: Globe2,
+      title: "اعتماد الغرفة الألمانية AHK Cairo",
+      desc: "اعتماد مهني دولي يعزز فرص الخريجين في سوق العمل المحلي والإقليمي والدولي.",
+      tag: "اعتماد دولي",
+      logo: null,
+    },
+    {
+      icon: Factory,
+      title: "شهادة خبرة من دار مدحت السويدي للطباعة",
+      desc: "إثبات خبرة عملية حقيقية من خلال التدريب داخل الشريك الصناعي دار مدحت السويدي.",
+      tag: "خبرة صناعية",
+      logo: IMG.logo,
+    },
+    {
+      icon: BadgeCheck,
+      title: "مناهج معتمدة دوليًا",
+      desc: "مناهج حديثة ومتطورة تواكب احتياجات الصناعة والتقنيات الحديثة على مستوى متقدم.",
+      tag: "مناهج دولية",
+      logo: null,
+    },
+  ];
+  return (
+    <section className="py-24 bg-gradient-to-b from-secondary/30 to-white relative overflow-hidden">
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-brand/20 to-transparent" />
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-2 text-[var(--accent-red)] font-bold text-sm mb-3">
+            <BadgeCheck className="h-4 w-4" /> الشهادات والاعتمادات
+          </div>
+          <h2 className="text-3xl md:text-5xl font-extrabold text-brand leading-tight">
+            الشهادات والاعتمادات التي يحصل عليها الطلاب
+          </h2>
+          <p className="mt-4 text-muted-foreground leading-8">
+            حزمة متكاملة من الشهادات الرسمية والاعتمادات المهنية الدولية تفتح للخريج مسارات وظيفية وأكاديمية متعددة.
+          </p>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          {items.map((c) => (
+            <article key={c.title} className="group relative bg-white rounded-3xl border border-brand/10 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all overflow-hidden">
+              <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-brand via-[var(--accent-red)] to-brand" />
+              <div className="p-7 grid grid-cols-[auto_minmax(0,1fr)] gap-5 items-start">
+                <div className="shrink-0 h-24 w-24 rounded-2xl bg-gradient-to-br from-secondary/60 to-white border border-brand/10 grid place-items-center p-3 shadow-inner">
+                  {c.logo ? (
+                    <img src={c.logo} alt="" className="max-h-full max-w-full object-contain" />
+                  ) : (
+                    <c.icon className="h-10 w-10 text-brand" strokeWidth={1.5} />
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent-red)]/10 text-[var(--accent-red)] text-[11px] font-bold px-2.5 py-1 mb-2">
+                    <c.icon className="h-3 w-3" /> {c.tag}
+                  </div>
+                  <h3 className="font-extrabold text-brand text-base md:text-lg leading-7">{c.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground leading-7">{c.desc}</p>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
 
 function AdmissionSteps() {
   const steps = [
