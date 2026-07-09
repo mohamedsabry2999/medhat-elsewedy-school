@@ -35,6 +35,7 @@ import { useBranches, saveBranch, createBranch, deleteBranch, type Branch } from
 import { VISIT_DAYS, VISIT_SLOTS, GALLERY_CATEGORIES } from "@/lib/site-data";
 import { isAdminAuthed, logoutAdmin } from "@/lib/admin-auth";
 import { FocalPointPicker } from "@/components/admin/FocalPointPicker";
+import { MediaLibraryTab } from "@/components/admin/MediaLibraryTab";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin")({
