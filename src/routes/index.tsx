@@ -609,10 +609,11 @@ function GalleryTeaser() {
         <SectionTitle eyebrow="معرض الصور" title="لحظات من داخل المدرسة" />
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {imgs.map((src, i) => (
-            <div key={i} className="aspect-square overflow-hidden rounded-xl">
-              <img src={src} alt="" className="h-full w-full object-cover hover:scale-105 transition-transform" />
+            <div key={i} className="aspect-square overflow-hidden rounded-xl relative">
+              <SmartImage src={src} alt="" imageType="student_portrait" fill imgClassName="hover:scale-105 transition-transform" />
             </div>
           ))}
+
         </div>
         <div className="text-center mt-8">
           <Button asChild variant="outline"><Link to="/gallery">المعرض الكامل</Link></Button>
