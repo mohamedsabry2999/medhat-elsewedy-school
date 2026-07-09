@@ -100,11 +100,21 @@ function Hero() {
           </div>
         </div>
         <div className="hidden lg:grid grid-cols-2 gap-4">
-          <img src={sideImgs[0]} alt="تدريب" className="rounded-2xl object-cover h-64 w-full shadow-2xl" />
-          <img src={sideImgs[1]} alt="ورشة" className="rounded-2xl object-cover h-64 w-full shadow-2xl mt-8" />
-          <img src={sideImgs[2]} alt="طالب" className="rounded-2xl object-cover h-64 w-full shadow-2xl" />
-          <img src={sideImgs[3]} alt="طالبة" className="rounded-2xl object-cover h-64 w-full shadow-2xl mt-8" />
+          {sideSlots.map((s, i) => (
+            <div key={i} className={i % 2 === 1 ? "mt-8" : ""}>
+              <SmartImage
+                src={s.src}
+                alt={s.alt}
+                focalX={s.focalX}
+                focalY={s.focalY}
+                imageType="student_portrait"
+                aspectRatio="4 / 5"
+                className="rounded-2xl shadow-2xl"
+              />
+            </div>
+          ))}
         </div>
+
       </div>
     </section>
   );
