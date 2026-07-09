@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,8 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { CheckCircle2, Info } from "lucide-react";
-import { addRegistration } from "@/lib/registrations-store";
-import { VISIT_DAYS, VISIT_SLOTS } from "@/lib/site-data";
+import { submitRegistration } from "@/lib/registrations.functions";
+import { VISIT_DAYS, VISIT_SLOTS, BRANCHES } from "@/lib/site-data";
 import { z } from "zod";
 
 export const Route = createFileRoute("/visit")({
@@ -35,22 +36,24 @@ const schema = z.object({
   visitDay: z.string().min(1, "اختر يوم الزيارة"),
   timeSlot: z.string().min(1, "اختر الفترة"),
   visitDate: z.string().min(1, "اختر تاريخ الزيارة"),
+  visitLocation: z.string().min(1, "اختر مقر الزيارة"),
   notes: z.string().max(500).optional().default(""),
 });
 
 const GOVS = ["القاهرة","الجيزة","القليوبية","الإسكندرية","الشرقية","الدقهلية","المنوفية","الغربية","بني سويف","الفيوم","المنيا","أسيوط","سوهاج","قنا","الأقصر","أسوان","البحيرة","كفر الشيخ","دمياط","بورسعيد","الإسماعيلية","السويس","شمال سيناء","جنوب سيناء","البحر الأحمر","مطروح","الوادي الجديد"];
 
 function VisitPage() {
+  const submitFn = useServerFn(submitRegistration);
   const [submitting, setSubmitting] = useState(false);
-  const [done, setDone] = useState<null | { id: string; date: string; day: string; slot: string }>(null);
+  const [done, setDone] = useState<null | { code: string; date: string; day: string; slot: string }>(null);
   const [form, setForm] = useState({
     studentName: "", nationalId: "", guardianPhone: "", whatsapp: "",
     governorate: "", eduDept: "", score: "", attendees: 1,
-    visitDay: "", timeSlot: "", visitDate: "", notes: "",
+    visitDay: "", timeSlot: "", visitDate: "", visitLocation: "", notes: "",
   });
   const upd = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm((f) => ({ ...f, [k]: v }));
 
-  const submit = (e: import("react").FormEvent) => {
+  const submit = async (e: import("react").FormEvent) => {
     e.preventDefault();
     const parsed = schema.safeParse(form);
     if (!parsed.success) {
@@ -58,13 +61,17 @@ function VisitPage() {
       return;
     }
     setSubmitting(true);
-    setTimeout(() => {
-      const rec = addRegistration({ ...parsed.data, notes: parsed.data.notes ?? "" });
-      setSubmitting(false);
-      setDone({ id: rec.id, date: rec.visitDate, day: rec.visitDay, slot: rec.timeSlot });
+    try {
+      const rec = await submitFn({ data: { ...parsed.data, notes: parsed.data.notes ?? "" } });
+      setDone({ code: rec.registration_code, date: rec.visit_date, day: rec.visit_day, slot: rec.time_slot });
       toast.success("تم تسجيل بياناتكم بنجاح، ونتشرف بزيارتكم في الموعد المحدد.");
-      setForm({ studentName: "", nationalId: "", guardianPhone: "", whatsapp: "", governorate: "", eduDept: "", score: "", attendees: 1, visitDay: "", timeSlot: "", visitDate: "", notes: "" });
-    }, 400);
+      setForm({ studentName: "", nationalId: "", guardianPhone: "", whatsapp: "", governorate: "", eduDept: "", score: "", attendees: 1, visitDay: "", timeSlot: "", visitDate: "", visitLocation: "", notes: "" });
+    } catch (err) {
+      console.error(err);
+      toast.error("تعذر إرسال التسجيل، يرجى المحاولة لاحقًا.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -87,7 +94,7 @@ function VisitPage() {
                 <div>
                   <div className="font-bold text-green-800">تم تسجيل بياناتكم بنجاح</div>
                   <div className="text-sm text-green-700 mt-1">
-                    رقم الطلب: <b>{done.id}</b> — اليوم: <b>{done.day}</b> — التاريخ: <b>{done.date}</b> — الفترة: <b>{done.slot}</b>
+                    رقم الطلب: <b dir="ltr">{done.code}</b> — اليوم: <b>{done.day}</b> — التاريخ: <b>{done.date}</b> — الفترة: <b>{done.slot}</b>
                   </div>
                   <div className="text-sm text-green-700 mt-1">ونتشرف بزيارتكم في الموعد المحدد.</div>
                 </div>
@@ -127,7 +134,13 @@ function VisitPage() {
                     <SelectContent>{VISIT_SLOTS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                   </Select>
                 </Field>
-                <Field label="تاريخ الزيارة" className="md:col-span-2">
+                <Field label="مقر الزيارة">
+                  <Select value={form.visitLocation} onValueChange={(v) => upd("visitLocation", v)}>
+                    <SelectTrigger><SelectValue placeholder="اختر مقر الزيارة" /></SelectTrigger>
+                    <SelectContent>{BRANCHES.map((b) => <SelectItem key={b.name} value={b.name}>{b.name}</SelectItem>)}</SelectContent>
+                  </Select>
+                </Field>
+                <Field label="تاريخ الزيارة">
                   <Input type="date" value={form.visitDate} onChange={(e) => upd("visitDate", e.target.value)} />
                 </Field>
                 <Field label="ملاحظات إضافية" className="md:col-span-2">

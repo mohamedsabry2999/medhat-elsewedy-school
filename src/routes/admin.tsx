@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,12 +13,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
-  LayoutDashboard, ClipboardList, Newspaper, Images, Settings, Search, Download, Plus, Home, LogOut, Eye, Trash2, Pencil, Star, EyeOff, Save,
+  LayoutDashboard, ClipboardList, Newspaper, Images, Settings, Search, Download, Plus, Home, LogOut, Eye, Trash2, Pencil, Star, EyeOff, Save, RefreshCw, CheckCircle2, AlertTriangle, Clock, Link2,
 } from "lucide-react";
 import {
-  listRegistrations, updateStatus, deleteRegistration, exportRegistrationsCSV,
-  type Registration, type RegistrationStatus,
-} from "@/lib/registrations-store";
+  listRegistrations, updateRegistrationStatus, cancelRegistration, resyncRegistration, resyncAllPending,
+  getSyncSettings, saveSyncSettings, testSheetConnection,
+  REGISTRATION_STATUSES, type Registration, type RegistrationStatus, type SyncSettings as SyncSettingsT,
+} from "@/lib/registrations.functions";
+import { supabase } from "@/integrations/supabase/client";
 import {
   useArticles, createArticle, saveArticle, deleteArticle, toggleStatus, toggleFeatured,
   ARTICLE_CATEGORIES, type Article,
@@ -43,11 +46,13 @@ function AdminGate() {
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    if (!isAdminAuthed()) {
-      navigate({ to: "/admin-login", replace: true });
-      return;
-    }
-    setReady(true);
+    let alive = true;
+    isAdminAuthed().then((ok) => {
+      if (!alive) return;
+      if (!ok) navigate({ to: "/admin-login", replace: true });
+      else setReady(true);
+    });
+    return () => { alive = false; };
   }, [navigate]);
   if (!ready) {
     return (
@@ -59,7 +64,7 @@ function AdminGate() {
   return <AdminPage />;
 }
 
-const STATUSES: RegistrationStatus[] = ["جديد", "تم التواصل", "مؤكد", "حضر", "لم يحضر", "ملغي"];
+const STATUSES = REGISTRATION_STATUSES;
 const STATUS_COLORS: Record<RegistrationStatus, string> = {
   "جديد": "bg-blue-100 text-blue-700",
   "تم التواصل": "bg-amber-100 text-amber-700",
@@ -81,10 +86,33 @@ function AdminPage() {
   const navigate = useNavigate();
   const [section, setSection] = useState<(typeof SECTIONS)[number]["id"]>("overview");
   const [regs, setRegs] = useState<Registration[]>([]);
-  const refreshRegs = () => setRegs(listRegistrations());
-  useEffect(() => { refreshRegs(); }, []);
-  const handleLogout = () => {
-    logoutAdmin();
+  const fetchRegs = useServerFn(listRegistrations);
+
+  const refreshRegs = useCallback(async () => {
+    try {
+      const data = await fetchRegs();
+      setRegs(data);
+    } catch (err) {
+      console.error(err);
+      toast.error("تعذر تحميل التسجيلات");
+    }
+  }, [fetchRegs]);
+
+  useEffect(() => { void refreshRegs(); }, [refreshRegs]);
+
+  // Realtime updates for registrations
+  useEffect(() => {
+    const channel = supabase
+      .channel("registrations-admin")
+      .on("postgres_changes", { event: "*", schema: "public", table: "registrations" }, () => {
+        void refreshRegs();
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [refreshRegs]);
+
+  const handleLogout = async () => {
+    await logoutAdmin();
     toast.success("تم تسجيل الخروج");
     navigate({ to: "/admin-login", replace: true });
   };
@@ -95,6 +123,7 @@ function AdminPage() {
     confirmed: regs.filter((r) => r.status === "مؤكد").length,
     attended: regs.filter((r) => r.status === "حضر").length,
     missed: regs.filter((r) => r.status === "لم يحضر").length,
+    pendingSync: regs.filter((r) => r.sync_status !== "synced").length,
   };
 
   return (
@@ -136,7 +165,7 @@ function AdminPage() {
             <div className="font-extrabold text-brand">مدير النظام</div>
           </div>
           <div className="md:hidden">
-            <Select value={section} onValueChange={(v) => setSection(v as any)}>
+            <Select value={section} onValueChange={(v) => setSection(v as (typeof SECTIONS)[number]["id"])}>
               <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
               <SelectContent>{SECTIONS.map((s) => <SelectItem key={s.id} value={s.id}>{s.label}</SelectItem>)}</SelectContent>
             </Select>
@@ -166,15 +195,16 @@ function StatCard({ label, value, tone }: { label: string; value: number | strin
   );
 }
 
-function Overview({ stats, regs }: { stats: any; regs: Registration[] }) {
+function Overview({ stats, regs }: { stats: { total: number; new: number; confirmed: number; attended: number; missed: number; pendingSync: number }; regs: Registration[] }) {
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
         <StatCard label="إجمالي التسجيلات" value={stats.total} tone="text-brand" />
         <StatCard label="طلبات جديدة" value={stats.new} tone="text-blue-600" />
         <StatCard label="زيارات مؤكدة" value={stats.confirmed} tone="text-green-600" />
         <StatCard label="حضر" value={stats.attended} tone="text-emerald-600" />
         <StatCard label="لم يحضر" value={stats.missed} tone="text-red-600" />
+        <StatCard label="بانتظار المزامنة" value={stats.pendingSync} tone="text-amber-600" />
       </div>
 
       <Card>
@@ -192,16 +222,18 @@ function Overview({ stats, regs }: { stats: any; regs: Registration[] }) {
                   <TableHead className="text-right">اليوم</TableHead>
                   <TableHead className="text-right">التاريخ</TableHead>
                   <TableHead className="text-right">الحالة</TableHead>
+                  <TableHead className="text-right">المزامنة</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {regs.map((r) => (
                   <TableRow key={r.id}>
-                    <TableCell className="font-semibold">{r.studentName}</TableCell>
+                    <TableCell className="font-semibold">{r.student_name}</TableCell>
                     <TableCell>{r.governorate}</TableCell>
-                    <TableCell>{r.visitDay}</TableCell>
-                    <TableCell>{r.visitDate}</TableCell>
+                    <TableCell>{r.visit_day}</TableCell>
+                    <TableCell>{r.visit_date}</TableCell>
                     <TableCell><Badge className={STATUS_COLORS[r.status]}>{r.status}</Badge></TableCell>
+                    <TableCell><SyncBadge status={r.sync_status} /></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -213,25 +245,56 @@ function Overview({ stats, regs }: { stats: any; regs: Registration[] }) {
   );
 }
 
+function SyncBadge({ status }: { status: Registration["sync_status"] }) {
+  if (status === "synced") return <Badge className="bg-green-100 text-green-700 gap-1"><CheckCircle2 className="h-3 w-3" /> متزامن</Badge>;
+  if (status === "failed") return <Badge className="bg-red-100 text-red-700 gap-1"><AlertTriangle className="h-3 w-3" /> فشل</Badge>;
+  return <Badge className="bg-amber-100 text-amber-700 gap-1"><Clock className="h-3 w-3" /> قيد الانتظار</Badge>;
+}
+
 /* ============================== REGISTRATIONS ============================== */
 
-function RegistrationsTab({ regs, onChange }: { regs: Registration[]; onChange: () => void }) {
+function csvEscape(v: string | number) {
+  const s = String(v ?? "");
+  if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+  return s;
+}
+
+function exportCSV(rows: Registration[]) {
+  const headers = ["رقم الطلب","تاريخ التسجيل","اسم الطالب","الرقم القومي","ولي الأمر","واتساب","المحافظة","الإدارة","المجموع","عدد الحضور","يوم الزيارة","الفترة","المقر","الحالة","المزامنة","ملاحظات"];
+  const body = rows.map((r) => [
+    r.registration_code, r.created_at, r.student_name, r.national_id, r.guardian_phone, r.whatsapp,
+    r.governorate, r.edu_dept, r.score, r.attendees, r.visit_day, r.time_slot,
+    r.visit_location, r.status, r.sync_status, r.notes,
+  ].map(csvEscape).join(","));
+  return "\uFEFF" + [headers.join(","), ...body].join("\n");
+}
+
+function RegistrationsTab({ regs, onChange }: { regs: Registration[]; onChange: () => Promise<void> }) {
+  const updStatus = useServerFn(updateRegistrationStatus);
+  const doCancel = useServerFn(cancelRegistration);
+  const doResync = useServerFn(resyncRegistration);
+  const doResyncAll = useServerFn(resyncAllPending);
+
   const [q, setQ] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("الكل");
   const [dayFilter, setDayFilter] = useState<string>("الكل");
   const [slotFilter, setSlotFilter] = useState<string>("الكل");
+  const [syncFilter, setSyncFilter] = useState<string>("الكل");
   const [detail, setDetail] = useState<Registration | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [busyAll, setBusyAll] = useState(false);
 
   const filtered = useMemo(() => regs.filter((r) => {
-    const matchesQ = !q || [r.studentName, r.nationalId, r.guardianPhone, r.whatsapp].some((v) => v?.includes(q));
+    const matchesQ = !q || [r.student_name, r.national_id, r.guardian_phone, r.whatsapp, r.registration_code].some((v) => v?.includes(q));
     const matchesS = statusFilter === "الكل" || r.status === statusFilter;
-    const matchesD = dayFilter === "الكل" || r.visitDay === dayFilter;
-    const matchesT = slotFilter === "الكل" || r.timeSlot === slotFilter;
-    return matchesQ && matchesS && matchesD && matchesT;
-  }), [regs, q, statusFilter, dayFilter, slotFilter]);
+    const matchesD = dayFilter === "الكل" || r.visit_day === dayFilter;
+    const matchesT = slotFilter === "الكل" || r.time_slot === slotFilter;
+    const matchesSync = syncFilter === "الكل" || r.sync_status === syncFilter;
+    return matchesQ && matchesS && matchesD && matchesT && matchesSync;
+  }), [regs, q, statusFilter, dayFilter, slotFilter, syncFilter]);
 
   const doExport = () => {
-    const csv = exportRegistrationsCSV(filtered);
+    const csv = exportCSV(filtered);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -242,10 +305,62 @@ function RegistrationsTab({ regs, onChange }: { regs: Registration[]; onChange: 
     toast.success("تم تصدير البيانات");
   };
 
-  const doDelete = (id: string) => {
-    deleteRegistration(id);
-    toast.success("تم حذف التسجيل");
-    onChange();
+  const changeStatus = async (id: string, next: RegistrationStatus) => {
+    setBusyId(id);
+    try {
+      await updStatus({ data: { id, status: next } });
+      toast.success("تم تحديث الحالة ومزامنتها");
+      await onChange();
+    } catch (e) {
+      console.error(e);
+      toast.error("تعذر تحديث الحالة");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const cancelOne = async (id: string) => {
+    if (!confirm("إلغاء هذا التسجيل نهائيًا؟")) return;
+    setBusyId(id);
+    try {
+      await doCancel({ data: { id } });
+      toast.success("تم الإلغاء");
+      await onChange();
+    } catch (e) {
+      console.error(e);
+      toast.error("تعذر تنفيذ الإلغاء");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const resyncOne = async (id: string) => {
+    setBusyId(id);
+    try {
+      const res = await doResync({ data: { id } });
+      if (res.ok) toast.success("تمت إعادة المزامنة بنجاح");
+      else toast.error(`فشلت المزامنة: ${res.error ?? "خطأ غير معروف"}`);
+      await onChange();
+    } catch (e) {
+      console.error(e);
+      toast.error("تعذر إعادة المزامنة");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const resyncAll = async () => {
+    setBusyAll(true);
+    try {
+      const res = await doResyncAll();
+      toast.success(`نجاح: ${res.success} — فشل: ${res.failure}`);
+      await onChange();
+    } catch (e) {
+      console.error(e);
+      toast.error("تعذر تنفيذ المزامنة الشاملة");
+    } finally {
+      setBusyAll(false);
+    }
   };
 
   return (
@@ -253,7 +368,7 @@ function RegistrationsTab({ regs, onChange }: { regs: Registration[]; onChange: 
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="بحث بالاسم أو الرقم القومي أو الهاتف..." className="pr-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="بحث بالاسم/الرقم القومي/الهاتف/رقم الطلب..." className="pr-9" />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-36"><SelectValue placeholder="الحالة" /></SelectTrigger>
@@ -276,7 +391,19 @@ function RegistrationsTab({ regs, onChange }: { regs: Registration[]; onChange: 
             {VISIT_SLOTS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
           </SelectContent>
         </Select>
+        <Select value={syncFilter} onValueChange={setSyncFilter}>
+          <SelectTrigger className="w-40"><SelectValue placeholder="المزامنة" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="الكل">كل حالات المزامنة</SelectItem>
+            <SelectItem value="synced">متزامن</SelectItem>
+            <SelectItem value="pending">قيد الانتظار</SelectItem>
+            <SelectItem value="failed">فشل</SelectItem>
+          </SelectContent>
+        </Select>
         <Button variant="outline" onClick={doExport}><Download className="h-4 w-4 ml-1" /> تصدير CSV</Button>
+        <Button variant="outline" disabled={busyAll} onClick={resyncAll}>
+          <RefreshCw className={cn("h-4 w-4 ml-1", busyAll && "animate-spin")} /> مزامنة الكل
+        </Button>
       </div>
 
       <Card><CardContent className="p-0">
@@ -284,41 +411,57 @@ function RegistrationsTab({ regs, onChange }: { regs: Registration[]; onChange: 
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="text-right">رقم الطلب</TableHead>
                 <TableHead className="text-right">الطالب</TableHead>
                 <TableHead className="text-right">ولي الأمر</TableHead>
                 <TableHead className="text-right">واتساب</TableHead>
                 <TableHead className="text-right">المحافظة</TableHead>
-                <TableHead className="text-right">اليوم</TableHead>
-                <TableHead className="text-right">الفترة</TableHead>
+                <TableHead className="text-right">اليوم/الفترة</TableHead>
                 <TableHead className="text-right">الحالة</TableHead>
+                <TableHead className="text-right">المزامنة</TableHead>
                 <TableHead className="text-right">إجراءات</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.map((r) => (
                 <TableRow key={r.id}>
-                  <TableCell><div className="font-semibold">{r.studentName}</div><div className="text-xs text-muted-foreground">{r.nationalId}</div></TableCell>
-                  <TableCell dir="ltr" className="text-right">{r.guardianPhone}</TableCell>
+                  <TableCell className="text-xs" dir="ltr">{r.registration_code}</TableCell>
+                  <TableCell><div className="font-semibold">{r.student_name}</div><div className="text-xs text-muted-foreground">{r.national_id}</div></TableCell>
+                  <TableCell dir="ltr" className="text-right">{r.guardian_phone}</TableCell>
                   <TableCell dir="ltr" className="text-right">{r.whatsapp}</TableCell>
                   <TableCell>{r.governorate}</TableCell>
-                  <TableCell>{r.visitDay}</TableCell>
-                  <TableCell className="text-xs max-w-[180px]">{r.timeSlot}</TableCell>
+                  <TableCell className="text-xs max-w-[180px]"><div>{r.visit_day}</div><div className="text-muted-foreground">{r.time_slot}</div></TableCell>
                   <TableCell>
-                    <Select value={r.status} onValueChange={(v) => { updateStatus(r.id, v as RegistrationStatus); toast.success("تم تحديث الحالة"); onChange(); }}>
+                    <Select value={r.status} disabled={busyId === r.id} onValueChange={(v) => changeStatus(r.id, v as RegistrationStatus)}>
                       <SelectTrigger className={cn("h-8 w-28 border-0 text-xs", STATUS_COLORS[r.status])}><SelectValue /></SelectTrigger>
                       <SelectContent>{STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                     </Select>
                   </TableCell>
                   <TableCell>
+                    <div className="space-y-1">
+                      <SyncBadge status={r.sync_status} />
+                      {r.sync_status === "failed" && r.sync_error && (
+                        <div className="text-[10px] text-red-600 max-w-[160px] truncate" title={r.sync_error}>{r.sync_error}</div>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
                     <div className="flex gap-1">
                       <Button size="icon" variant="ghost" onClick={() => setDetail(r)} title="عرض"><Eye className="h-4 w-4" /></Button>
-                      <Button size="icon" variant="ghost" className="text-red-600 hover:text-red-700" onClick={() => doDelete(r.id)} title="حذف"><Trash2 className="h-4 w-4" /></Button>
+                      {r.sync_status !== "synced" && (
+                        <Button size="icon" variant="ghost" disabled={busyId === r.id} onClick={() => resyncOne(r.id)} title="إعادة المزامنة">
+                          <RefreshCw className={cn("h-4 w-4", busyId === r.id && "animate-spin")} />
+                        </Button>
+                      )}
+                      <Button size="icon" variant="ghost" className="text-red-600 hover:text-red-700" disabled={busyId === r.id} onClick={() => cancelOne(r.id)} title="إلغاء">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
               {filtered.length === 0 && (
-                <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-10">لا توجد نتائج</TableCell></TableRow>
+                <TableRow><TableCell colSpan={9} className="text-center text-muted-foreground py-10">لا توجد نتائج</TableCell></TableRow>
               )}
             </TableBody>
           </Table>
@@ -330,18 +473,21 @@ function RegistrationsTab({ regs, onChange }: { regs: Registration[]; onChange: 
           <DialogHeader><DialogTitle className="text-brand">تفاصيل التسجيل</DialogTitle></DialogHeader>
           {detail && (
             <div className="grid gap-3 text-sm">
-              <Row k="اسم الطالب" v={detail.studentName} />
-              <Row k="الرقم القومي" v={detail.nationalId} />
-              <Row k="ولي الأمر" v={detail.guardianPhone} />
+              <Row k="رقم الطلب" v={detail.registration_code} />
+              <Row k="اسم الطالب" v={detail.student_name} />
+              <Row k="الرقم القومي" v={detail.national_id} />
+              <Row k="ولي الأمر" v={detail.guardian_phone} />
               <Row k="واتساب" v={detail.whatsapp} />
               <Row k="المحافظة" v={detail.governorate} />
-              <Row k="الإدارة التعليمية" v={detail.eduDept} />
+              <Row k="الإدارة التعليمية" v={detail.edu_dept} />
               <Row k="المجموع" v={detail.score} />
               <Row k="عدد الحضور" v={String(detail.attendees)} />
-              <Row k="يوم الزيارة" v={detail.visitDay} />
-              <Row k="التاريخ" v={detail.visitDate} />
-              <Row k="الفترة" v={detail.timeSlot} />
+              <Row k="يوم الزيارة" v={detail.visit_day} />
+              <Row k="التاريخ" v={detail.visit_date} />
+              <Row k="الفترة" v={detail.time_slot} />
+              <Row k="المقر" v={detail.visit_location || "—"} />
               <Row k="الحالة" v={detail.status} />
+              <Row k="حالة المزامنة" v={detail.sync_status === "synced" ? "متزامن" : detail.sync_status === "failed" ? `فشل: ${detail.sync_error ?? ""}` : "قيد الانتظار"} />
               <Row k="ملاحظات" v={detail.notes || "—"} />
             </div>
           )}
@@ -781,28 +927,119 @@ function SettingsTab() {
   };
 
   return (
+    <div className="grid gap-6 max-w-3xl">
+      <SyncSettingsPanel />
+      <Card>
+        <CardContent className="p-6 md:p-8 space-y-5">
+          <div>
+            <h2 className="font-extrabold text-brand text-xl">إعدادات الموقع</h2>
+            <p className="text-sm text-muted-foreground mt-1">أي تعديل هنا ينعكس تلقائيًا على الفوتر وصفحة تواصل معنا.</p>
+          </div>
+
+          <div className="grid gap-4">
+            <SField label="رقم الهاتف" value={s.phone} onChange={(v) => setS({ ...s, phone: v })} dir="ltr" />
+            <SField label="البريد الإلكتروني" value={s.email} onChange={(v) => setS({ ...s, email: v })} dir="ltr" />
+            <SField label="عنوان فرع الحي الخامس عشر" value={s.branch1} onChange={(v) => setS({ ...s, branch1: v })} textarea />
+            <SField label="عنوان فرع المنطقة الصناعية" value={s.branch2} onChange={(v) => setS({ ...s, branch2: v })} textarea />
+            <div className="grid gap-4 md:grid-cols-3">
+              <SField label="فيسبوك" value={s.facebook} onChange={(v) => setS({ ...s, facebook: v })} dir="ltr" />
+              <SField label="انستجرام" value={s.instagram} onChange={(v) => setS({ ...s, instagram: v })} dir="ltr" />
+              <SField label="يوتيوب" value={s.youtube} onChange={(v) => setS({ ...s, youtube: v })} dir="ltr" />
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Button className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white" onClick={save}>
+              <Save className="h-4 w-4 ml-1" /> حفظ الإعدادات
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function SyncSettingsPanel() {
+  const load = useServerFn(getSyncSettings);
+  const save = useServerFn(saveSyncSettings);
+  const test = useServerFn(testSheetConnection);
+
+  const [form, setForm] = useState<SyncSettingsT | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [testing, setTesting] = useState(false);
+
+  useEffect(() => {
+    load().then(setForm).catch((e) => {
+      console.error(e);
+      toast.error("تعذر تحميل إعدادات المزامنة");
+    });
+  }, [load]);
+
+  if (!form) {
+    return (
+      <Card><CardContent className="p-6"><div className="text-sm text-muted-foreground">جارٍ التحميل...</div></CardContent></Card>
+    );
+  }
+
+  const submit = async () => {
+    setSaving(true);
+    try {
+      await save({ data: { sheet_id: form.sheet_id, webhook_url: form.webhook_url, tab_name: form.tab_name } });
+      toast.success("تم حفظ إعدادات المزامنة");
+    } catch (e) {
+      toast.error((e as Error).message || "تعذر الحفظ");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const doTest = async () => {
+    setTesting(true);
+    try {
+      const res = await test();
+      if (res.ok) toast.success("الاتصال بالشيت يعمل بنجاح ✅");
+      else toast.error(`فشل الاختبار: ${res.error ?? "غير معروف"}`);
+    } catch (e) {
+      toast.error((e as Error).message || "تعذر الاختبار");
+    } finally {
+      setTesting(false);
+    }
+  };
+
+  return (
     <Card>
-      <CardContent className="p-6 md:p-8 max-w-2xl space-y-5">
+      <CardContent className="p-6 md:p-8 space-y-5">
         <div>
-          <h2 className="font-extrabold text-brand text-xl">إعدادات الموقع</h2>
-          <p className="text-sm text-muted-foreground mt-1">أي تعديل هنا ينعكس تلقائيًا على الفوتر وصفحة تواصل معنا.</p>
+          <h2 className="font-extrabold text-brand text-xl flex items-center gap-2">
+            <Link2 className="h-5 w-5" /> مزامنة Google Sheets
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            أنشئ Google Apps Script منشور كـ Web App وضع رابط الـ Webhook هنا. كل تسجيل جديد أو تحديث حالة يُضاف/يُحدَّث تلقائيًا في الشيت.
+          </p>
         </div>
 
         <div className="grid gap-4">
-          <Field label="رقم الهاتف" value={s.phone} onChange={(v) => setS({ ...s, phone: v })} dir="ltr" />
-          <Field label="البريد الإلكتروني" value={s.email} onChange={(v) => setS({ ...s, email: v })} dir="ltr" />
-          <Field label="عنوان فرع الحي الخامس عشر" value={s.branch1} onChange={(v) => setS({ ...s, branch1: v })} textarea />
-          <Field label="عنوان فرع المنطقة الصناعية" value={s.branch2} onChange={(v) => setS({ ...s, branch2: v })} textarea />
-          <div className="grid gap-4 md:grid-cols-3">
-            <Field label="فيسبوك" value={s.facebook} onChange={(v) => setS({ ...s, facebook: v })} dir="ltr" />
-            <Field label="انستجرام" value={s.instagram} onChange={(v) => setS({ ...s, instagram: v })} dir="ltr" />
-            <Field label="يوتيوب" value={s.youtube} onChange={(v) => setS({ ...s, youtube: v })} dir="ltr" />
-          </div>
+          <SField label="معرف الشيت (Sheet ID)" value={form.sheet_id} onChange={(v) => setForm({ ...form, sheet_id: v })} dir="ltr" />
+          <SField label="رابط الـ Webhook (Apps Script Web App URL)" value={form.webhook_url} onChange={(v) => setForm({ ...form, webhook_url: v })} dir="ltr" />
+          <SField label="اسم التبويب في الشيت (Tab / Sheet name)" value={form.tab_name} onChange={(v) => setForm({ ...form, tab_name: v })} />
         </div>
 
-        <div className="flex justify-end">
-          <Button className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white" onClick={save}>
-            <Save className="h-4 w-4 ml-1" /> حفظ الإعدادات
+        <div className="rounded-md bg-secondary/60 border p-4 text-xs leading-6 text-brand">
+          <div className="font-bold mb-1">إعداد Google Apps Script (مرة واحدة):</div>
+          <ol className="list-decimal pr-5 space-y-1">
+            <li>افتح الشيت &lt; Extensions &lt; Apps Script.</li>
+            <li>الصق كود يستقبل POST JSON ويضيف صف عند action=create ويُحدّث الصف المطابق لـ registration_id عند action=update.</li>
+            <li>Deploy &lt; New deployment &lt; Web app &lt; Execute as: Me &lt; Who has access: Anyone.</li>
+            <li>انسخ الرابط والصقه هنا ثم اضغط "اختبار الاتصال".</li>
+          </ol>
+        </div>
+
+        <div className="flex flex-wrap justify-end gap-2">
+          <Button variant="outline" disabled={testing || !form.webhook_url} onClick={doTest}>
+            <RefreshCw className={cn("h-4 w-4 ml-1", testing && "animate-spin")} /> اختبار الاتصال
+          </Button>
+          <Button className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white" disabled={saving} onClick={submit}>
+            <Save className="h-4 w-4 ml-1" /> حفظ إعدادات المزامنة
           </Button>
         </div>
       </CardContent>
@@ -810,7 +1047,7 @@ function SettingsTab() {
   );
 }
 
-function Field({
+function SField({
   label, value, onChange, textarea, dir,
 }: { label: string; value: string; onChange: (v: string) => void; textarea?: boolean; dir?: string }) {
   return (
