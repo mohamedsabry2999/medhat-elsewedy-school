@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { usePublishedGallery } from "@/lib/gallery-store";
 import { GALLERY_CATEGORIES } from "@/lib/site-data";
 import { pageSeo } from "@/lib/seo";
+import { SmartImage, type SmartImageType } from "@/components/ui/SmartImage";
+
 
 export const Route = createFileRoute("/gallery")({
   head: () => {
