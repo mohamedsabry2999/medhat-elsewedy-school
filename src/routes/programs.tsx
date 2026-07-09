@@ -56,7 +56,7 @@ function ProgramsPage() {
   );
 }
 
-function Block({ title, items, icon }: { title: string; items: string[]; icon?: React.ReactNode }) {
+function Block({ title, items, icon }: { title: string; items: string[]; icon?: import("react").ReactNode }) {
   return (
     <div className="bg-secondary/70 rounded-xl p-5">
       <div className="flex items-center gap-2 font-bold text-brand mb-3">{icon}{title}</div>
