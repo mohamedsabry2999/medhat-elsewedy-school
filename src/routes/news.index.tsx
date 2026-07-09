@@ -57,14 +57,18 @@ function NewsPage() {
             {list.map((n) => (
               <Link key={n.slug} to="/news/$slug" params={{ slug: n.slug }} className="group">
                 <Card className="overflow-hidden h-full pt-0">
-                  <div className="w-full overflow-hidden bg-secondary/50" style={{ aspectRatio: "16 / 9" }}>
-                    <img
+                  <div className="w-full overflow-hidden bg-secondary/50 relative" style={{ aspectRatio: "16 / 9" }}>
+                    <SmartImage
                       src={n.image}
                       alt={n.title}
-                      className="h-full w-full object-cover group-hover:scale-105 transition-transform"
-                      style={{ objectPosition: `${n.focalX ?? 50}% ${n.focalY ?? 50}%` }}
+                      focalX={n.focalX}
+                      focalY={n.focalY}
+                      imageType="article_cover"
+                      fill
+                      imgClassName="group-hover:scale-105 transition-transform"
                     />
                   </div>
+
                   <CardContent className="p-5">
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary">{n.category}</Badge>
