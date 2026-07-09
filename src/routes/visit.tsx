@@ -47,7 +47,7 @@ function VisitPage() {
   });
   const upd = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm((f) => ({ ...f, [k]: v }));
 
-  const submit = (e: React.FormEvent) => {
+  const submit = (e: import("react").FormEvent) => {
     e.preventDefault();
     const parsed = schema.safeParse(form);
     if (!parsed.success) {
@@ -125,7 +125,7 @@ function VisitPage() {
   );
 }
 
-function Field({ label, children, className = "" }: { label: string; children: React.ReactNode; className?: string }) {
+function Field({ label, children, className = "" }: { label: string; children: import("react").ReactNode; className?: string }) {
   return (
     <div className={`grid gap-2 ${className}`}>
       <Label className="font-semibold text-brand">{label}</Label>

@@ -31,7 +31,7 @@ const schema = z.object({
 function ContactPage() {
   const [form, setForm] = useState({ name: "", phone: "", subject: "", message: "" });
   const [sending, setSending] = useState(false);
-  const submit = (e: React.FormEvent) => {
+  const submit = (e: import("react").FormEvent) => {
     e.preventDefault();
     const p = schema.safeParse(form);
     if (!p.success) return toast.error(p.error.issues[0]?.message ?? "تحقق من البيانات");
@@ -88,7 +88,7 @@ function ContactPage() {
   );
 }
 
-function Info({ icon: Icon, title, value, action }: { icon: any; title: string; value: string; action?: React.ReactNode }) {
+function Info({ icon: Icon, title, value, action }: { icon: any; title: string; value: string; action?: import("react").ReactNode }) {
   return (
     <Card>
       <CardContent className="p-5">
