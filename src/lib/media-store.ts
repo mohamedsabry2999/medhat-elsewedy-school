@@ -329,6 +329,57 @@ export async function refreshSignedUrl(storagePath: string): Promise<string> {
 
 /* ============================== CRUD ============================== */
 
+/**
+ * Import existing hardcoded site images (Hero, students, gallery, article covers)
+ * into the media library so the admin can edit / crop / replace them from the CMS.
+ * Skips URLs that are already present.
+ */
+export async function importSiteImages(items: Array<{
+  url: string;
+  title: string;
+  altText: string;
+  category: string;
+  displayPosition?: string;
+  usageLocations?: string[];
+}>): Promise<number> {
+  // Ensure cache is fresh
+  await refetch();
+  const existing = new Set(cache.map((m) => m.imageUrl));
+  const toInsert = items.filter((i) => !existing.has(i.url));
+  let inserted = 0;
+  for (const it of toInsert) {
+    const row = {
+      title: it.title,
+      description: "",
+      alt_text: it.altText,
+      caption: "",
+      // Marker so we know this is an external/legacy asset (not in Supabase Storage)
+      storage_path: `external:${it.url}`,
+      image_url: it.url,
+      thumbnail_url: it.url,
+      category: it.category,
+      status: "published",
+      usage_locations: it.usageLocations ?? [],
+      display_position: it.displayPosition ?? "",
+      focal_x: 50,
+      focal_y: 50,
+      aspect_ratio: "",
+      crop_settings: {},
+      width: 0,
+      height: 0,
+      file_size: 0,
+      mime_type: "image/jpeg",
+      sort_order: 0,
+    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await supabase.from("media_assets").insert(row as any);
+    if (!error) inserted++;
+    else console.error("importSiteImages", error);
+  }
+  if (inserted > 0) await refetch();
+  return inserted;
+}
+
 export async function createMediaAsset(
   data: Omit<MediaAsset, "id" | "createdAt" | "updatedAt">,
 ): Promise<MediaAsset | null> {
