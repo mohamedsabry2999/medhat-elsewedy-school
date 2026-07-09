@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { CheckCircle2, Info } from "lucide-react";
 import { submitRegistration } from "@/lib/registrations.functions";
-import { VISIT_DAYS, VISIT_SLOTS, BRANCHES } from "@/lib/site-data";
+import { VISIT_SLOTS, BRANCHES } from "@/lib/site-data";
 import { z } from "zod";
 
 export const Route = createFileRoute("/visit")({
