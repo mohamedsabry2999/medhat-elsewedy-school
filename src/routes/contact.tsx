@@ -80,9 +80,9 @@ function ContactPage() {
                     <div className="h-10 w-10 shrink-0 rounded-lg bg-brand text-white grid place-items-center">
                       <MapPin className="h-5 w-5" />
                     </div>
-                    <div>
-                      <div className="font-extrabold text-brand">{b.name}</div>
-                      <div className="text-sm text-muted-foreground mt-1 leading-7">{b.address}</div>
+                    <div className="min-w-0">
+                      <div className="font-extrabold text-brand break-words">{b.name}</div>
+                      <div className="text-sm text-muted-foreground mt-1 leading-7 break-words">{b.address}</div>
                     </div>
                   </div>
                   <div className="text-sm text-brand bg-secondary/60 rounded-lg p-3 leading-7">{b.usage}</div>
