@@ -10,6 +10,7 @@ import {
   BadgeCheck, Globe2, Bus, HeartPulse, Shirt, Gift, Briefcase, Rocket, Lightbulb, Sparkles,
 } from "lucide-react";
 import { IMG, PROGRAMS, NEWS, FAQS, ACCREDITATIONS, CERTIFICATES, BENEFITS } from "@/lib/site-data";
+import { useMediaByPosition } from "@/lib/media-store";
 import ahkLogo from "@/assets/ahk-cairo.png.asset.json";
 import moeLogo from "@/assets/moe-egypt.png.asset.json";
 import elsewedyLogo from "@/assets/elsewedy-printhouse.png.asset.json";
@@ -48,9 +49,19 @@ function Home() {
 }
 
 function Hero() {
+  const heroMain = useMediaByPosition("Hero Main Image");
+  const heroSide = useMediaByPosition("Hero Side Image");
+  const mainImg = heroMain[0]?.imageUrl ?? IMG.hero1;
+  const mainFocal = heroMain[0] ? `${heroMain[0].focalX}% ${heroMain[0].focalY}%` : "50% 50%";
+  const sideImgs = [
+    heroSide[0]?.imageUrl ?? IMG.hero1,
+    heroSide[1]?.imageUrl ?? IMG.hero2,
+    heroSide[2]?.imageUrl ?? IMG.students[0],
+    heroSide[3]?.imageUrl ?? IMG.students[3],
+  ];
   return (
     <section className="relative overflow-hidden bg-brand text-white">
-      <div className="absolute inset-0 opacity-25 bg-cover bg-center" style={{ backgroundImage: `url(${IMG.hero1})` }} />
+      <div className="absolute inset-0 opacity-25 bg-cover" style={{ backgroundImage: `url(${mainImg})`, backgroundPosition: mainFocal }} />
       <div className="absolute inset-0 bg-gradient-to-l from-brand/95 via-brand/85 to-brand/70" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-24 grid lg:grid-cols-2 gap-10 items-center">
         <div className="min-w-0">
@@ -80,10 +91,10 @@ function Hero() {
           </div>
         </div>
         <div className="hidden lg:grid grid-cols-2 gap-4">
-          <img src={IMG.hero1} alt="تدريب" className="rounded-2xl object-cover h-64 w-full shadow-2xl" />
-          <img src={IMG.hero2} alt="ورشة" className="rounded-2xl object-cover h-64 w-full shadow-2xl mt-8" />
-          <img src={IMG.students[0]} alt="طالب" className="rounded-2xl object-cover h-64 w-full shadow-2xl" />
-          <img src={IMG.students[3]} alt="طالبة" className="rounded-2xl object-cover h-64 w-full shadow-2xl mt-8" />
+          <img src={sideImgs[0]} alt="تدريب" className="rounded-2xl object-cover h-64 w-full shadow-2xl" />
+          <img src={sideImgs[1]} alt="ورشة" className="rounded-2xl object-cover h-64 w-full shadow-2xl mt-8" />
+          <img src={sideImgs[2]} alt="طالب" className="rounded-2xl object-cover h-64 w-full shadow-2xl" />
+          <img src={sideImgs[3]} alt="طالبة" className="rounded-2xl object-cover h-64 w-full shadow-2xl mt-8" />
         </div>
       </div>
     </section>
