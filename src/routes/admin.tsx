@@ -759,7 +759,14 @@ const emptyGallery = (): Omit<GalleryImage, "id" | "createdAt" | "order"> => ({
   category: GALLERY_CATEGORIES[1] ?? "التدريب العملي",
   src: "",
   status: "منشورة",
+  focalX: 50,
+  focalY: 25,
+  mobileFocalX: null,
+  mobileFocalY: null,
+  imageType: "student_portrait",
+  cropMode: "cover",
 });
+
 
 function GalleryTab() {
   const items = useGallery();
