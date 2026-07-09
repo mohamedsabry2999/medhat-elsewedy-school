@@ -31,6 +31,7 @@ function Home() {
       <TrustBadges />
       <QuickStats />
       <AccreditationSection />
+      <PartnersStrip />
       <WhySection />
       <StudySystem />
       <ProgramsSection />
