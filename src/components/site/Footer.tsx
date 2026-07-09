@@ -1,29 +1,27 @@
 import { Link } from "@tanstack/react-router";
-import { Facebook, Instagram, Youtube, Phone, Mail, MapPin } from "lucide-react";
+import { Facebook, Instagram, Youtube, Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 import { IMG, NAV_LINKS } from "@/lib/site-data";
 import { useSiteSettings } from "@/lib/settings-store";
+import { useBranches } from "@/lib/branches-store";
 
 export function Footer() {
   const s = useSiteSettings();
-  const shortAddress =
-    "فروع المدرسة: الحي الخامس عشر، والمنطقة الصناعية 4A، العاشر من رمضان، الشرقية.";
+  const branches = useBranches();
 
   return (
     <footer className="bg-brand text-white mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 grid gap-10 md:grid-cols-4">
         <div className="md:col-span-2">
           <div className="flex items-center gap-3">
-            <img src={IMG.logo} alt="شعار" className="h-14 w-14 bg-white/95 rounded-lg p-1" />
+            <img src={IMG.logo} alt="شعار مدرسة مدحت السويدي للتكنولوجيا التطبيقية" className="h-14 w-14 bg-white/95 rounded-lg p-1" />
             <div>
               <div className="font-extrabold text-lg">مدرسة مدحت السويدي للتكنولوجيا التطبيقية</div>
               <div className="text-white/70 text-xs">Medhat Elsewedy School for Applied Technology</div>
             </div>
           </div>
-          <p className="mt-4 text-white/75 text-sm leading-7 max-w-md">
-            تعليم فني متطور يربط الدراسة بسوق العمل. نعد جيلاً جديداً من الفنيين المؤهلين في مجالات
-            الطباعة الرقمية والأوفست عبر تدريب عملي حقيقي داخل بيئة صناعية.
-          </p>
+          <p className="mt-4 text-white/75 text-sm leading-7 max-w-md">{s.footerDescription}</p>
         </div>
+
 
         <div>
           <div className="font-bold mb-3">روابط سريعة</div>
