@@ -117,10 +117,16 @@ export type Database = {
         Row: {
           category: string
           created_at: string
+          crop_mode: string
           description: string
+          focal_x: number
+          focal_y: number
           id: string
           image_alt: string
+          image_type: string
           image_url: string
+          mobile_focal_x: number | null
+          mobile_focal_y: number | null
           position: number
           status: string
           title: string
@@ -129,10 +135,16 @@ export type Database = {
         Insert: {
           category?: string
           created_at?: string
+          crop_mode?: string
           description?: string
+          focal_x?: number
+          focal_y?: number
           id?: string
           image_alt?: string
+          image_type?: string
           image_url: string
+          mobile_focal_x?: number | null
+          mobile_focal_y?: number | null
           position?: number
           status?: string
           title?: string
@@ -141,10 +153,16 @@ export type Database = {
         Update: {
           category?: string
           created_at?: string
+          crop_mode?: string
           description?: string
+          focal_x?: number
+          focal_y?: number
           id?: string
           image_alt?: string
+          image_type?: string
           image_url?: string
+          mobile_focal_x?: number | null
+          mobile_focal_y?: number | null
           position?: number
           status?: string
           title?: string
@@ -159,6 +177,7 @@ export type Database = {
           caption: string
           category: string
           created_at: string
+          crop_mode: string
           crop_settings: Json
           description: string
           display_position: string
@@ -167,8 +186,11 @@ export type Database = {
           focal_y: number
           height: number
           id: string
+          image_type: string
           image_url: string
           mime_type: string
+          mobile_focal_x: number | null
+          mobile_focal_y: number | null
           sort_order: number
           status: string
           storage_path: string
@@ -184,6 +206,7 @@ export type Database = {
           caption?: string
           category?: string
           created_at?: string
+          crop_mode?: string
           crop_settings?: Json
           description?: string
           display_position?: string
@@ -192,8 +215,11 @@ export type Database = {
           focal_y?: number
           height?: number
           id?: string
+          image_type?: string
           image_url?: string
           mime_type?: string
+          mobile_focal_x?: number | null
+          mobile_focal_y?: number | null
           sort_order?: number
           status?: string
           storage_path: string
@@ -209,6 +235,7 @@ export type Database = {
           caption?: string
           category?: string
           created_at?: string
+          crop_mode?: string
           crop_settings?: Json
           description?: string
           display_position?: string
@@ -217,8 +244,11 @@ export type Database = {
           focal_y?: number
           height?: number
           id?: string
+          image_type?: string
           image_url?: string
           mime_type?: string
+          mobile_focal_x?: number | null
+          mobile_focal_y?: number | null
           sort_order?: number
           status?: string
           storage_path?: string
