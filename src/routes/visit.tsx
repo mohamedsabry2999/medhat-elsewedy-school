@@ -145,10 +145,20 @@ function VisitPage() {
                     <SelectContent>{[1,2,3].map((n) => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}</SelectContent>
                   </Select>
                 </Field>
-                <Field label="يوم الزيارة">
-                  <Select value={form.visitDay} onValueChange={(v) => upd("visitDay", v)}>
-                    <SelectTrigger><SelectValue placeholder="اختر اليوم" /></SelectTrigger>
-                    <SelectContent>{VISIT_DAYS.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
+                <Field label="تاريخ الزيارة">
+                  <Select
+                    value={form.visitDate}
+                    onValueChange={(v) => {
+                      const found = VISIT_DATES.find((d) => d.value === v);
+                      setForm((f) => ({ ...f, visitDate: v, visitDay: found?.day ?? "" }));
+                    }}
+                  >
+                    <SelectTrigger><SelectValue placeholder="اختر تاريخ الزيارة" /></SelectTrigger>
+                    <SelectContent className="max-h-72">
+                      {VISIT_DATES.map((d) => (
+                        <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                 </Field>
                 <Field label="الفترة الزمنية">
@@ -157,14 +167,11 @@ function VisitPage() {
                     <SelectContent>{VISIT_SLOTS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                   </Select>
                 </Field>
-                <Field label="مقر الزيارة">
+                <Field label="مقر الزيارة" className="md:col-span-2">
                   <Select value={form.visitLocation} onValueChange={(v) => upd("visitLocation", v)}>
                     <SelectTrigger><SelectValue placeholder="اختر مقر الزيارة" /></SelectTrigger>
                     <SelectContent>{BRANCHES.map((b) => <SelectItem key={b.name} value={b.name}>{b.name}</SelectItem>)}</SelectContent>
                   </Select>
-                </Field>
-                <Field label="تاريخ الزيارة">
-                  <Input type="date" value={form.visitDate} onChange={(e) => upd("visitDate", e.target.value)} />
                 </Field>
                 <Field label="ملاحظات إضافية" className="md:col-span-2">
                   <Textarea value={form.notes} onChange={(e) => upd("notes", e.target.value)} placeholder="أي ملاحظات..." rows={4} />
