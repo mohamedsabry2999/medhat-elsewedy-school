@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VisitRouteImport } from './routes/visit'
 import { Route as StudySystemRouteImport } from './routes/study-system'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProgramsRouteImport } from './routes/programs'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as FaqRouteImport } from './routes/faq'
@@ -31,6 +32,11 @@ const VisitRoute = VisitRouteImport.update({
 const StudySystemRoute = StudySystemRouteImport.update({
   id: '/study-system',
   path: '/study-system',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProgramsRoute = ProgramsRouteImport.update({
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
   '/programs': typeof ProgramsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/study-system': typeof StudySystemRoute
   '/visit': typeof VisitRoute
   '/news/$slug': typeof NewsSlugRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
   '/programs': typeof ProgramsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/study-system': typeof StudySystemRoute
   '/visit': typeof VisitRoute
   '/news/$slug': typeof NewsSlugRoute
@@ -130,6 +138,7 @@ export interface FileRoutesById {
   '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
   '/programs': typeof ProgramsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/study-system': typeof StudySystemRoute
   '/visit': typeof VisitRoute
   '/news/$slug': typeof NewsSlugRoute
@@ -147,6 +156,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/gallery'
     | '/programs'
+    | '/sitemap.xml'
     | '/study-system'
     | '/visit'
     | '/news/$slug'
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/gallery'
     | '/programs'
+    | '/sitemap.xml'
     | '/study-system'
     | '/visit'
     | '/news/$slug'
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/gallery'
     | '/programs'
+    | '/sitemap.xml'
     | '/study-system'
     | '/visit'
     | '/news/$slug'
@@ -193,6 +205,7 @@ export interface RootRouteChildren {
   FaqRoute: typeof FaqRoute
   GalleryRoute: typeof GalleryRoute
   ProgramsRoute: typeof ProgramsRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StudySystemRoute: typeof StudySystemRoute
   VisitRoute: typeof VisitRoute
   NewsSlugRoute: typeof NewsSlugRoute
@@ -213,6 +226,13 @@ declare module '@tanstack/react-router' {
       path: '/study-system'
       fullPath: '/study-system'
       preLoaderRoute: typeof StudySystemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/programs': {
@@ -305,6 +325,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaqRoute: FaqRoute,
   GalleryRoute: GalleryRoute,
   ProgramsRoute: ProgramsRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   StudySystemRoute: StudySystemRoute,
   VisitRoute: VisitRoute,
   NewsSlugRoute: NewsSlugRoute,
