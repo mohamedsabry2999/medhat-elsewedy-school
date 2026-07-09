@@ -155,24 +155,30 @@ function SectionTitle({ eyebrow, title, subtitle }: { eyebrow?: string; title: s
 }
 
 function AccreditationSection() {
+  const icons = [BadgeCheck, Globe2, Factory, Award, ShieldCheck];
   return (
-    <section className="py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="py-20 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-secondary/40 via-white to-white pointer-events-none" />
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionTitle
           eyebrow="الاعتماد والثقة"
           title="مناهج معتمدة دوليًا باعتماد الغرفة الألمانية AHK Cairo"
           subtitle="مناهج معتمدة دوليًا بالتعاون مع وزارة التربية والتعليم والتعليم الفني، وباعتماد الغرفة الألمانية AHK Cairo، بما يدعم تأهيل الطلاب لسوق العمل المحلي والإقليمي والدولي."
         />
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-          {ACCREDITATIONS.map((a) => (
-            <Card key={a.title} className="border-brand/10">
-              <CardContent className="p-5">
-                <BadgeCheck className="h-6 w-6 text-[var(--accent-red)] mb-3" />
-                <div className="font-bold text-brand text-sm leading-6">{a.title}</div>
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-5">
+          {ACCREDITATIONS.map((a, i) => {
+            const Ico = icons[i] ?? BadgeCheck;
+            return (
+              <div key={a.title} className="group relative bg-white rounded-2xl border border-brand/10 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden">
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[var(--accent-red)] to-brand" />
+                <div className="relative h-14 w-14 mb-4 rounded-2xl bg-gradient-to-br from-brand/5 to-[var(--accent-red)]/10 grid place-items-center ring-1 ring-brand/10">
+                  <Ico className="h-7 w-7 text-brand" strokeWidth={1.75} />
+                </div>
+                <div className="font-extrabold text-brand text-sm leading-6">{a.title}</div>
                 <p className="mt-2 text-xs text-muted-foreground leading-6">{a.desc}</p>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
