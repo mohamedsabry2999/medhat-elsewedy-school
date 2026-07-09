@@ -939,14 +939,18 @@ function SettingsTab() {
           <div className="grid gap-4">
             <SField label="رقم الهاتف" value={s.phone} onChange={(v) => setS({ ...s, phone: v })} dir="ltr" />
             <SField label="البريد الإلكتروني" value={s.email} onChange={(v) => setS({ ...s, email: v })} dir="ltr" />
-            <SField label="عنوان فرع الحي الخامس عشر" value={s.branch1} onChange={(v) => setS({ ...s, branch1: v })} textarea />
-            <SField label="عنوان فرع المنطقة الصناعية" value={s.branch2} onChange={(v) => setS({ ...s, branch2: v })} textarea />
+            <SField label="رقم واتساب (رابط كامل)" value={s.whatsapp} onChange={(v) => setS({ ...s, whatsapp: v })} dir="ltr" />
+            <SField label="وصف الفوتر" value={s.footerDescription} onChange={(v) => setS({ ...s, footerDescription: v })} textarea />
+            <SField label="نص الدعوة الرئيسية" value={s.mainCta} onChange={(v) => setS({ ...s, mainCta: v })} />
             <div className="grid gap-4 md:grid-cols-3">
               <SField label="فيسبوك" value={s.facebook} onChange={(v) => setS({ ...s, facebook: v })} dir="ltr" />
               <SField label="انستجرام" value={s.instagram} onChange={(v) => setS({ ...s, instagram: v })} dir="ltr" />
               <SField label="يوتيوب" value={s.youtube} onChange={(v) => setS({ ...s, youtube: v })} dir="ltr" />
             </div>
           </div>
+
+          <BranchesEditor />
+
 
           <div className="flex justify-end">
             <Button className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white" onClick={save}>
