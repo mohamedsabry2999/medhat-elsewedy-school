@@ -874,18 +874,24 @@ function GalleryEditor({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-lg" dir="rtl">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" dir="rtl">
         <DialogHeader><DialogTitle className="text-brand">{isNew ? "إضافة صورة" : "تعديل صورة"}</DialogTitle></DialogHeader>
         <div className="grid gap-4">
           <div className="grid gap-2">
             <Label>ملف الصورة</Label>
             <input type="file" accept="image/*" onChange={(e) => onFile(e.target.files?.[0] ?? null)} className="text-sm" />
-            {form.src && (
-              <div className="mt-2 aspect-video rounded-lg overflow-hidden border">
-                <img src={form.src} alt="" className="w-full h-full object-cover" />
-              </div>
-            )}
           </div>
+          {form.src && (
+            <div className="grid gap-2">
+              <Label>نقطة تركيز الصورة (يمنع قص رأس الطالب)</Label>
+              <FocalPointPicker
+                src={form.src}
+                focalX={form.focalX}
+                focalY={form.focalY}
+                onChange={(x, y) => setForm({ ...form, focalX: x, focalY: y })}
+              />
+            </div>
+          )}
           <div className="grid gap-2">
             <Label>عنوان الصورة</Label>
             <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
@@ -905,6 +911,21 @@ function GalleryEditor({
               </Select>
             </div>
             <div className="grid gap-2">
+              <Label>نوع الصورة</Label>
+              <Select value={form.imageType} onValueChange={(v) => setForm({ ...form, imageType: v, cropMode: v === "logo" || v === "certificate" ? "contain" : "cover" })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="student_portrait">صورة طالب Portrait</SelectItem>
+                  <SelectItem value="student_group">مجموعة طلاب</SelectItem>
+                  <SelectItem value="training_landscape">تدريب / ورشة</SelectItem>
+                  <SelectItem value="gallery">صورة معرض</SelectItem>
+                  <SelectItem value="logo">شعار / Logo</SelectItem>
+                  <SelectItem value="certificate">شهادة</SelectItem>
+                  <SelectItem value="auto">تلقائي</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-2">
               <Label>الحالة</Label>
               <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as GalleryImage["status"] })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
@@ -914,8 +935,19 @@ function GalleryEditor({
                 </SelectContent>
               </Select>
             </div>
+            <div className="grid gap-2">
+              <Label>وضع القص</Label>
+              <Select value={form.cropMode} onValueChange={(v) => setForm({ ...form, cropMode: v as "cover" | "contain" })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="cover">Cover (ملء الإطار)</SelectItem>
+                  <SelectItem value="contain">Contain (إظهار الصورة كاملة)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
+
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>إلغاء</Button>
           <Button className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white" onClick={submit}>
