@@ -71,30 +71,57 @@ function serverPublicClient() {
   );
 }
 
-function buildSyncPayload(action: "create" | "update", r: Registration, tabName: string) {
+const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_sheets/v4";
+
+function rowValues(r: Registration): (string | number)[] {
+  return [
+    r.registration_code,
+    r.created_at,
+    r.student_name,
+    r.national_id,
+    r.guardian_phone,
+    r.whatsapp,
+    r.governorate,
+    r.edu_dept,
+    r.score,
+    r.attendees,
+    r.visit_day,
+    r.time_slot,
+    r.visit_location,
+    r.status,
+    r.notes,
+    r.source,
+    r.updated_at,
+  ];
+}
+
+function sheetsAuthHeaders(): Record<string, string> {
+  const lovableKey = process.env.LOVABLE_API_KEY;
+  const connKey = process.env.GOOGLE_SHEETS_API_KEY;
+  if (!lovableKey || !connKey) {
+    throw new Error("google_sheets_not_connected");
+  }
   return {
-    action,
-    tab: tabName,
-    row: {
-      registration_id: r.registration_code,
-      submitted_at: r.created_at,
-      student_name: r.student_name,
-      national_id: r.national_id,
-      guardian_phone: r.guardian_phone,
-      whatsapp: r.whatsapp,
-      governorate: r.governorate,
-      edu_dept: r.edu_dept,
-      score: r.score,
-      attendees: r.attendees,
-      visit_day: r.visit_day,
-      time_slot: r.time_slot,
-      visit_location: r.visit_location,
-      status: r.status,
-      notes: r.notes,
-      source: r.source,
-      updated_at: r.updated_at,
-    },
+    Authorization: `Bearer ${lovableKey}`,
+    "X-Connection-Api-Key": connKey,
+    "Content-Type": "application/json",
   };
+}
+
+async function findRowIndexByCode(
+  spreadsheetId: string,
+  tabName: string,
+  code: string,
+): Promise<number | null> {
+  const url = `${GATEWAY_URL}/spreadsheets/${spreadsheetId}/values/${tabName}!A:A`;
+  const res = await fetch(url, { headers: sheetsAuthHeaders() });
+  if (!res.ok) return null;
+  const body = (await res.json()) as { values?: string[][] };
+  const values = body.values ?? [];
+  for (let i = 0; i < values.length; i++) {
+    if ((values[i]?.[0] ?? "") === code) return i + 1; // 1-indexed row
+  }
+  return null;
 }
 
 async function pushToSheet(
@@ -104,27 +131,46 @@ async function pushToSheet(
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: settings } = await supabaseAdmin
     .from("sync_settings")
-    .select("webhook_url, tab_name")
+    .select("sheet_id, tab_name")
     .eq("id", 1)
     .maybeSingle();
 
-  const webhook = settings?.webhook_url?.trim();
+  const spreadsheetId = settings?.sheet_id?.trim();
   const tabName = settings?.tab_name?.trim() || "Registrations";
 
-  if (!webhook) {
-    return { ok: false, error: "webhook_not_configured" };
+  if (!spreadsheetId) {
+    return { ok: false, error: "sheet_id_not_configured" };
   }
+
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
-    const res = await fetch(webhook, {
+    const headers = sheetsAuthHeaders();
+    const values = rowValues(r);
+
+    if (action === "update") {
+      const rowIdx = await findRowIndexByCode(spreadsheetId, tabName, r.registration_code);
+      if (rowIdx) {
+        const range = `${tabName}!A${rowIdx}:Q${rowIdx}`;
+        const url = `${GATEWAY_URL}/spreadsheets/${spreadsheetId}/values/${range}?valueInputOption=RAW`;
+        const res = await fetch(url, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify({ values: [values] }),
+        });
+        if (!res.ok) {
+          const text = await res.text().catch(() => "");
+          return { ok: false, error: `HTTP ${res.status}: ${text.slice(0, 200)}` };
+        }
+        return { ok: true };
+      }
+      // fall through to append if row not found
+    }
+
+    const appendUrl = `${GATEWAY_URL}/spreadsheets/${spreadsheetId}/values/${tabName}!A:Q:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
+    const res = await fetch(appendUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(buildSyncPayload(action, r, tabName)),
-      signal: controller.signal,
-      redirect: "follow",
+      headers,
+      body: JSON.stringify({ values: [values] }),
     });
-    clearTimeout(timeout);
     if (!res.ok) {
       const text = await res.text().catch(() => "");
       return { ok: false, error: `HTTP ${res.status}: ${text.slice(0, 200)}` };
@@ -134,6 +180,7 @@ async function pushToSheet(
     return { ok: false, error: (err as Error).message.slice(0, 300) };
   }
 }
+
 
 async function markSync(id: string, ok: boolean, error?: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
