@@ -1,75 +1,102 @@
-## نظام مكتبة الصور والوسائط - خطة التنفيذ
+# خطة تحسين محركات البحث (SEO) لموقع مدرسة مدحت السويدي للتكنولوجيا التطبيقية
 
-سأبني نظام media library كامل مربوط بـ Supabase Storage + جدول `media_assets`، مع محرر صور، ونقاط تركيز، وربط ديناميكي بصفحات الموقع.
+الهدف: جعل الموقع الأول في نتائج جوجل العربية عند البحث عن المدرسة، التعليم التطبيقي، مدارس التكنولوجيا التطبيقية في القاهرة/العاشر من رمضان، وشهادة AHK.
 
-## المرحلة 1 — البنية التحتية (Database + Storage)
+---
 
-1. **Supabase Storage bucket** جديد باسم `media` (public read).
-2. **جدول `media_assets`** بالحقول:
-   - `id`, `title`, `description`, `alt_text`, `caption`
-   - `image_url`, `thumbnail_url`, `storage_path`
-   - `category` (نص من قائمة معرّفة)
-   - `status` (`published` / `hidden` / `archived`)
-   - `usage_locations` (text[]) — أماكن ظهور متعددة
-   - `display_position` (نص واحد — الدور المحدد)
-   - `focal_x`, `focal_y` (0-100)
-   - `aspect_ratio` (نص، مثل `16/9`)
-   - `crop_settings` (jsonb)
-   - `width`, `height`, `file_size`, `mime_type`
-   - `sort_order`, `created_at`, `updated_at`
-3. RLS: قراءة عامة للصور المنشورة، كتابة للأدمن فقط.
-4. GRANTs + Realtime.
+## 1. البنية التقنية (Technical SEO)
 
-## المرحلة 2 — الـ Store والـ Functions
+- **Meta Tags لكل صفحة** عبر `head()` في TanStack Route:
+  - `title` فريد (≤60 حرف) و`description` (≤160 حرف) لكل صفحة (الرئيسية، البرامج، الاعتمادات، الأخبار، سجل زيارة، تواصل، عن المدرسة، شروط القبول).
+  - `canonical` + `og:url` لكل صفحة تشير لنفسها.
+  - `og:title / og:description / og:type / twitter:card` مطابقة.
+- **Open Graph Image**: توليد صورة مشاركة رسمية 1200×630 (اللوجو + اسم المدرسة + شعارات AHK/الوزارة/السويدي) وربطها بـ `og:image` في الصفحات الرئيسية فقط (ليست في `__root`).
+- **lang & dir**: التأكيد على `<html lang="ar" dir="rtl">` في `__root.tsx`.
+- **Sitemap ديناميكي** (`/sitemap.xml`) يشمل كل الصفحات الثابتة + كل مقالات الأخبار من Supabase.
+- **robots.txt**: السماح للكل + إضافة `Sitemap:` directive.
+- **Google Search Console**: تحقق ملكية النطاق `medhat-elsewedy-school.lovable.app` عبر META tag ثم إرسال الـ sitemap.
+- **Performance**: lazy-loading للصور، تحويل الصور لـ WebP، وضع `alt` عربي وصفي لكل صورة.
+- **Structured Data (JSON-LD)**:
+  - `EducationalOrganization` في الصفحة الرئيسية (اسم، لوجو، عنوانَي الفرعين، تليفون، إيميل، سوشيال).
+  - `LocalBusiness` لكل فرع (العاشر من رمضان).
+  - `Article` لكل خبر في `/news/[slug]`.
+  - `BreadcrumbList` للصفحات الداخلية.
+  - `FAQPage` في صفحة القبول / الأسئلة الشائعة.
 
-- `src/lib/media-store.ts`: قراءة/كتابة/رفع/حذف مع realtime subscription.
-- `src/lib/media-upload.ts`: رفع للـ Storage + إنشاء thumbnail (client-side canvas resize).
-- ثوابت `MEDIA_CATEGORIES`, `USAGE_LOCATIONS`, `DISPLAY_POSITIONS`, `SIZE_PRESETS`.
+## 2. الكلمات المفتاحية المستهدفة (بالعربية)
 
-## المرحلة 3 — واجهة مكتبة الصور في لوحة التحكم
+- مدرسة مدحت السويدي، مدرسة السويدي للتكنولوجيا التطبيقية، MEAT
+- مدارس التكنولوجيا التطبيقية في العاشر من رمضان
+- مدارس الطباعة والتغليف في مصر
+- شهادة AHK القاهرة، التعليم المزدوج، Dual System
+- التقديم لمدارس التكنولوجيا التطبيقية 2026
+- تخصصات: تكنولوجيا الطباعة، ميكاترونكس، صيانة الآلات، التصميم الجرافيكي، تشغيل ماكينات CNC
 
-قسم جديد في Sidebar باسم "مكتبة الصور":
-- **Grid** بالصور مع preview، اسم، تصنيف، حالة، أماكن ظهور.
-- **بحث + فلاتر**: تصنيف، مكان ظهور، حالة (منشورة/مخفية/غير مستخدمة).
-- **زر رفع** يفتح Dialog:
-  - اختيار ملف
-  - عنوان + Alt Text (إلزامي للمنشورة) + وصف
-  - تصنيف
-  - Multi-select لأماكن الظهور
-  - Display Position
-  - اقتراح مقاس تلقائي حسب المكان
-  - محرر Focal Point (مكوّن موجود بالفعل)
-- **Modal تفاصيل** لكل صورة: تعديل جميع الحقول + قص + focal point + إخفاء/نشر/حذف.
-- **محرر صور**: crop + aspect ratio presets + focal point + rotate باستخدام `react-easy-crop`.
+## 3. تحسين المحتوى (On-Page)
 
-## المرحلة 4 — ربط الموقع العام
+- **H1 واحد فريد** لكل صفحة يحتوي كلمة مفتاحية.
+- إعادة صياغة نصوص الهيرو والأقسام لتشمل الكلمات المفتاحية طبيعيًا.
+- إضافة صفحة **FAQ** (شروط القبول، المصروفات، مدة الدراسة، فرص العمل، شهادة AHK).
+- إضافة صفحة **"عن المدرسة"** موسّعة (التاريخ، الشراكة مع السويدي للطباعة، الرؤية).
+- روابط داخلية بين البرامج ↔ الأخبار ↔ سجل زيارة.
+- Alt text عربي لكل صورة (لوجوهات AHK، الوزارة، السويدي، صور الطلاب، الورش).
 
-- **Articles**: في محرر المقال أضف زر "اختر من مكتبة الصور" بجانب الرفع، مع Dialog يعرض صور مصنفة `الأخبار` أو أي صورة.
-- **Gallery**: `usePublishedGallery` تقرأ صور مكتبة الوسائط ذات `display_position = "Gallery Item"` (+ الجدول القديم للتوافق).
-- **Hero**: hook `useHeroImages()` يقرأ من `display_position IN ('Hero Main Image', 'Hero Background')`. Fallback للصور الحالية إذا فارغ.
-- **Certificate Logos / Branch Images**: hooks مشابهة.
-- الصفحات العامة تستخدم `object-fit: cover` + `object-position` من focal point، أو `contain` للشعارات.
+## 4. المحتوى الجديد المقترح
 
-## المرحلة 5 — الاختبار
+- 6 مقالات افتتاحية للأخبار/المدونة:
+  1. ما هو نظام التعليم المزدوج؟
+  2. شهادة AHK وأهميتها لسوق العمل
+  3. فرص العمل بعد التخرج من مدارس التكنولوجيا التطبيقية
+  4. جولة داخل ورش المدرسة
+  5. شروط ومصروفات القبول 2026
+  6. الفرق بين الثانوي الفني التقليدي والتكنولوجيا التطبيقية
 
-- رفع صورة، تعيينها كـ Hero، التحقق من ظهورها.
-- إخفاء صورة، التحقق من اختفائها.
-- تعديل Alt Text وانعكاسه.
-- Responsive على 320/768/1280.
+## 5. SEO المحلي (Local SEO)
 
-## Technical Details
+- إنشاء **Google Business Profile** لكل فرع (العاشر من رمضان – الحي 15، والمنطقة الصناعية).
+- إضافة خرائط Google embed في صفحة "تواصل".
+- NAP (Name/Address/Phone) موحّد في الفوتر وكل صفحة.
 
-- استخدام `react-easy-crop` لمحرر القص (خفيف ومتوافق).
-- Thumbnail: canvas يعمل resize لعرض 400px قبل الرفع.
-- Storage path: `media/{uuid}-{filename}` + `media/thumbs/{uuid}.jpg`.
-- Realtime channel واحد على `media_assets`.
-- التوافق مع النظام الحالي: `gallery_images` و `articles.image` تبقى تعمل؛ الصور الجديدة من `media_assets` تُدمج معها.
+## 6. المتابعة والقياس
 
-## نطاق محدود عمدًا
+- ربط **Google Analytics 4** و**Google Search Console**.
+- تشغيل SEO Review داخل Lovable شهريًا.
+- متابعة الترتيب للكلمات المفتاحية عبر Semrush.
 
-لن يشمل هذا الإصدار:
-- `media_usages` كجدول منفصل (سنعتمد على `usage_locations` array — أبسط وكافٍ للحالات المطلوبة).
-- Drag & Drop للترتيب (سنستخدم حقل رقمي `sort_order`).
-- Flip/Rotate كامل (Rotate فقط بزوايا 90°).
+---
 
-هذه ميزات ثانوية يمكن إضافتها لاحقًا. الأولوية للنظام الأساسي المتين.
+## خطة التنفيذ (مراحل)
+
+**المرحلة 1 – الأساسيات التقنية (فوري):**
+- تحديث `head()` لكل route بـ title/description/canonical/OG فريدة.
+- توليد OG image رسمية للصفحة الرئيسية.
+- التأكد من `sitemap.xml` و`robots.txt`.
+- إضافة JSON-LD (EducationalOrganization + LocalBusiness) في `__root` والصفحة الرئيسية.
+
+**المرحلة 2 – المحتوى:**
+- صفحات جديدة: FAQ، عن المدرسة الموسّعة.
+- 6 مقالات SEO أولى تُضاف عبر لوحة التحكم.
+- alt text عربي لكل الصور.
+
+**المرحلة 3 – التحقق والقياس:**
+- Google Search Console verification + sitemap submission.
+- ربط GA4.
+- تشغيل SEO scan داخلي والإصلاح.
+
+**المرحلة 4 – Local SEO:**
+- تفعيل Google Business Profile للفرعين.
+- تجميع reviews.
+
+---
+
+## المخرجات التقنية داخل الكود
+
+- تعديل ملفات routes التالية لإضافة `head()` مخصص:
+  `index.tsx, about.tsx, programs.tsx, accreditation.tsx, news.tsx, visit.tsx, contact.tsx, admissions.tsx`
+- إنشاء `src/routes/faq.tsx` جديدة.
+- إضافة JSON-LD helper في `src/lib/seo.ts`.
+- توليد صورة `public/og-image.jpg` (1200×630).
+- تحديث `src/routes/sitemap[.]xml.ts` ليشمل مقالات الأخبار الديناميكية.
+- إضافة meta verification tag لـ Google Search Console.
+
+هل أبدأ التنفيذ من المرحلة 1؟
