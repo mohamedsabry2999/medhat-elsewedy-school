@@ -37,6 +37,7 @@ const schema = z.object({
   timeSlot: z.string().min(1, "اختر الفترة"),
   visitDate: z.string().min(1, "اختر تاريخ الزيارة"),
   visitLocation: z.string().min(1, "اختر مقر الزيارة"),
+  notes: z.string().max(500).optional().default(""),
 });
 
 const DAY_MAP: Record<number, string> = { 0: "الأحد", 1: "الإثنين", 2: "الثلاثاء", 3: "الأربعاء", 4: "الخميس", 5: "الجمعة", 6: "السبت" };
@@ -61,11 +62,6 @@ function buildVisitDates(): { value: string; label: string; day: string }[] {
   return out;
 }
 const VISIT_DATES = buildVisitDates();
-
-const _schema2 = z.object({
-  _: z.string().optional(),
-  notes: z.string().max(500).optional().default(""),
-});
 
 const GOVS = ["القاهرة","الجيزة","القليوبية","الإسكندرية","الشرقية","الدقهلية","المنوفية","الغربية","بني سويف","الفيوم","المنيا","أسيوط","سوهاج","قنا","الأقصر","أسوان","البحيرة","كفر الشيخ","دمياط","بورسعيد","الإسماعيلية","السويس","شمال سيناء","جنوب سيناء","البحر الأحمر","مطروح","الوادي الجديد"];
 
