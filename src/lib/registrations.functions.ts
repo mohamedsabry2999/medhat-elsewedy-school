@@ -220,6 +220,7 @@ export const submitRegistration = createServerFn({ method: "POST" })
     // Insert via admin client: Zod already validated inputs, and the anon role
     // has no SELECT policy so `.select().single()` after INSERT would fail RLS.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    console.log("[submitRegistration] SRK set?", !!process.env.SUPABASE_SERVICE_ROLE_KEY, "prefix:", (process.env.SUPABASE_SERVICE_ROLE_KEY||"").slice(0,10));
     const { data: inserted, error } = await supabaseAdmin
       .from("registrations")
       .insert(insertPayload)
