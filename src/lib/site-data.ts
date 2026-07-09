@@ -321,12 +321,13 @@ export const BRANCHES: Branch[] = [
 ];
 
 export const CONTACT = {
-  phone: "+20 100 000 0000",
-  whatsapp: "+20 100 000 0000",
-  email: "info@meat-school.edu.eg",
+  phone: "01050360883",
+  whatsapp: "01050360883",
+  email: "school@elsewedyprint.com",
   hours: "الأحد - الخميس: 8 صباحاً - 3 مساءً",
-  address: "العاشر من رمضان، محافظة الشرقية، جمهورية مصر العربية",
+  address: "فروع المدرسة: الحي الخامس عشر، والمنطقة الصناعية 4A، العاشر من رمضان، الشرقية.",
 };
+
 
 export const VISIT_DAYS = ["السبت", "الإثنين", "الأربعاء"] as const;
 export const VISIT_SLOTS = [

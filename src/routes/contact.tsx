@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Phone, Mail, MapPin, Clock, MessageCircle, Navigation, Info } from "lucide-react";
 import { CONTACT, BRANCHES } from "@/lib/site-data";
+import { useSiteSettings } from "@/lib/settings-store";
+
 import { z } from "zod";
 
 export const Route = createFileRoute("/contact")({
@@ -29,8 +31,14 @@ const schema = z.object({
 });
 
 function ContactPage() {
+  const settings = useSiteSettings();
+  const branches = BRANCHES.map((b, i) => ({
+    ...b,
+    address: i === 0 ? settings.branch1 : settings.branch2,
+  }));
   const [form, setForm] = useState({ name: "", phone: "", subject: "", message: "" });
   const [sending, setSending] = useState(false);
+
   const submit = (e: import("react").FormEvent) => {
     e.preventDefault();
     const p = schema.safeParse(form);
@@ -55,7 +63,7 @@ function ContactPage() {
             <p className="mt-3 text-muted-foreground text-sm">لكل فرع استخدام مختلف — يرجى التأكد من مقر الزيارة المحدد في رسالة التأكيد قبل الحضور.</p>
           </div>
           <div className="grid gap-5 md:grid-cols-2">
-            {BRANCHES.map((b) => (
+            {branches.map((b) => (
               <Card key={b.id} className="border-brand/10">
                 <CardContent className="p-6 space-y-4">
                   <div className="flex items-start gap-3">
@@ -91,20 +99,21 @@ function ContactPage() {
       <section className="py-12 bg-secondary/50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1 space-y-4">
-            <InfoCard icon={Phone} title="الهاتف" value={CONTACT.phone} />
+            <InfoCard icon={Phone} title="الهاتف" value={settings.phone} />
             <InfoCard
               icon={MessageCircle}
               title="واتساب"
-              value={CONTACT.whatsapp}
+              value={settings.phone}
               action={
                 <Button asChild size="sm" className="bg-green-600 hover:bg-green-700 text-white mt-2">
-                  <a href={`https://wa.me/${CONTACT.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">فتح واتساب</a>
+                  <a href={`https://wa.me/2${settings.phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">فتح واتساب</a>
                 </Button>
               }
             />
-            <InfoCard icon={Mail} title="البريد الإلكتروني" value={CONTACT.email} />
+            <InfoCard icon={Mail} title="البريد الإلكتروني" value={settings.email} />
             <InfoCard icon={Clock} title="مواعيد العمل" value={CONTACT.hours} />
           </div>
+
 
           <Card className="lg:col-span-2">
             <CardContent className="p-6 md:p-8">
