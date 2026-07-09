@@ -1,5 +1,6 @@
-// Gallery CMS store (localStorage).
+// Gallery CMS store — Supabase-backed with realtime.
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { GALLERY, type GalleryItem } from "./site-data";
 
 export type GalleryStatus = "منشورة" | "مخفية";
@@ -13,9 +14,34 @@ export type GalleryImage = {
   status: GalleryStatus;
   order: number;
   createdAt: string;
+  imageAlt?: string;
 };
 
-const KEY = "meat_gallery_v1";
+type DBRow = {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  image_url: string;
+  image_alt: string;
+  status: string;
+  position: number;
+  created_at: string;
+};
+
+function fromRow(r: DBRow): GalleryImage {
+  return {
+    id: r.id,
+    title: r.title,
+    description: r.description,
+    category: r.category,
+    src: r.image_url,
+    status: r.status === "published" ? "منشورة" : "مخفية",
+    order: r.position,
+    createdAt: r.created_at,
+    imageAlt: r.image_alt,
+  };
+}
 
 function seed(): GalleryImage[] {
   return GALLERY.map((g: GalleryItem, i) => ({
@@ -27,95 +53,127 @@ function seed(): GalleryImage[] {
     status: "منشورة" as GalleryStatus,
     order: i,
     createdAt: new Date().toISOString(),
+    imageAlt: g.caption,
   }));
 }
 
-function read(): GalleryImage[] {
-  if (typeof window === "undefined") return seed();
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    if (!raw) {
-      const s = seed();
-      window.localStorage.setItem(KEY, JSON.stringify(s));
-      return s;
-    }
-    return JSON.parse(raw) as GalleryImage[];
-  } catch {
-    return seed();
+let cache: GalleryImage[] = [];
+let loaded = false;
+const listeners = new Set<() => void>();
+function notify() { listeners.forEach((l) => l()); }
+
+async function refetch() {
+  const { data, error } = await supabase
+    .from("gallery_images")
+    .select("*")
+    .order("position", { ascending: true });
+  if (!error && data) {
+    cache = (data as DBRow[]).map(fromRow);
+    loaded = true;
+    notify();
   }
 }
 
-function write(list: GalleryImage[]) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(KEY, JSON.stringify(list));
-  window.dispatchEvent(new CustomEvent("meat:gallery-changed"));
+let subscribed = false;
+function ensureSubscribed() {
+  if (subscribed || typeof window === "undefined") return;
+  subscribed = true;
+  refetch();
+  supabase
+    .channel("gallery-changes")
+    .on("postgres_changes", { event: "*", schema: "public", table: "gallery_images" }, () => refetch())
+    .subscribe();
+}
+
+function currentList(): GalleryImage[] {
+  if (!loaded || cache.length === 0) return seed();
+  return cache;
 }
 
 export function listGallery(): GalleryImage[] {
-  return read().sort((a, b) => a.order - b.order);
+  return [...currentList()].sort((a, b) => a.order - b.order);
 }
-
 export function listPublishedGallery(): GalleryImage[] {
   return listGallery().filter((g) => g.status === "منشورة");
 }
 
+function toDb(g: Partial<GalleryImage> & { id?: string }) {
+  return {
+    title: g.title ?? "",
+    description: g.description ?? "",
+    category: g.category ?? "",
+    image_url: g.src ?? "",
+    image_alt: g.imageAlt ?? g.title ?? "",
+    status: g.status === "مخفية" ? "hidden" : "published",
+    position: g.order ?? 0,
+  };
+}
+
 export function saveGallery(item: GalleryImage) {
-  const list = read();
-  const idx = list.findIndex((x) => x.id === item.id);
-  if (idx >= 0) list[idx] = item;
-  else list.push(item);
-  write(list);
+  const isSeed = item.id.startsWith("g-seed-");
+  if (isSeed) {
+    supabase.from("gallery_images").insert(toDb(item)).then(({ error }) => {
+      if (error) console.error("saveGallery insert", error);
+    });
+  } else {
+    supabase.from("gallery_images").update(toDb(item)).eq("id", item.id).then(({ error }) => {
+      if (error) console.error("saveGallery update", error);
+    });
+    const idx = cache.findIndex((x) => x.id === item.id);
+    if (idx >= 0) cache[idx] = item;
+    notify();
+  }
 }
 
 export function createGallery(data: Omit<GalleryImage, "id" | "createdAt" | "order">) {
-  const list = read();
-  const item: GalleryImage = {
-    ...data,
-    id: `g-${Date.now()}`,
-    order: list.length,
-    createdAt: new Date().toISOString(),
-  };
-  list.push(item);
-  write(list);
-  return item;
+  const position = cache.length;
+  supabase.from("gallery_images").insert({ ...toDb({ ...data, order: position }) }).then(({ error }) => {
+    if (error) console.error("createGallery", error);
+  });
+  return { ...data, id: `pending-${Date.now()}`, order: position, createdAt: new Date().toISOString() } as GalleryImage;
 }
 
 export function deleteGallery(id: string) {
-  write(read().filter((g) => g.id !== id));
+  if (id.startsWith("g-seed-")) {
+    // Seed items live in code — hide locally.
+    cache = cache.filter((g) => g.id !== id);
+    notify();
+    return;
+  }
+  supabase.from("gallery_images").delete().eq("id", id).then(({ error }) => {
+    if (error) console.error("deleteGallery", error);
+  });
+  cache = cache.filter((g) => g.id !== id);
+  notify();
 }
 
 export function toggleGalleryStatus(id: string) {
-  write(
-    read().map((g) =>
-      g.id === id
-        ? { ...g, status: g.status === "منشورة" ? "مخفية" : "منشورة" }
-        : g,
-    ),
-  );
+  const g = cache.find((x) => x.id === id) ?? currentList().find((x) => x.id === id);
+  if (!g) return;
+  const next: GalleryStatus = g.status === "منشورة" ? "مخفية" : "منشورة";
+  saveGallery({ ...g, status: next });
 }
 
 export function usePublishedGallery(): GalleryImage[] {
-  const [list, setList] = useState<GalleryImage[]>([]);
+  const [list, setList] = useState<GalleryImage[]>(() => listPublishedGallery());
   useEffect(() => {
-    setList(listPublishedGallery());
+    ensureSubscribed();
     const on = () => setList(listPublishedGallery());
-    window.addEventListener("meat:gallery-changed", on);
-    window.addEventListener("storage", on);
-    return () => {
-      window.removeEventListener("meat:gallery-changed", on);
-      window.removeEventListener("storage", on);
-    };
+    listeners.add(on);
+    on();
+    return () => { listeners.delete(on); };
   }, []);
   return list;
 }
 
 export function useGallery(): GalleryImage[] {
-  const [list, setList] = useState<GalleryImage[]>([]);
+  const [list, setList] = useState<GalleryImage[]>(() => listGallery());
   useEffect(() => {
-    setList(listGallery());
+    ensureSubscribed();
     const on = () => setList(listGallery());
-    window.addEventListener("meat:gallery-changed", on);
-    return () => window.removeEventListener("meat:gallery-changed", on);
+    listeners.add(on);
+    on();
+    return () => { listeners.delete(on); };
   }, []);
   return list;
 }
