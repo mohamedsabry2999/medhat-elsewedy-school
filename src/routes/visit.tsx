@@ -37,6 +37,33 @@ const schema = z.object({
   timeSlot: z.string().min(1, "اختر الفترة"),
   visitDate: z.string().min(1, "اختر تاريخ الزيارة"),
   visitLocation: z.string().min(1, "اختر مقر الزيارة"),
+});
+
+const DAY_MAP: Record<number, string> = { 0: "الأحد", 1: "الإثنين", 2: "الثلاثاء", 3: "الأربعاء", 4: "الخميس", 5: "الجمعة", 6: "السبت" };
+const ALLOWED_DOW = new Set([6, 1, 3]); // Sat, Mon, Wed
+function buildVisitDates(): { value: string; label: string; day: string }[] {
+  const out: { value: string; label: string; day: string }[] = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const end = new Date(2026, 7, 31); // Aug 31, 2026
+  const cur = new Date(today);
+  while (cur <= end) {
+    if (ALLOWED_DOW.has(cur.getDay())) {
+      const y = cur.getFullYear();
+      const m = String(cur.getMonth() + 1).padStart(2, "0");
+      const d = String(cur.getDate()).padStart(2, "0");
+      const iso = `${y}-${m}-${d}`;
+      const day = DAY_MAP[cur.getDay()];
+      out.push({ value: iso, label: `${day} — ${iso}`, day });
+    }
+    cur.setDate(cur.getDate() + 1);
+  }
+  return out;
+}
+const VISIT_DATES = buildVisitDates();
+
+const _schema2 = z.object({
+  _: z.string().optional(),
   notes: z.string().max(500).optional().default(""),
 });
 
