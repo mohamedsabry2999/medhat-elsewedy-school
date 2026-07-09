@@ -42,9 +42,11 @@ function resolveFocal(p: SmartImageProps): { x: number; y: number } {
     return { x: p.focalX, y: p.focalY };
   }
   if (HEAD_SAFE_TYPES.has(p.imageType ?? "auto")) return { x: 50, y: 25 };
+  if (p.imageType === "article_cover") return { x: 50, y: 35 };
   if (p.imageType === "training_landscape") return { x: 50, y: 40 };
   return { x: 50, y: 50 };
 }
+
 
 function useIsMobile(): boolean {
   const [m, setM] = useState<boolean>(() =>
