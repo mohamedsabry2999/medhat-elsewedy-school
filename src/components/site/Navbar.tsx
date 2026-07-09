@@ -121,7 +121,7 @@ export function Navbar() {
       {open && (
         <>
           <div
-            className="xl:hidden fixed inset-0 top-16 lg:top-[calc(4rem+2.25rem)] bg-black/40 z-40"
+            className="xl:hidden fixed inset-0 top-16 lg:top-[calc(5rem+2.25rem)] bg-black/40 z-40"
             onClick={() => setOpen(false)}
             aria-hidden
           />
