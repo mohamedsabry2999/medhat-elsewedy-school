@@ -47,29 +47,29 @@ function Hero() {
     <section className="relative overflow-hidden bg-brand text-white">
       <div className="absolute inset-0 opacity-25 bg-cover bg-center" style={{ backgroundImage: `url(${IMG.hero1})` }} />
       <div className="absolute inset-0 bg-gradient-to-l from-brand/95 via-brand/85 to-brand/70" />
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 md:py-24 grid lg:grid-cols-2 gap-10 items-center">
-        <div>
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-24 grid lg:grid-cols-2 gap-10 items-center">
+        <div className="min-w-0">
           <Badge className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)] text-white border-0 mb-4">
             وزارة التربية والتعليم والتعليم الفني — رؤية مصر 2030
           </Badge>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight">
+          <h1 className="font-extrabold leading-tight text-[clamp(1.6rem,6.5vw,3rem)]">
             مدرسة مدحت السويدي <br />
             <span className="text-[var(--accent-red)]">للتكنولوجيا التطبيقية</span>
           </h1>
-          <p className="mt-5 text-lg text-white/90 max-w-xl leading-8">
+          <p className="mt-5 text-base sm:text-lg text-white/90 max-w-xl leading-8">
             أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر، تأسست في ضوء رؤية مصر 2030 لتطوير التعليم الفني وربط الدراسة باحتياجات سوق العمل.
           </p>
           <p className="mt-3 text-white/75 max-w-xl leading-8 text-sm">
             نموذج تعليمي يجمع بين الدراسة النظرية والتدريب العملي داخل بيئة صناعية حقيقية، لإعداد جيل من الفنيين المؤهلين والقادرين على المنافسة في سوق الطباعة المحلي والإقليمي والدولي.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild size="lg" className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white">
+          <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
+            <Button asChild size="lg" className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white w-full sm:w-auto">
               <Link to="/visit">سجل لحضور الندوة التعريفية</Link>
             </Button>
-            <Button asChild size="lg" variant="secondary" className="bg-white text-brand hover:bg-white/90">
+            <Button asChild size="lg" variant="secondary" className="bg-white text-brand hover:bg-white/90 w-full sm:w-auto">
               <Link to="/study-system">تعرف على نظام الدراسة</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-brand">
+            <Button asChild size="lg" variant="outline" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-brand w-full sm:w-auto">
               <Link to="/admissions">شروط الالتحاق</Link>
             </Button>
           </div>

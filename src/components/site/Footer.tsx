@@ -40,7 +40,7 @@ export function Footer() {
             <li className="flex gap-2" dir="ltr"><Phone className="h-4 w-4 mt-0.5" /> {s.phone}</li>
             <li className="flex gap-2"><Mail className="h-4 w-4 mt-0.5" /> {s.email}</li>
             {branches.map((b) => (
-              <li key={b.id} className="flex gap-2"><MapPin className="h-4 w-4 mt-0.5 shrink-0" /> <span><strong className="text-white">{b.name}:</strong> {b.address}</span></li>
+              <li key={b.id} className="flex gap-2"><MapPin className="h-4 w-4 mt-0.5 shrink-0" /> <span className="min-w-0 break-words"><strong className="text-white">{b.name}:</strong> {b.address}</span></li>
             ))}
           </ul>
           <div className="flex gap-3 mt-4">
