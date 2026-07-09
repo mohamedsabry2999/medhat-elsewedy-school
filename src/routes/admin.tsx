@@ -965,6 +965,73 @@ function SettingsTab() {
   );
 }
 
+function BranchesEditor() {
+  const branches = useBranches();
+  const [drafts, setDrafts] = useState<Record<string, Branch>>({});
+  const getVal = (b: Branch): Branch => drafts[b.id] ?? b;
+  const update = (b: Branch, patch: Partial<Branch>) =>
+    setDrafts((d) => ({ ...d, [b.id]: { ...getVal(b), ...patch } }));
+
+  return (
+    <div className="border-t pt-5 space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="font-bold text-brand">فروع المدرسة</h3>
+          <p className="text-sm text-muted-foreground">تظهر تلقائيًا في صفحة تواصل معنا والفوتر.</p>
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() =>
+            createBranch({
+              name: "فرع جديد",
+              address: "",
+              usage: "",
+              position: branches.length + 1,
+            })
+          }
+        >
+          + إضافة فرع
+        </Button>
+      </div>
+      <div className="grid gap-4">
+        {branches.map((b) => {
+          const v = getVal(b);
+          return (
+            <div key={b.id} className="rounded-lg border p-4 space-y-3">
+              <SField label="اسم الفرع" value={v.name} onChange={(x) => update(b, { name: x })} />
+              <SField label="العنوان" value={v.address} onChange={(x) => update(b, { address: x })} textarea />
+              <SField label="الاستخدام / وصف الفرع" value={v.usage} onChange={(x) => update(b, { usage: x })} textarea />
+              <div className="flex justify-between items-center">
+                <Button
+                  variant="ghost"
+                  className="text-red-600"
+                  onClick={() => {
+                    if (confirm("حذف هذا الفرع؟")) deleteBranch(b.id);
+                  }}
+                >
+                  حذف
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    saveBranch(v);
+                    toast.success("تم حفظ الفرع");
+                  }}
+                >
+                  حفظ الفرع
+                </Button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+
+
 function SyncSettingsPanel() {
   const load = useServerFn(getSyncSettings);
   const save = useServerFn(saveSyncSettings);
