@@ -1,7 +1,13 @@
 // Local in-memory + localStorage store for visit registrations.
 // Structured to be swapped later for Supabase.
 
-export type RegistrationStatus = "جديد" | "تم التواصل" | "مؤكد" | "حضر" | "لم يحضر";
+export type RegistrationStatus =
+  | "جديد"
+  | "تم التواصل"
+  | "مؤكد"
+  | "حضر"
+  | "لم يحضر"
+  | "ملغي";
 
 export type Registration = {
   id: string;
@@ -13,13 +19,15 @@ export type Registration = {
   eduDept: string;
   score: string;
   attendees: number;
-  visitDate: string;
+  visitDate: string; // ISO date
+  visitDay: string; // e.g. "السبت"
+  timeSlot: string; // e.g. "من 9:00 صباحًا إلى 11:00 صباحًا"
   notes: string;
   status: RegistrationStatus;
   createdAt: string;
 };
 
-const KEY = "meat_registrations_v1";
+const KEY = "meat_registrations_v2";
 
 const SEED: Registration[] = [
   {
@@ -28,11 +36,13 @@ const SEED: Registration[] = [
     nationalId: "30201010101010",
     guardianPhone: "01000000001",
     whatsapp: "01000000001",
-    governorate: "القاهرة",
-    eduDept: "إدارة شرق",
+    governorate: "الشرقية",
+    eduDept: "إدارة العاشر من رمضان",
     score: "260",
     attendees: 2,
-    visitDate: "2026-07-20",
+    visitDate: "2026-07-25",
+    visitDay: "السبت",
+    timeSlot: "من 9:00 صباحًا إلى 11:00 صباحًا",
     notes: "",
     status: "جديد",
     createdAt: "2026-07-01T09:00:00Z",
@@ -43,11 +53,13 @@ const SEED: Registration[] = [
     nationalId: "30202020202020",
     guardianPhone: "01000000002",
     whatsapp: "01000000002",
-    governorate: "الجيزة",
-    eduDept: "إدارة العجوزة",
+    governorate: "القاهرة",
+    eduDept: "إدارة شرق",
     score: "245",
     attendees: 3,
-    visitDate: "2026-07-20",
+    visitDate: "2026-07-27",
+    visitDay: "الإثنين",
+    timeSlot: "من 11:30 صباحًا إلى 1:30 ظهرًا",
     notes: "الحضور مع الوالدين",
     status: "مؤكد",
     createdAt: "2026-07-02T10:30:00Z",
@@ -62,7 +74,9 @@ const SEED: Registration[] = [
     eduDept: "إدارة بنها",
     score: "210",
     attendees: 1,
-    visitDate: "2026-07-27",
+    visitDate: "2026-07-29",
+    visitDay: "الأربعاء",
+    timeSlot: "من 9:00 صباحًا إلى 11:00 صباحًا",
     notes: "",
     status: "تم التواصل",
     createdAt: "2026-07-03T11:15:00Z",
@@ -110,4 +124,50 @@ export function addRegistration(
 export function updateStatus(id: string, status: RegistrationStatus) {
   const list = read().map((r) => (r.id === id ? { ...r, status } : r));
   write(list);
+}
+
+export function deleteRegistration(id: string) {
+  const list = read().filter((r) => r.id !== id);
+  write(list);
+}
+
+export function exportRegistrationsCSV(regs: Registration[]): string {
+  const headers = [
+    "اسم الطالب",
+    "الرقم القومي",
+    "ولي الأمر",
+    "واتساب",
+    "المحافظة",
+    "الإدارة التعليمية",
+    "المجموع",
+    "عدد الحضور",
+    "يوم الزيارة",
+    "الفترة",
+    "التاريخ",
+    "الحالة",
+    "الملاحظات",
+    "تاريخ التسجيل",
+  ];
+  const escape = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
+  const rows = regs.map((r) =>
+    [
+      r.studentName,
+      r.nationalId,
+      r.guardianPhone,
+      r.whatsapp,
+      r.governorate,
+      r.eduDept,
+      r.score,
+      r.attendees,
+      r.visitDay,
+      r.timeSlot,
+      r.visitDate,
+      r.status,
+      r.notes,
+      r.createdAt,
+    ]
+      .map(escape)
+      .join(","),
+  );
+  return "\uFEFF" + [headers.map(escape).join(","), ...rows].join("\n");
 }

@@ -7,15 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Phone, Mail, MapPin, Clock, MessageCircle } from "lucide-react";
-import { CONTACT } from "@/lib/site-data";
+import { Phone, Mail, MapPin, Clock, MessageCircle, Navigation, Info } from "lucide-react";
+import { CONTACT, BRANCHES } from "@/lib/site-data";
 import { z } from "zod";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "تواصل معنا — مدرسة مدحت السويدي" },
-      { name: "description", content: "قنوات التواصل مع المدرسة." },
+      { name: "description", content: "قنوات التواصل مع المدرسة وفروعها بمدينة العاشر من رمضان." },
     ],
   }),
   component: ContactPage,
@@ -46,14 +46,64 @@ function ContactPage() {
   return (
     <SiteLayout>
       <PageHeader eyebrow="تواصل معنا" title="نحن هنا للإجابة على استفساراتك" />
+
       <section className="py-12">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <div className="text-[var(--accent-red)] font-bold text-sm mb-2">فروع المدرسة ومواقع الزيارة</div>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-brand">للمدرسة فرعان داخل مدينة العاشر من رمضان</h2>
+            <p className="mt-3 text-muted-foreground text-sm">لكل فرع استخدام مختلف — يرجى التأكد من مقر الزيارة المحدد في رسالة التأكيد قبل الحضور.</p>
+          </div>
+          <div className="grid gap-5 md:grid-cols-2">
+            {BRANCHES.map((b) => (
+              <Card key={b.id} className="border-brand/10">
+                <CardContent className="p-6 space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="h-10 w-10 shrink-0 rounded-lg bg-brand text-white grid place-items-center">
+                      <MapPin className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="font-extrabold text-brand">{b.name}</div>
+                      <div className="text-sm text-muted-foreground mt-1 leading-7">{b.address}</div>
+                    </div>
+                  </div>
+                  <div className="text-sm text-brand bg-secondary/60 rounded-lg p-3 leading-7">{b.usage}</div>
+                  {b.route && (
+                    <div className="flex items-start gap-2 text-sm text-muted-foreground leading-7">
+                      <Navigation className="h-4 w-4 mt-1 shrink-0 text-[var(--accent-red)]" />
+                      <span>{b.route}</span>
+                    </div>
+                  )}
+                  <Button asChild className="w-full bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white">
+                    <a href={b.mapUrl} target="_blank" rel="noreferrer">{b.ctaLabel}</a>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="mt-6 rounded-lg border bg-secondary/40 p-4 text-sm text-brand flex items-start gap-2">
+            <Info className="h-4 w-4 mt-0.5 shrink-0" />
+            <span>يرجى التأكد من مقر الزيارة المحدد في رسالة التأكيد قبل الحضور.</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-12 bg-secondary/50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1 space-y-4">
-            <Info icon={Phone} title="الهاتف" value={CONTACT.phone} />
-            <Info icon={MessageCircle} title="واتساب" value={CONTACT.whatsapp} action={<Button asChild size="sm" className="bg-green-600 hover:bg-green-700 text-white mt-2"><a href={`https://wa.me/${CONTACT.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">فتح واتساب</a></Button>} />
-            <Info icon={Mail} title="البريد الإلكتروني" value={CONTACT.email} />
-            <Info icon={MapPin} title="العنوان" value={CONTACT.address} />
-            <Info icon={Clock} title="مواعيد العمل" value={CONTACT.hours} />
+            <InfoCard icon={Phone} title="الهاتف" value={CONTACT.phone} />
+            <InfoCard
+              icon={MessageCircle}
+              title="واتساب"
+              value={CONTACT.whatsapp}
+              action={
+                <Button asChild size="sm" className="bg-green-600 hover:bg-green-700 text-white mt-2">
+                  <a href={`https://wa.me/${CONTACT.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">فتح واتساب</a>
+                </Button>
+              }
+            />
+            <InfoCard icon={Mail} title="البريد الإلكتروني" value={CONTACT.email} />
+            <InfoCard icon={Clock} title="مواعيد العمل" value={CONTACT.hours} />
           </div>
 
           <Card className="lg:col-span-2">
@@ -73,22 +123,12 @@ function ContactPage() {
             </CardContent>
           </Card>
         </div>
-
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
-          <div className="rounded-2xl overflow-hidden border h-72 bg-secondary grid place-items-center text-muted-foreground">
-            <div className="text-center">
-              <MapPin className="h-8 w-8 mx-auto text-brand" />
-              <div className="mt-2 font-bold">خريطة الموقع</div>
-              <div className="text-xs">{CONTACT.address}</div>
-            </div>
-          </div>
-        </div>
       </section>
     </SiteLayout>
   );
 }
 
-function Info({ icon: Icon, title, value, action }: { icon: any; title: string; value: string; action?: import("react").ReactNode }) {
+function InfoCard({ icon: Icon, title, value, action }: { icon: any; title: string; value: string; action?: import("react").ReactNode }) {
   return (
     <Card>
       <CardContent className="p-5">

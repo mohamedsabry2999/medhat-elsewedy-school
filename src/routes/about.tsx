@@ -1,14 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Eye, Flag, Target, Factory, GraduationCap, Handshake } from "lucide-react";
-import { IMG } from "@/lib/site-data";
+import { Eye, Flag, Target, Factory, GraduationCap, Handshake, BadgeCheck } from "lucide-react";
+import { IMG, CERTIFICATES } from "@/lib/site-data";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "عن المدرسة — مدرسة مدحت السويدي للتكنولوجيا التطبيقية" },
-      { name: "description", content: "نبذة عن المدرسة، الرؤية، الرسالة، والأهداف." },
+      { name: "description", content: "نشأة المدرسة، الرؤية، الرسالة، الأهداف، والشراكة الصناعية." },
     ],
   }),
   component: AboutPage,
@@ -17,20 +17,29 @@ export const Route = createFileRoute("/about")({
 function AboutPage() {
   return (
     <SiteLayout>
-      <PageHeader eyebrow="عن المدرسة" title="مدرسة تصنع فنيين محترفين" subtitle="نبني جيلاً من الفنيين المؤهلين عبر تعليم فني تطبيقي حديث مرتبط بسوق العمل." />
+      <PageHeader
+        eyebrow="عن المدرسة"
+        title="نشأة المدرسة ونبذة عنها"
+        subtitle="أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر."
+      />
+
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-10 items-start">
           <div>
-            <h2 className="text-2xl font-extrabold text-brand">نبذة عن المدرسة</h2>
+            <h2 className="text-2xl font-extrabold text-brand">نشأة المدرسة</h2>
             <p className="mt-4 text-muted-foreground leading-8">
-              مدرسة مدحت السويدي للتكنولوجيا التطبيقية هي مدرسة فنية تطبيقية متخصصة في تكنولوجيا الطباعة الرقمية والأوفست،
-              تعمل تحت مظلة وزارة التربية والتعليم — قطاع التعليم الفني، بالشراكة مع القطاع الصناعي.
-              تهدف المدرسة إلى إعداد جيل من الفنيين المؤهلين للعمل مباشرة بعد التخرج، عبر مناهج
-              حديثة وتدريب عملي داخل بيئة صناعية حقيقية.
+              تم تأسيس مدرسة مدحت السويدي للتكنولوجيا التطبيقية على يد المهندس مدحت حافظ السويدي،
+              رئيس مجلس إدارة دار مدحت السويدي للطباعة، عام 2022 - 2023، في ضوء رؤية مصر 2030 لتطوير
+              منظومة التعليم الفني والتدريب المهني.
             </p>
             <p className="mt-4 text-muted-foreground leading-8">
-              تعتمد المدرسة على منظومة تعليم مطبق حيث يقضي الطالب جزءاً كبيراً من وقته داخل المعامل والورش
-              وخطوط الإنتاج الفعلية، مما يضمن اكتساب مهارات تخصصية عالية الجودة.
+              وجاء تأسيس المدرسة بهدف سد الفجوة بين العملية التعليمية النظرية والاحتياجات الفعلية لسوق العمل،
+              من خلال إطلاق أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة بالتعاون مع
+              وزارة التربية والتعليم والتعليم الفني.
+            </p>
+            <p className="mt-4 text-muted-foreground leading-8">
+              تهدف المدرسة إلى إعداد جيل من الفنيين المؤهلين والقادرين على المنافسة في سوق العمل بمجال
+              الطباعة محليًا وإقليميًا ودوليًا، من خلال تنمية مهارات الطلاب وإكسابهم الخبرة العملية اللازمة.
             </p>
           </div>
           <img src={IMG.hero1} alt="داخل المدرسة" className="rounded-2xl w-full aspect-video object-cover shadow-xl" />
@@ -40,9 +49,9 @@ function AboutPage() {
       <section className="py-16 bg-secondary/60">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid md:grid-cols-3 gap-5">
           {[
-            { icon: Eye, t: "الرؤية", d: "أن نكون نموذجاً رائداً للتعليم الفني التطبيقي المرتبط بالصناعة على مستوى الجمهورية." },
-            { icon: Flag, t: "الرسالة", d: "إعداد فنيين مؤهلين مهنياً وأخلاقياً لسوق العمل، عبر شراكة حقيقية بين التعليم والصناعة." },
-            { icon: Target, t: "الأهداف", d: "توفير تعليم عملي حديث، وربط الخريج مباشرة بفرص العمل، وبناء شخصية منضبطة قادرة على التطوير." },
+            { icon: Eye, t: "الرؤية", d: "أن تكون المدرسة نموذجًا رائدًا في التعليم الفني المتخصص في مجال الطباعة، وأن تساهم في إعداد كوادر قادرة على دعم الصناعة والمنافسة محليًا وإقليميًا ودوليًا." },
+            { icon: Flag, t: "الرسالة", d: "تأهيل الطلاب بالمهارات الفنية والسلوكية اللازمة للعمل في صناعة الطباعة، من خلال مناهج معتمدة وتدريب عملي داخل بيئة صناعية حقيقية." },
+            { icon: Target, t: "أهداف المدرسة", d: "سد الفجوة بين التعليم واحتياجات سوق العمل، وإعداد فنيين مؤهلين، وربط الخريج مباشرة بفرص عمل حقيقية داخل قطاع الطباعة." },
           ].map((c) => (
             <Card key={c.t}>
               <CardContent className="p-8">
@@ -58,9 +67,9 @@ function AboutPage() {
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid md:grid-cols-3 gap-5">
           {[
-            { icon: Handshake, t: "شراكة التعليم والصناعة", d: "بروتوكولات تعاون فعلية مع مصانع ومطابع كبرى تشارك في تطوير المناهج والتدريب." },
-            { icon: Factory, t: "دور التدريب الميداني", d: "تدريب حقيقي داخل خطوط الإنتاج تحت إشراف فنيين متخصصين وخبراء صناعة." },
-            { icon: GraduationCap, t: "ما يميزنا", d: "مناهج مبنية على احتياج السوق، معامل حديثة، ومتابعة أكاديمية دقيقة لكل طالب." },
+            { icon: Handshake, t: "الشريك الصناعي", d: "دار مدحت السويدي للطباعة توفر بيئة تدريب صناعية حقيقية، ومكافآت، وتأمين صحي، ومسارات وظيفية للخريجين." },
+            { icon: Factory, t: "التدريب الميداني", d: "تدريب داخل خطوط الإنتاج الفعلية تحت إشراف فنيين متخصصين وخبراء صناعة." },
+            { icon: GraduationCap, t: "التعليم المرتبط بسوق العمل", d: "مناهج معتمدة دوليًا باعتماد الغرفة الألمانية AHK Cairo، مرتبطة باحتياجات صناعة الطباعة." },
           ].map((c) => (
             <Card key={c.t} className="border-border">
               <CardContent className="p-8">
@@ -70,6 +79,29 @@ function AboutPage() {
               </CardContent>
             </Card>
           ))}
+        </div>
+      </section>
+
+      <section className="py-16 bg-secondary/60">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <div className="text-[var(--accent-red)] font-bold text-sm mb-2">الشهادات والاعتمادات</div>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-brand">شهادات معتمدة تفتح أبواب المستقبل</h2>
+            <p className="mt-3 text-muted-foreground leading-8">
+              تعتمد المدرسة على مناهج معتمدة دوليًا، مع إبراز اعتماد الغرفة الألمانية AHK Cairo ضمن عناصر الثقة والاعتماد المهني للمدرسة.
+            </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+            {CERTIFICATES.map((c) => (
+              <Card key={c.title}>
+                <CardContent className="p-5">
+                  <BadgeCheck className="h-6 w-6 text-[var(--accent-red)] mb-3" />
+                  <div className="font-bold text-brand text-sm leading-6">{c.title}</div>
+                  <p className="mt-2 text-xs text-muted-foreground leading-6">{c.desc}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
     </SiteLayout>

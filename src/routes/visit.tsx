@@ -8,8 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Info } from "lucide-react";
 import { addRegistration } from "@/lib/registrations-store";
+import { VISIT_DAYS, VISIT_SLOTS } from "@/lib/site-data";
 import { z } from "zod";
 
 export const Route = createFileRoute("/visit")({
@@ -31,19 +32,21 @@ const schema = z.object({
   eduDept: z.string().trim().min(2, "الإدارة التعليمية مطلوبة").max(120),
   score: z.string().trim().regex(/^\d{1,3}$/, "المجموع غير صحيح"),
   attendees: z.number().min(1).max(3),
-  visitDate: z.string().min(1, "اختر موعد الزيارة"),
+  visitDay: z.string().min(1, "اختر يوم الزيارة"),
+  timeSlot: z.string().min(1, "اختر الفترة"),
+  visitDate: z.string().min(1, "اختر تاريخ الزيارة"),
   notes: z.string().max(500).optional().default(""),
 });
 
 const GOVS = ["القاهرة","الجيزة","القليوبية","الإسكندرية","الشرقية","الدقهلية","المنوفية","الغربية","بني سويف","الفيوم","المنيا","أسيوط","سوهاج","قنا","الأقصر","أسوان","البحيرة","كفر الشيخ","دمياط","بورسعيد","الإسماعيلية","السويس","شمال سيناء","جنوب سيناء","البحر الأحمر","مطروح","الوادي الجديد"];
-const DATES = ["2026-07-20","2026-07-27","2026-08-03","2026-08-10","2026-08-17"];
 
 function VisitPage() {
   const [submitting, setSubmitting] = useState(false);
-  const [done, setDone] = useState<null | { id: string; date: string }>(null);
+  const [done, setDone] = useState<null | { id: string; date: string; day: string; slot: string }>(null);
   const [form, setForm] = useState({
     studentName: "", nationalId: "", guardianPhone: "", whatsapp: "",
-    governorate: "", eduDept: "", score: "", attendees: 1, visitDate: "", notes: "",
+    governorate: "", eduDept: "", score: "", attendees: 1,
+    visitDay: "", timeSlot: "", visitDate: "", notes: "",
   });
   const upd = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -58,25 +61,35 @@ function VisitPage() {
     setTimeout(() => {
       const rec = addRegistration({ ...parsed.data, notes: parsed.data.notes ?? "" });
       setSubmitting(false);
-      setDone({ id: rec.id, date: rec.visitDate });
-      toast.success("تم تسجيل حضورك بنجاح");
-      setForm({ studentName: "", nationalId: "", guardianPhone: "", whatsapp: "", governorate: "", eduDept: "", score: "", attendees: 1, visitDate: "", notes: "" });
-    }, 500);
+      setDone({ id: rec.id, date: rec.visitDate, day: rec.visitDay, slot: rec.timeSlot });
+      toast.success("تم تسجيل بياناتكم بنجاح، ونتشرف بزيارتكم في الموعد المحدد.");
+      setForm({ studentName: "", nationalId: "", guardianPhone: "", whatsapp: "", governorate: "", eduDept: "", score: "", attendees: 1, visitDay: "", timeSlot: "", visitDate: "", notes: "" });
+    }, 400);
   };
 
   return (
     <SiteLayout>
-      <PageHeader eyebrow="الندوات التعريفية" title="سجل حضور الندوة" subtitle="املأ البيانات التالية وسنتواصل معك لتأكيد الحضور." />
+      <PageHeader eyebrow="الندوات التعريفية" title="سجل حضور الندوة" subtitle="الحد الأدنى الحالي لحضور الندوات التعريفية: 190 درجة." />
       <section className="py-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-6 rounded-lg border bg-secondary/50 p-4 text-sm text-brand flex items-start gap-2">
+            <Info className="h-4 w-4 mt-0.5 shrink-0" />
+            <div>
+              أيام الزيارة المتاحة: السبت، الإثنين، الأربعاء. الفترات: من 9:00 إلى 11:00 صباحًا، أو من 11:30 إلى 1:30 ظهرًا.
+              <div className="mt-1 text-muted-foreground">يرجى التأكد من مقر الزيارة المحدد في رسالة التأكيد قبل الحضور.</div>
+            </div>
+          </div>
+
           {done && (
             <Card className="mb-8 border-green-200 bg-green-50">
               <CardContent className="p-6 flex items-start gap-3">
                 <CheckCircle2 className="h-6 w-6 text-green-600 shrink-0" />
                 <div>
-                  <div className="font-bold text-green-800">تم استلام طلبك بنجاح</div>
-                  <div className="text-sm text-green-700 mt-1">رقم الطلب: <b>{done.id}</b> — موعد الزيارة: <b>{done.date}</b></div>
-                  <div className="text-sm text-green-700 mt-1">سيتم التواصل معك قريباً لتأكيد الحضور.</div>
+                  <div className="font-bold text-green-800">تم تسجيل بياناتكم بنجاح</div>
+                  <div className="text-sm text-green-700 mt-1">
+                    رقم الطلب: <b>{done.id}</b> — اليوم: <b>{done.day}</b> — التاريخ: <b>{done.date}</b> — الفترة: <b>{done.slot}</b>
+                  </div>
+                  <div className="text-sm text-green-700 mt-1">ونتشرف بزيارتكم في الموعد المحدد.</div>
                 </div>
               </CardContent>
             </Card>
@@ -84,8 +97,8 @@ function VisitPage() {
           <Card>
             <CardContent className="p-6 md:p-8">
               <form onSubmit={submit} className="grid gap-5 md:grid-cols-2">
-                <Field label="اسم الطالب"><Input value={form.studentName} onChange={(e) => upd("studentName", e.target.value)} placeholder="الاسم الرباعي" /></Field>
-                <Field label="الرقم القومي"><Input value={form.nationalId} onChange={(e) => upd("nationalId", e.target.value)} placeholder="14 رقم" inputMode="numeric" maxLength={14} /></Field>
+                <Field label="اسم الطالب بالكامل"><Input value={form.studentName} onChange={(e) => upd("studentName", e.target.value)} placeholder="الاسم الرباعي" /></Field>
+                <Field label="الرقم القومي للطالب"><Input value={form.nationalId} onChange={(e) => upd("nationalId", e.target.value)} placeholder="14 رقم" inputMode="numeric" maxLength={14} /></Field>
                 <Field label="رقم ولي الأمر"><Input value={form.guardianPhone} onChange={(e) => upd("guardianPhone", e.target.value)} inputMode="tel" placeholder="01xxxxxxxxx" /></Field>
                 <Field label="رقم واتساب"><Input value={form.whatsapp} onChange={(e) => upd("whatsapp", e.target.value)} inputMode="tel" placeholder="01xxxxxxxxx" /></Field>
                 <Field label="المحافظة">
@@ -102,11 +115,20 @@ function VisitPage() {
                     <SelectContent>{[1,2,3].map((n) => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}</SelectContent>
                   </Select>
                 </Field>
-                <Field label="موعد الزيارة" className="md:col-span-2">
-                  <Select value={form.visitDate} onValueChange={(v) => upd("visitDate", v)}>
-                    <SelectTrigger><SelectValue placeholder="اختر الموعد" /></SelectTrigger>
-                    <SelectContent>{DATES.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
+                <Field label="يوم الزيارة">
+                  <Select value={form.visitDay} onValueChange={(v) => upd("visitDay", v)}>
+                    <SelectTrigger><SelectValue placeholder="اختر اليوم" /></SelectTrigger>
+                    <SelectContent>{VISIT_DAYS.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
                   </Select>
+                </Field>
+                <Field label="الفترة الزمنية">
+                  <Select value={form.timeSlot} onValueChange={(v) => upd("timeSlot", v)}>
+                    <SelectTrigger><SelectValue placeholder="اختر الفترة" /></SelectTrigger>
+                    <SelectContent>{VISIT_SLOTS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                  </Select>
+                </Field>
+                <Field label="تاريخ الزيارة" className="md:col-span-2">
+                  <Input type="date" value={form.visitDate} onChange={(e) => upd("visitDate", e.target.value)} />
                 </Field>
                 <Field label="ملاحظات إضافية" className="md:col-span-2">
                   <Textarea value={form.notes} onChange={(e) => upd("notes", e.target.value)} placeholder="أي ملاحظات..." rows={4} />
