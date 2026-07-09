@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /admin-login
-Sitemap: https://highschool-heartbeat.lovable.app/sitemap.xml
+Sitemap: https://medhat-elsewedy-school.lovable.app/sitemap.xml
