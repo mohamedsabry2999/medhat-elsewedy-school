@@ -69,7 +69,7 @@ function Hero() {
             <Button asChild size="lg" variant="secondary" className="bg-white text-brand hover:bg-white/90">
               <Link to="/study-system">تعرف على نظام الدراسة</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white/40 text-white hover:bg-white/10 hover:text-white">
+            <Button asChild size="lg" variant="outline" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-brand">
               <Link to="/admissions">شروط الالتحاق</Link>
             </Button>
           </div>

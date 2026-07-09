@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,14 +16,38 @@ import {
   type Registration, type RegistrationStatus,
 } from "@/lib/registrations-store";
 import { NEWS, VISIT_DAYS, VISIT_SLOTS } from "@/lib/site-data";
+import { isAdminAuthed, logoutAdmin } from "@/lib/admin-auth";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [{ title: "لوحة التحكم — مدرسة مدحت السويدي" }, { name: "robots", content: "noindex" }],
   }),
-  component: AdminPage,
+  component: AdminGate,
 });
+
+function AdminGate() {
+  const navigate = useNavigate();
+  const [ready, setReady] = useState(false);
+  const [ok, setOk] = useState(false);
+  useEffect(() => {
+    const authed = isAdminAuthed();
+    if (!authed) {
+      navigate({ to: "/admin-login", replace: true });
+      return;
+    }
+    setOk(true);
+    setReady(true);
+  }, [navigate]);
+  if (!ready || !ok) {
+    return (
+      <div dir="rtl" className="min-h-screen grid place-items-center bg-secondary/40">
+        <div className="text-sm text-muted-foreground">جارٍ التحقق من الصلاحيات...</div>
+      </div>
+    );
+  }
+  return <AdminPage />;
+}
 
 const STATUSES: RegistrationStatus[] = ["جديد", "تم التواصل", "مؤكد", "حضر", "لم يحضر", "ملغي"];
 const STATUS_COLORS: Record<RegistrationStatus, string> = {
@@ -44,10 +68,16 @@ const SECTIONS = [
 ] as const;
 
 function AdminPage() {
+  const navigate = useNavigate();
   const [section, setSection] = useState<(typeof SECTIONS)[number]["id"]>("overview");
   const [regs, setRegs] = useState<Registration[]>([]);
   const refresh = () => setRegs(listRegistrations());
   useEffect(() => { refresh(); }, []);
+  const handleLogout = () => {
+    logoutAdmin();
+    toast.success("تم تسجيل الخروج");
+    navigate({ to: "/admin-login", replace: true });
+  };
 
   const stats = {
     total: regs.length,
@@ -83,7 +113,7 @@ function AdminPage() {
           <Button asChild variant="outline" size="sm" className="w-full bg-white/5 border-white/20 text-white hover:bg-white/10">
             <Link to="/"><Home className="h-4 w-4 ml-1" /> عرض الموقع</Link>
           </Button>
-          <Button size="sm" variant="ghost" className="w-full text-white/70 hover:text-white hover:bg-white/10" onClick={() => toast.info("تسجيل الخروج (عرض)")}>
+          <Button size="sm" variant="ghost" className="w-full text-white/70 hover:text-white hover:bg-white/10" onClick={handleLogout}>
             <LogOut className="h-4 w-4 ml-1" /> تسجيل الخروج
           </Button>
         </div>

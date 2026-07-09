@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, X, LayoutDashboard } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IMG, NAV_LINKS } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
@@ -49,12 +49,6 @@ export function Navbar() {
             <Button asChild size="sm" className="hidden sm:inline-flex bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white">
               <Link to="/visit">سجل الآن</Link>
             </Button>
-            <Button asChild size="sm" variant="outline" className="hidden md:inline-flex">
-              <Link to="/admin">
-                <LayoutDashboard className="ml-1 h-4 w-4" />
-                لوحة التحكم
-              </Link>
-            </Button>
             <button
               className="xl:hidden inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-secondary"
               onClick={() => setOpen((v) => !v)}
@@ -81,13 +75,6 @@ export function Navbar() {
                   {l.label}
                 </Link>
               ))}
-              <Link
-                to="/admin"
-                onClick={() => setOpen(false)}
-                className="px-3 py-2 rounded-md text-sm font-semibold hover:bg-secondary"
-              >
-                لوحة التحكم
-              </Link>
             </nav>
           </div>
         )}
