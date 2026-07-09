@@ -375,9 +375,6 @@ export const saveSyncSettings = createServerFn({ method: "POST" })
       .parse(raw),
   )
   .handler(async ({ context, data }) => {
-    if (data.webhook_url && !/^https:\/\/script\.google(?:usercontent)?\.com\//i.test(data.webhook_url)) {
-      throw new Error("رابط الـ Webhook يجب أن يبدأ بـ https://script.google.com/");
-    }
     const { error } = await context.supabase
       .from("sync_settings")
       .update({
@@ -396,32 +393,30 @@ export const testSheetConnection = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: settings } = await supabaseAdmin
       .from("sync_settings")
-      .select("webhook_url, tab_name")
+      .select("sheet_id, tab_name")
       .eq("id", 1)
       .maybeSingle();
-    const webhook = settings?.webhook_url?.trim();
-    if (!webhook) return { ok: false, error: "لم يتم إعداد رابط الـ Webhook بعد." };
+    const spreadsheetId = settings?.sheet_id?.trim();
+    const tabName = settings?.tab_name?.trim() || "Registrations";
+    if (!spreadsheetId) {
+      return { ok: false, error: "لم يتم إعداد Sheet ID بعد." };
+    }
     try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 15000);
-      const res = await fetch(webhook, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "ping",
-          tab: settings?.tab_name ?? "Registrations",
-          at: new Date().toISOString(),
-        }),
-        signal: controller.signal,
-        redirect: "follow",
-      });
-      clearTimeout(timeout);
+      const url = `${GATEWAY_URL}/spreadsheets/${spreadsheetId}?fields=spreadsheetId,properties.title`;
+      const res = await fetch(url, { headers: sheetsAuthHeaders() });
       if (!res.ok) {
         const text = await res.text().catch(() => "");
         return { ok: false, error: `HTTP ${res.status}: ${text.slice(0, 200)}` };
       }
-      return { ok: true, error: null as string | null };
+      const body = (await res.json()) as { properties?: { title?: string } };
+      return {
+        ok: true,
+        error: null as string | null,
+        title: body.properties?.title ?? "",
+        tab: tabName,
+      };
     } catch (err) {
       return { ok: false, error: (err as Error).message.slice(0, 300) };
     }
   });
+
