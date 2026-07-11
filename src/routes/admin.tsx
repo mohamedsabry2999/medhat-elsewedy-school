@@ -1002,6 +1002,7 @@ function SettingsTab() {
             <SField label="رقم واتساب (رابط كامل)" value={s.whatsapp} onChange={(v) => setS({ ...s, whatsapp: v })} dir="ltr" />
             <SField label="وصف الفوتر" value={s.footerDescription} onChange={(v) => setS({ ...s, footerDescription: v })} textarea />
             <SField label="نص الدعوة الرئيسية" value={s.mainCta} onChange={(v) => setS({ ...s, mainCta: v })} />
+            <SField label="رابط فيديو المدرسة على يوتيوب (تعريفي — يظهر في الصفحة الرئيسية)" value={s.youtubeIntroUrl} onChange={(v) => setS({ ...s, youtubeIntroUrl: v })} dir="ltr" placeholder="https://www.youtube.com/watch?v=..." />
             <div className="grid gap-4 md:grid-cols-3">
               <SField label="فيسبوك" value={s.facebook} onChange={(v) => setS({ ...s, facebook: v })} dir="ltr" />
               <SField label="انستجرام" value={s.instagram} onChange={(v) => setS({ ...s, instagram: v })} dir="ltr" />
