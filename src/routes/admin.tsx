@@ -136,7 +136,7 @@ function AdminPage() {
     <div className="min-h-screen bg-secondary/40 flex" dir="rtl">
       <aside className="w-64 bg-brand text-white shrink-0 hidden md:flex flex-col">
         <div className="p-5 border-b border-white/10 flex items-center gap-3">
-          <img src={require_logo_src()} alt="شعار المدرسة" className="h-12 w-12 shrink-0 object-contain bg-white/95 rounded-lg p-1" />
+          <img src={IMG.logo} alt="شعار المدرسة" className="h-12 w-12 shrink-0 object-contain bg-white/95 rounded-lg p-1" />
           <div className="min-w-0">
             <div className="font-extrabold truncate">لوحة التحكم</div>
             <div className="text-xs text-white/70 truncate">مدرسة مدحت السويدي</div>
