@@ -11,7 +11,7 @@ import { Phone, Mail, MapPin, Clock, MessageCircle, Navigation, Info } from "luc
 import { CONTACT, BRANCHES } from "@/lib/site-data";
 import { useSiteSettings } from "@/lib/settings-store";
 import { useBranches } from "@/lib/branches-store";
-
+import { useContent } from "@/lib/content-store";
 
 import { z } from "zod";
 
@@ -44,6 +44,16 @@ const schema = z.object({
 
 function ContactPage() {
   const settings = useSiteSettings();
+  const eyebrow = useContent("contact.header.eyebrow", "تواصل معنا", { page: "contact", section: "header", label: "Eyebrow" });
+  const title = useContent("contact.header.title", "نحن هنا للإجابة على استفساراتك", { page: "contact", section: "header", label: "عنوان الصفحة" });
+  const branchesEyebrow = useContent("contact.branches.eyebrow", "فروع المدرسة ومواقع الزيارة", { page: "contact", section: "branches", label: "Eyebrow الفروع" });
+  const branchesTitle = useContent("contact.branches.title", "للمدرسة فرعان داخل مدينة العاشر من رمضان", { page: "contact", section: "branches", label: "عنوان الفروع" });
+  const branchesDesc = useContent("contact.branches.desc", "لكل فرع استخدام مختلف — يرجى التأكد من مقر الزيارة المحدد في رسالة التأكيد قبل الحضور.", { page: "contact", section: "branches", label: "وصف الفروع", type: "textarea" });
+  const branchesWarn = useContent("contact.branches.warn", "يرجى التأكد من مقر الزيارة المحدد في رسالة التأكيد قبل الحضور.", { page: "contact", section: "branches", label: "تنبيه الفروع", type: "message" });
+  const formTitle = useContent("contact.form.title", "نموذج التواصل", { page: "contact", section: "form", label: "عنوان النموذج" });
+  const btnSubmit = useContent("contact.form.submit", "إرسال الرسالة", { page: "contact", section: "form", label: "زر إرسال", type: "button" });
+  const btnSending = useContent("contact.form.sending", "جارٍ الإرسال...", { page: "contact", section: "form", label: "زر إرسال (أثناء الإرسال)", type: "button" });
+  const successMsg = useContent("contact.form.success", "تم إرسال رسالتك بنجاح، سنتواصل معك قريباً", { page: "contact", section: "form", label: "رسالة نجاح", type: "message" });
   const dbBranches = useBranches();
   const branches = dbBranches.map((b, i) => {
     const meta = BRANCHES[i] ?? BRANCHES[0];
@@ -66,21 +76,21 @@ function ContactPage() {
     setSending(true);
     setTimeout(() => {
       setSending(false);
-      toast.success("تم إرسال رسالتك بنجاح، سنتواصل معك قريباً");
+      toast.success(successMsg);
       setForm({ name: "", phone: "", subject: "", message: "" });
     }, 400);
   };
 
   return (
     <SiteLayout>
-      <PageHeader eyebrow="تواصل معنا" title="نحن هنا للإجابة على استفساراتك" />
+      <PageHeader eyebrow={eyebrow} title={title} />
 
       <section className="py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10">
-            <div className="text-[var(--accent-red)] font-bold text-sm mb-2">فروع المدرسة ومواقع الزيارة</div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-brand">للمدرسة فرعان داخل مدينة العاشر من رمضان</h2>
-            <p className="mt-3 text-muted-foreground text-sm">لكل فرع استخدام مختلف — يرجى التأكد من مقر الزيارة المحدد في رسالة التأكيد قبل الحضور.</p>
+            <div className="text-[var(--accent-red)] font-bold text-sm mb-2">{branchesEyebrow}</div>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-brand">{branchesTitle}</h2>
+            <p className="mt-3 text-muted-foreground text-sm">{branchesDesc}</p>
           </div>
           <div className="grid gap-5 md:grid-cols-2">
             {branches.map((b) => (
@@ -111,7 +121,7 @@ function ContactPage() {
           </div>
           <div className="mt-6 rounded-lg border bg-secondary/40 p-4 text-sm text-brand flex items-start gap-2">
             <Info className="h-4 w-4 mt-0.5 shrink-0" />
-            <span>يرجى التأكد من مقر الزيارة المحدد في رسالة التأكيد قبل الحضور.</span>
+            <span>{branchesWarn}</span>
           </div>
         </div>
       </section>
@@ -137,7 +147,7 @@ function ContactPage() {
 
           <Card className="lg:col-span-2">
             <CardContent className="p-6 md:p-8">
-              <h2 className="text-xl font-extrabold text-brand mb-4">نموذج التواصل</h2>
+              <h2 className="text-xl font-extrabold text-brand mb-4">{formTitle}</h2>
               <form onSubmit={submit} className="grid gap-4 md:grid-cols-2">
                 <div className="grid gap-2"><Label>الاسم</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
                 <div className="grid gap-2"><Label>رقم الهاتف</Label><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} inputMode="tel" /></div>
@@ -145,7 +155,7 @@ function ContactPage() {
                 <div className="grid gap-2 md:col-span-2"><Label>الرسالة</Label><Textarea rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} /></div>
                 <div className="md:col-span-2 flex justify-end">
                   <Button type="submit" disabled={sending} className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white">
-                    {sending ? "جارٍ الإرسال..." : "إرسال الرسالة"}
+                    {sending ? btnSending : btnSubmit}
                   </Button>
                 </div>
               </form>

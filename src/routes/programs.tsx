@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2, Factory, Briefcase } from "lucide-react";
 import { PROGRAMS } from "@/lib/site-data";
 import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
+import { useContent } from "@/lib/content-store";
 
 export const Route = createFileRoute("/programs")({
   loader: cmsLoader("programs"),
@@ -26,9 +27,13 @@ export const Route = createFileRoute("/programs")({
 
 
 function ProgramsPage() {
+  const eyebrow = useContent("programs.header.eyebrow", "التخصصات", { page: "programs", section: "header", label: "Eyebrow" });
+  const title = useContent("programs.header.title", "مسارات دراسية عملية", { page: "programs", section: "header", label: "عنوان الصفحة" });
+  const subtitle = useContent("programs.header.subtitle", "تخصصات مصممة وفق احتياجات سوق العمل في صناعة الطباعة والتغليف.", { page: "programs", section: "header", label: "Subtitle", type: "textarea" });
+  const ctaText = useContent("programs.cta.apply", "تعرف على شروط التقديم", { page: "programs", section: "cta", label: "زر شروط التقديم", type: "button" });
   return (
     <SiteLayout>
-      <PageHeader eyebrow="التخصصات" title="مسارات دراسية عملية" subtitle="تخصصات مصممة وفق احتياجات سوق العمل في صناعة الطباعة والتغليف." />
+      <PageHeader eyebrow={eyebrow} title={title} subtitle={subtitle} />
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
           {PROGRAMS.map((p, i) => (
@@ -56,7 +61,7 @@ function ProgramsPage() {
           ))}
           <div className="text-center">
             <Button asChild size="lg" className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white">
-              <Link to="/admissions">تعرف على شروط التقديم</Link>
+              <Link to="/admissions">{ctaText}</Link>
             </Button>
           </div>
         </div>

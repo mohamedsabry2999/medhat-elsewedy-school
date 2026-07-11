@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Wrench, Factory, Globe2, Users, Lightbulb, ClipboardCheck, Briefcase, GraduationCap, BadgeCheck } from "lucide-react";
 import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
+import { useContent } from "@/lib/content-store";
 
 export const Route = createFileRoute("/study-system")({
   loader: cmsLoader("study-system"),
@@ -24,20 +25,19 @@ export const Route = createFileRoute("/study-system")({
 
 
 function StudySystemPage() {
+  const eyebrow = useContent("study-system.header.eyebrow", "نظام الدراسة", { page: "study-system", section: "header", label: "Eyebrow" });
+  const title = useContent("study-system.header.title", "نظام الساعات المعتمدة", { page: "study-system", section: "header", label: "عنوان الصفحة" });
+  const subtitle = useContent("study-system.header.subtitle", "مناهج معتمدة دوليًا وعلى مستوى متقدم في تخصصات الطباعة المختلفة.", { page: "study-system", section: "header", label: "Subtitle", type: "textarea" });
+  const intro = useContent("study-system.intro", "تعمل مدرسة مدحت السويدي للتكنولوجيا التطبيقية بنظام الساعات المعتمدة، وتقدم مناهج معتمدة دوليًا وعلى مستوى متقدم في تخصصات الطباعة المختلفة، بالتعاون مع وزارة التربية والتعليم والتعليم الفني وباعتماد الغرفة الألمانية AHK Cairo.", { page: "study-system", section: "intro", label: "فقرة التقديم", type: "textarea" });
+  const ctaApply = useContent("study-system.cta.apply", "قدم الآن", { page: "study-system", section: "cta", label: "زر قدم الآن", type: "button" });
   return (
     <SiteLayout>
-      <PageHeader
-        eyebrow="نظام الدراسة"
-        title="نظام الساعات المعتمدة"
-        subtitle="مناهج معتمدة دوليًا وعلى مستوى متقدم في تخصصات الطباعة المختلفة."
-      />
+      <PageHeader eyebrow={eyebrow} title={title} subtitle={subtitle} />
 
       <section className="py-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-muted-foreground leading-8">
-            تعمل مدرسة مدحت السويدي للتكنولوجيا التطبيقية بنظام الساعات المعتمدة، وتقدم مناهج معتمدة دوليًا
-            وعلى مستوى متقدم في تخصصات الطباعة المختلفة، بالتعاون مع وزارة التربية والتعليم والتعليم الفني
-            وباعتماد الغرفة الألمانية AHK Cairo.
+            {intro}
           </p>
         </div>
       </section>
@@ -124,7 +124,7 @@ function StudySystemPage() {
 
           <div className="text-center mt-10">
             <Button asChild className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white">
-              <Link to="/admissions">قدم الآن</Link>
+              <Link to="/admissions">{ctaApply}</Link>
             </Button>
           </div>
         </div>

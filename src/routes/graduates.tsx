@@ -7,6 +7,7 @@ import { GraduationCap, Users, Calendar, ArrowLeft } from "lucide-react";
 import { usePublishedBatches } from "@/lib/graduates-store";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { pageSeo } from "@/lib/seo";
+import { useContent } from "@/lib/content-store";
 
 export const Route = createFileRoute("/graduates")({
   head: () =>
@@ -23,12 +24,19 @@ function GraduatesPage() {
   const batches = usePublishedBatches();
   const sorted = [...batches].sort((a, b) => (b.graduation_year ?? 0) - (a.graduation_year ?? 0));
 
+  const eyebrow = useContent("graduates.header.eyebrow", "فخر المدرسة", { page: "graduates", section: "header", label: "Eyebrow" });
+  const title = useContent("graduates.header.title", "دفعات الخريجين", { page: "graduates", section: "header", label: "عنوان الصفحة" });
+  const subtitle = useContent("graduates.header.subtitle", "نعتز بخريجي مدرسة مدحت السويدي للتكنولوجيا التطبيقية، فهم ثمرة رحلة تعليمية وتدريبية تجمع بين المعرفة الفنية والخبرة العملية داخل بيئة صناعية متخصصة.", { page: "graduates", section: "header", label: "Subtitle", type: "textarea" });
+  const emptyTitle = useContent("graduates.empty.title", "قريبًا", { page: "graduates", section: "state", label: "عنوان فارغ" });
+  const emptyDesc = useContent("graduates.empty.desc", "سيتم قريبًا إضافة دفعات الخريجين وصور وفيديوهات حفلات التخرج.", { page: "graduates", section: "state", label: "وصف فارغ", type: "textarea" });
+  const detailsCta = useContent("graduates.card.details", "عرض تفاصيل الدفعة", { page: "graduates", section: "card", label: "زر التفاصيل", type: "button" });
+
   return (
     <SiteLayout>
       <PageHeader
-        eyebrow="فخر المدرسة"
-        title="دفعات الخريجين"
-        subtitle="نعتز بخريجي مدرسة مدحت السويدي للتكنولوجيا التطبيقية، فهم ثمرة رحلة تعليمية وتدريبية تجمع بين المعرفة الفنية والخبرة العملية داخل بيئة صناعية متخصصة."
+        eyebrow={eyebrow}
+        title={title}
+        subtitle={subtitle}
       />
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 md:py-20">
@@ -36,9 +44,9 @@ function GraduatesPage() {
           <Card>
             <CardContent className="p-12 text-center">
               <GraduationCap className="mx-auto h-12 w-12 text-brand/50" />
-              <h2 className="mt-4 text-xl font-extrabold text-brand">قريبًا</h2>
+              <h2 className="mt-4 text-xl font-extrabold text-brand">{emptyTitle}</h2>
               <p className="mt-2 text-muted-foreground">
-                سيتم قريبًا إضافة دفعات الخريجين وصور وفيديوهات حفلات التخرج.
+                {emptyDesc}
               </p>
             </CardContent>
           </Card>
@@ -90,7 +98,7 @@ function GraduatesPage() {
                   <div className="mt-auto pt-4">
                     <Button asChild variant="outline" size="sm" className="w-full">
                       <Link to="/graduates/$slug" params={{ slug: b.slug }}>
-                        عرض تفاصيل الدفعة
+                        {detailsCta}
                         <ArrowLeft className="h-4 w-4 mr-1" />
                       </Link>
                     </Button>

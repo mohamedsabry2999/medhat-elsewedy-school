@@ -5,6 +5,7 @@ import { Eye, Flag, Target, Factory, GraduationCap, Handshake, BadgeCheck } from
 import { IMG, CERTIFICATES } from "@/lib/site-data";
 import { breadcrumbJsonLd } from "@/lib/seo";
 import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
+import { useContent } from "@/lib/content-store";
 
 export const Route = createFileRoute("/about")({
   loader: cmsLoader("about"),
@@ -38,13 +39,15 @@ export const Route = createFileRoute("/about")({
 
 
 function AboutPage() {
+  const eyebrow = useContent("about.header.eyebrow", "عن المدرسة", { page: "about", section: "header", label: "Eyebrow — عن المدرسة" });
+  const title = useContent("about.header.title", "نشأة المدرسة ونبذة عنها", { page: "about", section: "header", label: "عنوان الصفحة" });
+  const subtitle = useContent("about.header.subtitle", "أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر.", { page: "about", section: "header", label: "Subtitle", type: "textarea" });
+  const certsEyebrow = useContent("about.certs.eyebrow", "الشهادات والاعتمادات", { page: "about", section: "certs", label: "Eyebrow الشهادات" });
+  const certsTitle = useContent("about.certs.title", "شهادات معتمدة تفتح أبواب المستقبل", { page: "about", section: "certs", label: "عنوان الشهادات" });
+  const certsDesc = useContent("about.certs.desc", "تعتمد المدرسة على مناهج معتمدة دوليًا، مع إبراز اعتماد الغرفة الألمانية AHK Cairo ضمن عناصر الثقة والاعتماد المهني للمدرسة.", { page: "about", section: "certs", label: "وصف الشهادات", type: "textarea" });
   return (
     <SiteLayout>
-      <PageHeader
-        eyebrow="عن المدرسة"
-        title="نشأة المدرسة ونبذة عنها"
-        subtitle="أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر."
-      />
+      <PageHeader eyebrow={eyebrow} title={title} subtitle={subtitle} />
 
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-10 items-start">
@@ -114,10 +117,10 @@ function AboutPage() {
       <section className="py-16 bg-secondary/60">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10">
-            <div className="text-[var(--accent-red)] font-bold text-sm mb-2">الشهادات والاعتمادات</div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-brand">شهادات معتمدة تفتح أبواب المستقبل</h2>
+            <div className="text-[var(--accent-red)] font-bold text-sm mb-2">{certsEyebrow}</div>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-brand">{certsTitle}</h2>
             <p className="mt-3 text-muted-foreground leading-8">
-              تعتمد المدرسة على مناهج معتمدة دوليًا، مع إبراز اعتماد الغرفة الألمانية AHK Cairo ضمن عناصر الثقة والاعتماد المهني للمدرسة.
+              {certsDesc}
             </p>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
