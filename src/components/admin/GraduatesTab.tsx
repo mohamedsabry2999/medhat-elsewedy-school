@@ -28,6 +28,7 @@ import {
 import { toYouTubeEmbed } from "@/lib/youtube";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { FileUploader } from "@/components/admin/FileUploader";
+import { MultiFileUploader } from "@/components/admin/MultiFileUploader";
 
 const STATUS_OPTIONS: BatchStatus[] = ["منشورة", "مسودة", "مخفية"];
 
@@ -375,32 +376,9 @@ function MediaImagesEditor({ batchId, images }: { batchId: string; images: Gradu
     <div className="space-y-4">
       <Card>
         <CardContent className="p-4 space-y-3">
-          <Label>مصدر الصورة</Label>
-          <Tabs defaultValue="upload">
-            <TabsList>
-              <TabsTrigger value="upload">رفع من الجهاز</TabsTrigger>
-              <TabsTrigger value="url">رابط خارجي</TabsTrigger>
-            </TabsList>
-            <TabsContent value="upload" className="pt-3">
-              <FileUploader
-                kind="image"
-                folder={`graduates/${batchId}/images`}
-                currentUrl={url || undefined}
-                onUploaded={(u) => setUrl(u)}
-                onClear={() => setUrl("")}
-              />
-            </TabsContent>
-            <TabsContent value="url" className="pt-3">
-              <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." />
-            </TabsContent>
-          </Tabs>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <Label>Alt Text</Label>
-              <Input value={alt} onChange={(e) => setAlt(e.target.value)} />
-            </div>
-            <div>
-              <Label>التصنيف</Label>
+              <Label>التصنيف (يُطبَّق على الرفع المتعدد)</Label>
               <Select value={cat} onValueChange={setCat}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -408,12 +386,43 @@ function MediaImagesEditor({ batchId, images }: { batchId: string; images: Gradu
                 </SelectContent>
               </Select>
             </div>
+            <div>
+              <Label>Alt Text افتراضي (اختياري)</Label>
+              <Input value={alt} onChange={(e) => setAlt(e.target.value)} placeholder="يُستخدم لكل صور الرفع المتعدد" />
+            </div>
           </div>
-          <Button onClick={add} className="bg-brand hover:bg-brand/90 text-white">
-            <ImagePlus className="h-4 w-4 ml-1" /> إضافة صورة
-          </Button>
+
+          <Label>رفع متعدد (حتى 20 صورة دفعة واحدة)</Label>
+          <MultiFileUploader
+            kind="image"
+            folder={`graduates/${batchId}/images`}
+            maxFiles={20}
+            onUploaded={async ({ url, name }) => {
+              await createMedia({
+                batch_id: batchId,
+                media_type: "image",
+                image_url: url,
+                alt_text: alt.trim() || name.replace(/\.[^.]+$/, ""),
+                category: cat,
+                sort_order: images.length,
+              });
+            }}
+          />
+
+          <details className="pt-2">
+            <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
+              أو إضافة صورة واحدة عبر رابط خارجي
+            </summary>
+            <div className="mt-3 space-y-3">
+              <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." />
+              <Button onClick={add} className="bg-brand hover:bg-brand/90 text-white">
+                <ImagePlus className="h-4 w-4 ml-1" /> إضافة صورة
+              </Button>
+            </div>
+          </details>
         </CardContent>
       </Card>
+
 
       {images.length === 0 ? (
         <div className="text-center text-muted-foreground py-6">لا توجد صور بعد.</div>
