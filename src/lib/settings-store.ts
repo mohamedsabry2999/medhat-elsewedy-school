@@ -125,6 +125,9 @@ export function saveSettings(s: SiteSettings) {
     footer_description: s.footerDescription ?? DEFAULT_SETTINGS.footerDescription,
     main_cta: s.mainCta ?? DEFAULT_SETTINGS.mainCta,
     youtube_intro_url: s.youtubeIntroUrl ?? "",
+    youtube_intro_title: s.youtubeIntroTitle ?? DEFAULT_YOUTUBE_INTRO_TITLE,
+    youtube_intro_description: s.youtubeIntroDescription ?? DEFAULT_YOUTUBE_INTRO_DESCRIPTION,
+    youtube_intro_enabled: s.youtubeIntroEnabled,
   }).eq("id", 1).then(({ error }) => {
     if (error) console.error("saveSettings", error);
   });
