@@ -13,6 +13,7 @@ import { CheckCircle2, Info } from "lucide-react";
 import { submitRegistration } from "@/lib/registrations.functions";
 import { VISIT_SLOTS, BRANCHES } from "@/lib/site-data";
 import { z } from "zod";
+import { useContent } from "@/lib/content-store";
 
 import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 
@@ -79,6 +80,17 @@ function VisitPage() {
   const submitFn = useServerFn(submitRegistration);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<null | { code: string; date: string; day: string; slot: string }>(null);
+  const eyebrow = useContent("visit.header.eyebrow", "الندوات التعريفية", { page: "visit", section: "header", label: "Eyebrow" });
+  const title = useContent("visit.header.title", "سجل حضور الندوة", { page: "visit", section: "header", label: "عنوان الصفحة" });
+  const subtitle = useContent("visit.header.subtitle", "الحد الأدنى الحالي لحضور الندوات التعريفية: 190 درجة.", { page: "visit", section: "header", label: "Subtitle", type: "textarea" });
+  const infoLine = useContent("visit.info.line", "أيام الزيارة المتاحة: السبت، الإثنين، الأربعاء. الفترات: من 9:00 إلى 11:00 صباحًا، أو من 11:30 إلى 1:30 ظهرًا.", { page: "visit", section: "info", label: "معلومات المواعيد", type: "textarea" });
+  const infoWarn = useContent("visit.info.warn", "يرجى التأكد من مقر الزيارة المحدد في رسالة التأكيد قبل الحضور.", { page: "visit", section: "info", label: "تنبيه المقر", type: "message" });
+  const successToast = useContent("visit.form.success", "تم تسجيل بياناتكم بنجاح، ونتشرف بزيارتكم في الموعد المحدد.", { page: "visit", section: "form", label: "رسالة نجاح", type: "message" });
+  const errorToast = useContent("visit.form.error", "تعذر إرسال التسجيل، يرجى المحاولة لاحقًا.", { page: "visit", section: "form", label: "رسالة خطأ", type: "message" });
+  const successTitle = useContent("visit.success.title", "تم تسجيل بياناتكم بنجاح", { page: "visit", section: "success", label: "عنوان النجاح" });
+  const successNote = useContent("visit.success.note", "ونتشرف بزيارتكم في الموعد المحدد.", { page: "visit", section: "success", label: "ملاحظة النجاح" });
+  const btnSubmit = useContent("visit.form.submit", "تأكيد التسجيل", { page: "visit", section: "form", label: "زر التأكيد", type: "button" });
+  const btnSubmitting = useContent("visit.form.submitting", "جارٍ التسجيل...", { page: "visit", section: "form", label: "زر التأكيد (أثناء الإرسال)", type: "button" });
   const [form, setForm] = useState({
     studentName: "", nationalId: "", guardianPhone: "", whatsapp: "",
     governorate: "", eduDept: "", score: "", attendees: 1,
@@ -97,11 +109,11 @@ function VisitPage() {
     try {
       const rec = await submitFn({ data: { ...parsed.data, notes: parsed.data.notes ?? "" } });
       setDone({ code: rec.registration_code, date: rec.visit_date, day: rec.visit_day, slot: rec.time_slot });
-      toast.success("تم تسجيل بياناتكم بنجاح، ونتشرف بزيارتكم في الموعد المحدد.");
+      toast.success(successToast);
       setForm({ studentName: "", nationalId: "", guardianPhone: "", whatsapp: "", governorate: "", eduDept: "", score: "", attendees: 1, visitDay: "", timeSlot: "", visitDate: "", visitLocation: "", notes: "" });
     } catch (err) {
       console.error(err);
-      toast.error("تعذر إرسال التسجيل، يرجى المحاولة لاحقًا.");
+      toast.error(errorToast);
     } finally {
       setSubmitting(false);
     }
