@@ -16,6 +16,7 @@ export type SiteSettings = {
   whatsapp: string;
   footerDescription: string;
   mainCta: string;
+  youtubeIntroUrl: string;
 };
 
 export const DEFAULT_SETTINGS: SiteSettings = {
@@ -31,6 +32,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   footerDescription:
     "مدرسة مدحت السويدي للتكنولوجيا التطبيقية — تعليم فني متخصص في تكنولوجيا الطباعة، بالشراكة مع دار مدحت السويدي للطباعة وباعتماد الغرفة الألمانية AHK Cairo.",
   mainCta: "سجل الآن لحضور الندوة التعريفية",
+  youtubeIntroUrl: "",
 };
 
 type DBRow = {
