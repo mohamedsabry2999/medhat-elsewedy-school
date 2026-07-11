@@ -375,11 +375,26 @@ function MediaImagesEditor({ batchId, images }: { batchId: string; images: Gradu
     <div className="space-y-4">
       <Card>
         <CardContent className="p-4 space-y-3">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="sm:col-span-2">
-              <Label>رابط الصورة</Label>
+          <Label>مصدر الصورة</Label>
+          <Tabs defaultValue="upload">
+            <TabsList>
+              <TabsTrigger value="upload">رفع من الجهاز</TabsTrigger>
+              <TabsTrigger value="url">رابط خارجي</TabsTrigger>
+            </TabsList>
+            <TabsContent value="upload" className="pt-3">
+              <FileUploader
+                kind="image"
+                folder={`graduates/${batchId}/images`}
+                currentUrl={url || undefined}
+                onUploaded={(u) => setUrl(u)}
+                onClear={() => setUrl("")}
+              />
+            </TabsContent>
+            <TabsContent value="url" className="pt-3">
               <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." />
-            </div>
+            </TabsContent>
+          </Tabs>
+          <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <Label>Alt Text</Label>
               <Input value={alt} onChange={(e) => setAlt(e.target.value)} />
