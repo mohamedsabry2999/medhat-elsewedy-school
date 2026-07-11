@@ -4,6 +4,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { FAQS } from "@/lib/site-data";
 import { faqJsonLd } from "@/lib/seo";
 import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
+import { useContent } from "@/lib/content-store";
 
 export const Route = createFileRoute("/faq")({
   loader: cmsLoader("faq"),
@@ -29,9 +30,11 @@ export const Route = createFileRoute("/faq")({
 
 
 function FaqPage() {
+  const eyebrow = useContent("faq.header.eyebrow", "الأسئلة الشائعة", { page: "faq", section: "header", label: "Eyebrow" });
+  const title = useContent("faq.header.title", "إجابات على أهم أسئلتكم", { page: "faq", section: "header", label: "عنوان الصفحة" });
   return (
     <SiteLayout>
-      <PageHeader eyebrow="الأسئلة الشائعة" title="إجابات على أهم أسئلتكم" />
+      <PageHeader eyebrow={eyebrow} title={title} />
       <section className="py-12">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <Accordion type="single" collapsible className="bg-white rounded-2xl px-4 border">

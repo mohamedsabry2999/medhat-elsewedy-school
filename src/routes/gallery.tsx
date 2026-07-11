@@ -6,6 +6,7 @@ import { usePublishedGallery } from "@/lib/gallery-store";
 import { GALLERY_CATEGORIES } from "@/lib/site-data";
 import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 import { SmartImage, type SmartImageType } from "@/components/ui/SmartImage";
+import { useContent } from "@/lib/content-store";
 
 
 export const Route = createFileRoute("/gallery")({
@@ -33,9 +34,12 @@ function GalleryPage() {
     () => (cat === "الكل" ? all : all.filter((g) => g.category === cat)),
     [all, cat],
   );
+  const eyebrow = useContent("gallery.header.eyebrow", "معرض الصور", { page: "gallery", section: "header", label: "Eyebrow" });
+  const title = useContent("gallery.header.title", "لحظات من داخل المدرسة", { page: "gallery", section: "header", label: "عنوان الصفحة" });
+  const empty = useContent("gallery.empty", "لا توجد صور في هذا التصنيف حالياً.", { page: "gallery", section: "state", label: "رسالة فارغة", type: "message" });
   return (
     <SiteLayout>
-      <PageHeader eyebrow="معرض الصور" title="لحظات من داخل المدرسة" />
+      <PageHeader eyebrow={eyebrow} title={title} />
       <section className="py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap gap-2 mb-8">
@@ -64,7 +68,7 @@ function GalleryPage() {
 
             ))}
           </div>
-          {list.length === 0 && <div className="text-center py-16 text-muted-foreground">لا توجد صور في هذا التصنيف حالياً.</div>}
+          {list.length === 0 && <div className="text-center py-16 text-muted-foreground">{empty}</div>}
         </div>
       </section>
     </SiteLayout>
