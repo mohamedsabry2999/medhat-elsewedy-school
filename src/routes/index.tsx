@@ -42,13 +42,16 @@ function Home() {
       <Hero />
       <TrustBadges />
       <QuickStats />
+      <YoutubeIntro />
       <AccreditationSection />
       <PartnersStrip />
       <WhySection />
       <StudySystem />
       <ProgramsSection />
+      <GlobalOpportunities />
       <BenefitsSection />
       <GraduatesFuture />
+      <EducationPaths />
       <CertificatesSection />
       <AdmissionSteps />
       <SeminarCTA />
@@ -56,6 +59,108 @@ function Home() {
       <GalleryTeaser />
       <FaqSection />
     </SiteLayout>
+  );
+}
+
+function YoutubeIntro() {
+  const s = useSiteSettings();
+  const embed = toYouTubeEmbed(s.youtubeIntroUrl);
+  if (!embed) return null;
+  return (
+    <section className="py-16 bg-white">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-2xl mx-auto mb-8">
+          <div className="inline-flex items-center gap-2 text-[var(--accent-red)] font-bold text-sm mb-2">
+            <PlayCircle className="h-4 w-4" /> فيديو تعريفي
+          </div>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-brand">تعرف على المدرسة عن قرب</h2>
+          <p className="mt-3 text-muted-foreground leading-8">
+            شاهد نبذة عن مدرسة مدحت السويدي للتكنولوجيا التطبيقية، ونظام الدراسة، والتدريب العملي، والفرص التي يحصل عليها الطلاب داخل بيئة تعليمية وصناعية متخصصة.
+          </p>
+        </div>
+        <div className="relative rounded-3xl overflow-hidden shadow-2xl ring-1 ring-brand/10 bg-black">
+          <div className="relative w-full" style={{ aspectRatio: "16 / 9" }}>
+            <iframe
+              src={embed}
+              title="فيديو تعريفي عن مدرسة مدحت السويدي للتكنولوجيا التطبيقية"
+              className="absolute inset-0 h-full w-full"
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function GlobalOpportunities() {
+  const items = [
+    { icon: Briefcase, t: "سوق العمل المحلي", d: "تأهيل الطلاب للعمل داخل المطابع وشركات التغليف والصناعات المرتبطة بالطباعة داخل مصر." },
+    { icon: Globe2, t: "فرص إقليمية ودولية", d: "اعتماد الغرفة الألمانية AHK Cairo والمناهج المتخصصة يدعمان قدرة الطالب على المنافسة في أسواق عمل أوسع." },
+    { icon: Factory, t: "خبرة عملية حقيقية", d: "تدريب ميداني داخل دار مدحت السويدي للطباعة لاكتساب مهارات واقعية داخل بيئة إنتاج فعلية." },
+    { icon: TrendingUp, t: "مسار مهني واضح", d: "مساعدة الطالب على فهم متطلبات الصناعة وبناء مستقبل مهني قائم على المهارة والخبرة." },
+  ];
+  return (
+    <section className="py-20 bg-white">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <SectionTitle
+          eyebrow="آفاق مهنية"
+          title="آفاق مهنية محلية وعالمية"
+          subtitle="لا يقتصر دور المدرسة على التعليم داخل الفصول، بل يمتد إلى إعداد الطالب لسوق العمل الحقيقي من خلال تدريب عملي ومناهج متخصصة واعتماد مهني يعزز جاهزيته للمنافسة محليًا وإقليميًا ودوليًا."
+        />
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {items.map((it) => (
+            <div key={it.t} className="group relative bg-gradient-to-br from-white to-secondary/40 rounded-2xl border border-brand/10 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-brand to-[var(--accent-red)] rounded-t-2xl" />
+              <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-brand to-[color-mix(in_oklab,var(--brand)_70%,black)] text-white grid place-items-center mb-4 shadow-md">
+                <it.icon className="h-7 w-7" strokeWidth={1.75} />
+              </div>
+              <h3 className="font-extrabold text-brand text-base leading-6">{it.t}</h3>
+              <p className="mt-2 text-sm text-muted-foreground leading-7">{it.d}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-center mt-8 text-xs text-muted-foreground max-w-3xl mx-auto leading-7">
+          * صياغة رسمية: المدرسة تؤهل الطلاب وتدعم فرصهم للمنافسة، وفرص العمل النهائية تخضع لمتطلبات كل جهة عمل ومتطلبات السوق المستهدف.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function EducationPaths() {
+  const items = [
+    { icon: Building2, t: "الجامعات التكنولوجية", d: "يمكن للخريج استكمال الدراسة في الجامعات التكنولوجية المرتبطة بمجاله وتخصصه وفقًا لقواعد القبول المنظمة." },
+    { icon: School, t: "كليات التعليم الصناعي", d: "تتيح شهادة الطالب فرصًا لاستكمال الدراسة في كليات التعليم الصناعي وفقًا لشروط القبول المعلنة." },
+    { icon: Wrench, t: "الكليات الهندسية للطلاب المتميزين", d: "يمكن للطلاب المتميزين التقدم للكليات الهندسية بعد اجتياز المعادلة المطلوبة ووفقًا لشروط وزارة التعليم العالي والجهات المختصة." },
+    { icon: GraduationCap, t: "المعاهد والكليات الحكومية والخاصة", d: "تتوفر أمام الخريج مسارات متعددة في عدد من المعاهد والكليات الحكومية والخاصة حسب شروط التنسيق والقبول." },
+  ];
+  return (
+    <section className="py-20 bg-secondary/50">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <SectionTitle
+          eyebrow="ما بعد التخرج"
+          title="المسارات التعليمية بعد التخرج"
+          subtitle="بعد التخرج من مدرسة مدحت السويدي للتكنولوجيا التطبيقية، يمكن للطالب استكمال مساره التعليمي من خلال عدد من الجامعات التكنولوجية والكليات والمعاهد الحكومية والخاصة وفقًا للقواعد المنظمة للقبول، كما يمكن للطلاب المتميزين الالتحاق بالكليات الهندسية بعد اجتياز المعادلة المطلوبة طبقًا لشروط الجهات المختصة."
+        />
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {items.map((it) => (
+            <Card key={it.t} className="border-brand/10 hover:border-[var(--accent-red)]/40 transition-colors h-full">
+              <CardContent className="p-6">
+                <div className="h-12 w-12 rounded-xl bg-[var(--accent-red)]/10 text-[var(--accent-red)] grid place-items-center mb-4">
+                  <it.icon className="h-6 w-6" />
+                </div>
+                <h3 className="font-extrabold text-brand text-sm leading-6">{it.t}</h3>
+                <p className="mt-2 text-xs text-muted-foreground leading-7">{it.d}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
