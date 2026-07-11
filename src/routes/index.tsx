@@ -16,6 +16,7 @@ import { useMediaByPosition } from "@/lib/media-store";
 import { useSiteSettings } from "@/lib/settings-store";
 import { toYouTubeEmbed } from "@/lib/youtube";
 import { SmartImage } from "@/components/ui/SmartImage";
+import { MobileHeroSlider, type HeroSlide } from "@/components/site/MobileHeroSlider";
 
 import ahkLogo from "@/assets/ahk-cairo.png.asset.json";
 import moeLogo from "@/assets/moe-egypt.png.asset.json";
