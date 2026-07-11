@@ -17,6 +17,7 @@ import { useSiteSettings } from "@/lib/settings-store";
 import { toYouTubeEmbed } from "@/lib/youtube";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { MobileHeroSlider, type HeroSlide } from "@/components/site/MobileHeroSlider";
+import { usePageSections, useSection } from "@/lib/page-sections-store";
 
 import ahkLogo from "@/assets/ahk-cairo.png.asset.json";
 import moeLogo from "@/assets/moe-egypt.png.asset.json";
@@ -38,27 +39,32 @@ export const Route = createFileRoute("/")({
 
 
 function Home() {
+  const sections = usePageSections("home");
+  const isVisible = (key: string) => {
+    const s = sections.find((x) => x.section_key === key);
+    return s ? s.is_visible : true;
+  };
   return (
     <SiteLayout>
-      <Hero />
-      <TrustBadges />
-      <QuickStats />
-      <YoutubeIntro />
-      <AccreditationSection />
-      <PartnersStrip />
-      <WhySection />
-      <StudySystem />
-      <ProgramsSection />
-      <GlobalOpportunities />
-      <BenefitsSection />
-      <GraduatesFuture />
-      <EducationPaths />
-      <CertificatesSection />
-      <AdmissionSteps />
-      <SeminarCTA />
-      <NewsSection />
-      <GalleryTeaser />
-      <FaqSection />
+      {isVisible("hero") && <Hero />}
+      {isVisible("trust-badges") && <TrustBadges />}
+      {isVisible("quick-stats") && <QuickStats />}
+      {isVisible("video-intro") && <YoutubeIntro />}
+      {isVisible("accreditation") && <AccreditationSection />}
+      {isVisible("partners") && <PartnersStrip />}
+      {isVisible("why-us") && <WhySection />}
+      {isVisible("study-system") && <StudySystem />}
+      {isVisible("programs") && <ProgramsSection />}
+      {isVisible("career-horizons") && <GlobalOpportunities />}
+      {isVisible("student-features") && <BenefitsSection />}
+      {isVisible("graduates-future") && <GraduatesFuture />}
+      {isVisible("education-paths") && <EducationPaths />}
+      {isVisible("certificates") && <CertificatesSection />}
+      {isVisible("admission-steps") && <AdmissionSteps />}
+      {isVisible("seminar-cta") && <SeminarCTA />}
+      {isVisible("latest-news") && <NewsSection />}
+      {isVisible("gallery-preview") && <GalleryTeaser />}
+      {isVisible("faq-preview") && <FaqSection />}
     </SiteLayout>
   );
 }
@@ -164,6 +170,7 @@ function EducationPaths() {
 }
 
 function Hero() {
+  const cms = useSection("home", "hero");
   const heroMain = useMediaByPosition("Hero Main Image");
   const heroSide = useMediaByPosition("Hero Side Image");
   const mainImg = heroMain[0]?.imageUrl ?? IMG.hero1;
@@ -175,8 +182,6 @@ function Hero() {
     { src: heroSide[3]?.imageUrl ?? IMG.students[3], focalX: heroSide[3]?.focalX ?? 50, focalY: heroSide[3]?.focalY ?? 22, alt: "طالبة" },
   ];
 
-  // Build the mobile slider list — prefer CMS media, fall back to bundled student photos.
-  // Priority: Hero Side images (4) → Hero Main image → local student portraits.
   const cmsSlides: HeroSlide[] = heroSide.slice(0, 4).map((m, i) => ({
     src: m.imageUrl,
     alt: m.altText || `طالب ${i + 1}`,
@@ -206,6 +211,23 @@ function Hero() {
             ]
           : fallbackSlides;
 
+  // CMS overrides — fall back to originals when not set
+  const badge = cms?.data_json?.badge || "وزارة التربية والتعليم والتعليم الفني — رؤية مصر 2030";
+  const titleMain = cms?.title || "مدرسة مدحت السويدي";
+  const titleHighlight = cms?.data_json?.titleHighlight || "للتكنولوجيا التطبيقية";
+  const subtitle =
+    cms?.subtitle ||
+    "أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر، تأسست في ضوء رؤية مصر 2030 لتطوير التعليم الفني وربط الدراسة باحتياجات سوق العمل.";
+  const contentHtml =
+    cms?.content ||
+    "<p>نموذج تعليمي يجمع بين الدراسة النظرية والتدريب العملي داخل بيئة صناعية حقيقية، لإعداد جيل من الفنيين المؤهلين والقادرين على المنافسة في سوق الطباعة المحلي والإقليمي والدولي.</p>";
+  const cta1Text = cms?.cta_text || "سجل لحضور الندوة التعريفية";
+  const cta1Url = cms?.cta_url || "/visit";
+  const cta2Text = cms?.cta_text_2 || "تعرف على نظام الدراسة";
+  const cta2Url = cms?.cta_url_2 || "/study-system";
+  const cta3Text = cms?.data_json?.cta3_text || "شروط الالتحاق";
+  const cta3Url = cms?.data_json?.cta3_url || "/admissions";
+
   return (
     <section className="relative overflow-hidden bg-brand text-white">
       <div className="absolute inset-0 opacity-25 bg-cover" style={{ backgroundImage: `url(${mainImg})`, backgroundPosition: mainFocal }} />
@@ -213,27 +235,28 @@ function Hero() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14 md:py-20 lg:py-24 grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
         <div className="min-w-0 order-2 lg:order-1">
           <Badge className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)] text-white border-0 mb-4">
-            وزارة التربية والتعليم والتعليم الفني — رؤية مصر 2030
+            {badge}
           </Badge>
           <h1 className="font-extrabold leading-tight text-[clamp(1.6rem,6.5vw,3rem)]">
-            مدرسة مدحت السويدي <br />
-            <span className="text-[var(--accent-red)]">للتكنولوجيا التطبيقية</span>
+            {titleMain} <br />
+            <span className="text-[var(--accent-red)]">{titleHighlight}</span>
           </h1>
           <p className="mt-5 text-base sm:text-lg text-white/90 max-w-xl leading-8">
-            أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر، تأسست في ضوء رؤية مصر 2030 لتطوير التعليم الفني وربط الدراسة باحتياجات سوق العمل.
+            {subtitle}
           </p>
-          <p className="mt-3 text-white/75 max-w-xl leading-8 text-sm hidden sm:block">
-            نموذج تعليمي يجمع بين الدراسة النظرية والتدريب العملي داخل بيئة صناعية حقيقية، لإعداد جيل من الفنيين المؤهلين والقادرين على المنافسة في سوق الطباعة المحلي والإقليمي والدولي.
-          </p>
+          <div
+            className="mt-3 text-white/75 max-w-xl leading-8 text-sm hidden sm:block prose prose-invert prose-p:my-1 max-w-none"
+            dangerouslySetInnerHTML={{ __html: contentHtml }}
+          />
           <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
             <Button asChild size="lg" className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white w-full sm:w-auto">
-              <Link to="/visit">سجل لحضور الندوة التعريفية</Link>
+              <a href={cta1Url}>{cta1Text}</a>
             </Button>
             <Button asChild size="lg" variant="secondary" className="bg-white text-brand hover:bg-white/90 w-full sm:w-auto">
-              <Link to="/study-system">تعرف على نظام الدراسة</Link>
+              <a href={cta2Url}>{cta2Text}</a>
             </Button>
             <Button asChild size="lg" variant="outline" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-brand w-full sm:w-auto">
-              <Link to="/admissions">شروط الالتحاق</Link>
+              <a href={cta3Url}>{cta3Text}</a>
             </Button>
           </div>
         </div>
