@@ -102,9 +102,9 @@ const NewsSlugRoute = NewsSlugRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const GraduatesSlugRoute = GraduatesSlugRouteImport.update({
-  id: '/graduates/$slug',
-  path: '/graduates/$slug',
-  getParentRoute: () => rootRouteImport,
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => GraduatesRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -232,7 +232,6 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StudySystemRoute: typeof StudySystemRoute
   VisitRoute: typeof VisitRoute
-  GraduatesSlugRoute: typeof GraduatesSlugRoute
   NewsSlugRoute: typeof NewsSlugRoute
   GraduatesIndexRoute: typeof GraduatesIndexRoute
   NewsIndexRoute: typeof NewsIndexRoute
@@ -347,10 +346,10 @@ declare module '@tanstack/react-router' {
     }
     '/graduates/$slug': {
       id: '/graduates/$slug'
-      path: '/graduates/$slug'
+      path: '/$slug'
       fullPath: '/graduates/$slug'
       preLoaderRoute: typeof GraduatesSlugRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof GraduatesRoute
     }
   }
 }
@@ -368,7 +367,6 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StudySystemRoute: StudySystemRoute,
   VisitRoute: VisitRoute,
-  GraduatesSlugRoute: GraduatesSlugRoute,
   NewsSlugRoute: NewsSlugRoute,
   GraduatesIndexRoute: GraduatesIndexRoute,
   NewsIndexRoute: NewsIndexRoute,
@@ -376,3 +374,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
