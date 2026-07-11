@@ -6,6 +6,7 @@ import { IMG, CERTIFICATES } from "@/lib/site-data";
 import { breadcrumbJsonLd } from "@/lib/seo";
 import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 import { useContent } from "@/lib/content-store";
+import { SchoolName } from "@/components/site/SchoolName";
 
 export const Route = createFileRoute("/about")({
   loader: cmsLoader("about"),
@@ -54,7 +55,7 @@ function AboutPage() {
           <div>
             <h2 className="text-2xl font-extrabold text-brand">نشأة المدرسة</h2>
             <p className="mt-4 text-muted-foreground leading-8">
-              تم تأسيس مدرسة مدحت السويدي للتكنولوجيا التطبيقية على يد المهندس مدحت حافظ السويدي،
+              تم تأسيس <SchoolName /> على يد المهندس مدحت حافظ السويدي،
               رئيس مجلس إدارة دار مدحت السويدي للطباعة، عام 2022 - 2023، في ضوء رؤية مصر 2030 لتطوير
               منظومة التعليم الفني والتدريب المهني.
             </p>
@@ -68,7 +69,7 @@ function AboutPage() {
               الطباعة محليًا وإقليميًا ودوليًا، من خلال تنمية مهارات الطلاب وإكسابهم الخبرة العملية اللازمة.
             </p>
             <p className="mt-4 text-muted-foreground leading-8">
-              تسعى مدرسة مدحت السويدي للتكنولوجيا التطبيقية إلى إعداد خريج مؤهل يمتلك المهارات الفنية والعملية المطلوبة داخل سوق العمل المحلي والإقليمي والدولي، بما يمنحه فرصة أقوى للمنافسة في مجالات الطباعة والصناعات المرتبطة بها.
+              تسعى <SchoolName /> إلى إعداد خريج مؤهل يمتلك المهارات الفنية والعملية المطلوبة داخل سوق العمل المحلي والإقليمي والدولي، بما يمنحه فرصة أقوى للمنافسة في مجالات الطباعة والصناعات المرتبطة بها.
             </p>
             <p className="mt-4 text-muted-foreground leading-8">
               وبفضل المناهج المتخصصة، والتدريب العملي داخل بيئة صناعية حقيقية، واعتماد الغرفة الألمانية AHK Cairo، يحصل الطالب على تأهيل مهني يدعم فرصه المستقبلية ويعزز قدرته على الالتحاق بفرص عمل داخل مصر وخارجها وفقًا لمتطلبات سوق العمل.

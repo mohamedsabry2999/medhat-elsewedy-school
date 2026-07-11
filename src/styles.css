@@ -133,3 +133,34 @@ div[class*="lovable"][class*="badge"] {
   height: 0 !important;
   overflow: hidden !important;
 }
+
+/* Unified highlight style for the official school name.
+   Applied wherever "مدرسة مدحت السويدي للتكنولوجيا التطبيقية" appears
+   in public-facing UI. Never applied inside SEO meta / alt attributes. */
+.school-name-hl {
+  font-family: "Readex Pro", "Cairo", "Tajawal", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  background-image: linear-gradient(120deg, #0B1F4D 0%, #123F8A 45%, #E30613 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  padding-inline: 0.05em;
+  white-space: nowrap;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+/* When the surrounding text is white (dark hero / brand backgrounds),
+   swap to a lighter gradient so the name stays readable and premium. */
+.on-brand .school-name-hl,
+.bg-brand .school-name-hl,
+[class*="bg-brand"] .school-name-hl {
+  background-image: linear-gradient(120deg, #FFFFFF 0%, #F6D365 55%, #E30613 100%);
+}
+
+@media (max-width: 640px) {
+  .school-name-hl {
+    white-space: normal;
+  }
+}

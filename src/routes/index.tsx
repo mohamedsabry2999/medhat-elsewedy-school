@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { SchoolName, hl } from "@/components/site/SchoolName";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -355,8 +356,8 @@ function SectionTitle({ eyebrow, title, subtitle }: { eyebrow?: string; title: s
   return (
     <div className="text-center max-w-2xl mx-auto mb-10">
       {eyebrow && <div className="text-[var(--accent-red)] font-bold text-sm mb-2">{eyebrow}</div>}
-      <h2 className="text-2xl md:text-4xl font-extrabold text-brand">{title}</h2>
-      {subtitle && <p className="mt-3 text-muted-foreground leading-8">{subtitle}</p>}
+      <h2 className="text-2xl md:text-4xl font-extrabold text-brand">{hl(title)}</h2>
+      {subtitle && <p className="mt-3 text-muted-foreground leading-8">{hl(subtitle)}</p>}
     </div>
   );
 }
@@ -580,10 +581,10 @@ function GraduatesFuture() {
             <Sparkles className="h-4 w-4" /> مستقبل الخريجين
           </div>
           <h2 className="text-3xl md:text-5xl font-extrabold leading-tight">
-            فرص ومستقبل خريجي <span className="text-[var(--accent-red)]">مدرسة مدحت السويدي</span>
+            فرص ومستقبل خريجي <span className="school-name-hl">مدرسة مدحت السويدي</span>
           </h2>
           <p className="mt-4 text-white/80 leading-8">
-            بعد تخرج الطلاب من مدرسة مدحت السويدي للتكنولوجيا التطبيقية، تتوفر أمامهم عدة مسارات مهنية وأكاديمية تؤهلهم لبناء مستقبل قوي في مجالات الطباعة والصناعات المرتبطة بها.
+            بعد تخرج الطلاب من <SchoolName />، تتوفر أمامهم عدة مسارات مهنية وأكاديمية تؤهلهم لبناء مستقبل قوي في مجالات الطباعة والصناعات المرتبطة بها.
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

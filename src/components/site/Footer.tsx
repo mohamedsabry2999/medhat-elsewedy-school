@@ -4,6 +4,7 @@ import { IMG, NAV_LINKS } from "@/lib/site-data";
 import { useSiteSettings } from "@/lib/settings-store";
 import { useBranches } from "@/lib/branches-store";
 import { useContent } from "@/lib/content-store";
+import { hl, SchoolName, SCHOOL_NAME } from "./SchoolName";
 
 export function Footer() {
   const s = useSiteSettings();
@@ -23,7 +24,9 @@ export function Footer() {
           <div className="flex items-center gap-3">
             <img src={IMG.logo} alt="شعار مدرسة مدحت السويدي للتكنولوجيا التطبيقية" className="h-20 w-20 bg-white/95 rounded-xl p-1.5 shrink-0 object-contain" />
             <div>
-              <div className="font-extrabold text-lg">{brandFull}</div>
+              <div className="font-extrabold text-lg">
+                {brandFull === SCHOOL_NAME ? <SchoolName /> : hl(brandFull)}
+              </div>
               <div className="text-white/70 text-xs">{brandEn}</div>
             </div>
           </div>
@@ -70,7 +73,7 @@ export function Footer() {
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 text-xs text-white/60 flex flex-wrap gap-2 justify-between">
-          <span>© {new Date().getFullYear()} {copyright}</span>
+          <span>© {new Date().getFullYear()} {hl(copyright)}</span>
           <span>{ministry}</span>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, Wrench, Factory, Globe2, Users, Lightbulb, ClipboardCheck, Briefcase, GraduationCap, BadgeCheck } from "lucide-react";
 import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 import { useContent } from "@/lib/content-store";
+import { hl } from "@/components/site/SchoolName";
 
 export const Route = createFileRoute("/study-system")({
   loader: cmsLoader("study-system"),
@@ -37,7 +38,7 @@ function StudySystemPage() {
       <section className="py-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-muted-foreground leading-8">
-            {intro}
+            {hl(intro)}
           </p>
         </div>
       </section>

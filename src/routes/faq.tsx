@@ -5,6 +5,7 @@ import { FAQS } from "@/lib/site-data";
 import { faqJsonLd } from "@/lib/seo";
 import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 import { useContent } from "@/lib/content-store";
+import { hl } from "@/components/site/SchoolName";
 
 export const Route = createFileRoute("/faq")({
   loader: cmsLoader("faq"),
@@ -40,8 +41,8 @@ function FaqPage() {
           <Accordion type="single" collapsible className="bg-white rounded-2xl px-4 border">
             {FAQS.map((f, i) => (
               <AccordionItem key={i} value={`i-${i}`}>
-                <AccordionTrigger className="text-start font-bold text-brand">{f.q}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-7">{f.a}</AccordionContent>
+                <AccordionTrigger className="text-start font-bold text-brand">{hl(f.q)}</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground leading-7">{hl(f.a)}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
