@@ -49,22 +49,22 @@ function Home() {
       {isVisible("hero") && <Hero />}
       {isVisible("trust-badges") && <TrustBadges />}
       {isVisible("quick-stats") && <QuickStats />}
-      {isVisible("youtube-intro") && <YoutubeIntro />}
+      {isVisible("video-intro") && <YoutubeIntro />}
       {isVisible("accreditation") && <AccreditationSection />}
       {isVisible("partners") && <PartnersStrip />}
       {isVisible("why-us") && <WhySection />}
       {isVisible("study-system") && <StudySystem />}
       {isVisible("programs") && <ProgramsSection />}
-      {isVisible("global-opportunities") && <GlobalOpportunities />}
-      {isVisible("benefits") && <BenefitsSection />}
+      {isVisible("career-horizons") && <GlobalOpportunities />}
+      {isVisible("student-features") && <BenefitsSection />}
       {isVisible("graduates-future") && <GraduatesFuture />}
       {isVisible("education-paths") && <EducationPaths />}
       {isVisible("certificates") && <CertificatesSection />}
       {isVisible("admission-steps") && <AdmissionSteps />}
       {isVisible("seminar-cta") && <SeminarCTA />}
-      {isVisible("news") && <NewsSection />}
-      {isVisible("gallery-teaser") && <GalleryTeaser />}
-      {isVisible("faq") && <FaqSection />}
+      {isVisible("latest-news") && <NewsSection />}
+      {isVisible("gallery-preview") && <GalleryTeaser />}
+      {isVisible("faq-preview") && <FaqSection />}
     </SiteLayout>
   );
 }
