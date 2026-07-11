@@ -98,7 +98,7 @@ function GraduatesPage() {
                   <div className="mt-auto pt-4">
                     <Button asChild variant="outline" size="sm" className="w-full">
                       <Link to="/graduates/$slug" params={{ slug: b.slug }}>
-                        عرض تفاصيل الدفعة
+                        {detailsCta}
                         <ArrowLeft className="h-4 w-4 mr-1" />
                       </Link>
                     </Button>
