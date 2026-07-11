@@ -11,42 +11,45 @@ type SeoDefaults = {
   noindex?: boolean;
 };
 
-export function cmsRouteExtras(slug: string, defaults: SeoDefaults) {
+type ScriptEntry = { type: string; children: string };
+
+export function buildCmsHead(
+  defaults: SeoDefaults,
+  loaderData: PageMetaDTO | undefined,
+  extras?: { scripts?: ScriptEntry[] },
+) {
+  const cms = loaderData ?? null;
+  const seo = pageSeo({
+    title: cms?.meta_title || defaults.title,
+    description: cms?.meta_description || defaults.description,
+    path: defaults.path,
+    image: cms?.og_image || defaults.image,
+    ogType: defaults.ogType,
+    noindex: defaults.noindex || (cms?.robots?.includes("noindex") ?? false),
+  });
+  if (cms?.og_title) {
+    seo.meta = seo.meta.map((m) =>
+      m.property === "og:title" || m.name === "twitter:title" ? { ...m, content: cms.og_title } : m,
+    );
+  }
+  if (cms?.og_description) {
+    seo.meta = seo.meta.map((m) =>
+      m.property === "og:description" || m.name === "twitter:description"
+        ? { ...m, content: cms.og_description }
+        : m,
+    );
+  }
   return {
-    loader: () => getPageMeta({ data: { slug } }),
-    head: ({ loaderData }: { loaderData: PageMetaDTO | undefined }) => {
-      const cms = loaderData ?? null;
-      const seo = pageSeo({
-        title: cms?.meta_title || defaults.title,
-        description: cms?.meta_description || defaults.description,
-        path: defaults.path,
-        image: cms?.og_image || defaults.image,
-        ogType: defaults.ogType,
-        noindex: defaults.noindex || (cms?.robots?.includes("noindex") ?? false),
-      });
-      // Override OG title/description if CMS provides distinct values
-      if (cms?.og_title) {
-        seo.meta = seo.meta.map((m) =>
-          m.property === "og:title" || m.name === "twitter:title"
-            ? { ...m, content: cms.og_title }
-            : m,
-        );
-      }
-      if (cms?.og_description) {
-        seo.meta = seo.meta.map((m) =>
-          m.property === "og:description" || m.name === "twitter:description"
-            ? { ...m, content: cms.og_description }
-            : m,
-        );
-      }
-      return seo;
-    },
-    errorComponent: DefaultError,
-    notFoundComponent: DefaultNotFound,
+    ...seo,
+    scripts: extras?.scripts,
   };
 }
 
-function DefaultError({ error }: { error: Error }) {
+export function cmsLoader(slug: string) {
+  return () => getPageMeta({ data: { slug } });
+}
+
+export function DefaultError({ error }: { error: Error }) {
   return (
     <div className="min-h-[50vh] flex items-center justify-center p-6" dir="rtl">
       <div className="text-center max-w-md">
@@ -60,7 +63,7 @@ function DefaultError({ error }: { error: Error }) {
   );
 }
 
-function DefaultNotFound() {
+export function DefaultNotFound() {
   return (
     <div className="min-h-[50vh] flex items-center justify-center p-6" dir="rtl">
       <div className="text-center max-w-md">
