@@ -28,6 +28,7 @@ import {
 import { toYouTubeEmbed } from "@/lib/youtube";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { FileUploader } from "@/components/admin/FileUploader";
+import { MultiFileUploader } from "@/components/admin/MultiFileUploader";
 
 const STATUS_OPTIONS: BatchStatus[] = ["منشورة", "مسودة", "مخفية"];
 
