@@ -53,27 +53,30 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-border shadow-sm">
       <TopBar />
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 sm:gap-6 h-[92px] md:h-[108px] lg:h-[124px]">
-          {/* Right (logical): Logo + school name */}
-          <Link to="/" className="flex items-center gap-2.5 sm:gap-4 min-w-0 shrink-0">
+      <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between gap-4 sm:gap-8 h-[96px] md:h-[116px] lg:h-[132px]">
+          {/* Brand Area (right in RTL): Logo + school name — protected, never shrinks */}
+          <Link
+            to="/"
+            className="flex items-center gap-3 sm:gap-4 shrink-0 min-w-0 max-w-[calc(100%-140px)] sm:max-w-none"
+          >
             <img
               src={IMG.logo}
               alt="شعار مدرسة مدحت السويدي للتكنولوجيا التطبيقية"
-              className="shrink-0 h-[72px] w-auto sm:h-20 md:h-[92px] lg:h-[108px] object-contain"
+              className="shrink-0 h-[64px] w-auto sm:h-[76px] md:h-[92px] lg:h-[108px] object-contain"
             />
             <div className="flex flex-col min-w-0 leading-tight">
-              <span className="text-[13px] sm:text-base md:text-lg lg:text-xl font-extrabold text-brand truncate">
+              <span className="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-brand truncate">
                 مدرسة مدحت السويدي
               </span>
-              <span className="text-[10px] sm:text-xs md:text-[13px] text-muted-foreground truncate">
+              <span className="text-[11px] sm:text-xs md:text-[13px] text-muted-foreground truncate">
                 للتكنولوجيا التطبيقية
               </span>
             </div>
           </Link>
 
-          {/* Middle: Nav links (desktop only, 2xl+) */}
-          <nav className="hidden 2xl:flex items-center justify-center gap-0.5 min-w-0">
+          {/* Desktop nav — only on very wide screens (≥1536px) with generous spacing */}
+          <nav className="hidden 2xl:flex items-center gap-1 shrink min-w-0">
             {NAV_LINKS.map((l) => {
               const active = pathname === l.to;
               return (
@@ -81,7 +84,7 @@ export function Navbar() {
                   key={l.to}
                   to={l.to}
                   className={cn(
-                    "relative px-2.5 py-2 rounded-md text-[13px] font-semibold transition-colors whitespace-nowrap",
+                    "relative px-3 py-2 rounded-md text-[13px] font-semibold transition-colors whitespace-nowrap",
                     active
                       ? "text-[var(--accent-red)]"
                       : "text-foreground/75 hover:text-brand",
@@ -89,24 +92,24 @@ export function Navbar() {
                 >
                   {l.label}
                   {active && (
-                    <span className="absolute inset-x-2 -bottom-0.5 h-0.5 bg-[var(--accent-red)] rounded-full" />
+                    <span className="absolute inset-x-3 -bottom-0.5 h-0.5 bg-[var(--accent-red)] rounded-full" />
                   )}
                 </Link>
               );
             })}
           </nav>
 
-          {/* Left: CTA + burger */}
-          <div className="flex items-center gap-2 justify-self-end">
+          {/* CTA Area (left): Register + burger — protected, never shrinks */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Button
               asChild
               size="sm"
-              className="hidden sm:inline-flex bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white font-bold px-4"
+              className="hidden sm:inline-flex bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white font-bold px-4 md:px-5 h-10"
             >
               <Link to="/visit">سجل الآن</Link>
             </Button>
             <button
-              className="2xl:hidden inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-secondary text-brand"
+              className="2xl:hidden inline-flex items-center justify-center h-11 w-11 rounded-md hover:bg-secondary text-brand border border-border/60"
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "إغلاق القائمة" : "فتح القائمة"}
               aria-expanded={open}
@@ -121,11 +124,12 @@ export function Navbar() {
       {open && (
         <>
           <div
-            className="2xl:hidden fixed inset-0 top-[92px] md:top-[108px] lg:top-[calc(124px+2.25rem)] bg-black/40 z-40"
+            className="2xl:hidden fixed inset-0 top-[96px] md:top-[116px] lg:top-[calc(132px+2.25rem)] bg-black/40 z-40"
             onClick={() => setOpen(false)}
             aria-hidden
           />
-          <div className="2xl:hidden fixed inset-x-0 top-[92px] md:top-[108px] lg:top-[calc(124px+2.25rem)] z-50 bg-white border-t border-border shadow-xl max-h-[calc(100vh-92px)] overflow-y-auto">
+          <div className="2xl:hidden fixed inset-x-0 top-[96px] md:top-[116px] lg:top-[calc(132px+2.25rem)] z-50 bg-white border-t border-border shadow-xl max-h-[calc(100vh-96px)] overflow-y-auto">
+
             <nav className="mx-auto max-w-7xl px-4 sm:px-6 py-4 grid gap-1">
               {NAV_LINKS.map((l) => (
                 <Link
