@@ -13,7 +13,6 @@ import { Route as VisitRouteImport } from './routes/visit'
 import { Route as StudySystemRouteImport } from './routes/study-system'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProgramsRouteImport } from './routes/programs'
-import { Route as GraduatesRouteImport } from './routes/graduates'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -23,6 +22,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as NewsIndexRouteImport } from './routes/news.index'
+import { Route as GraduatesIndexRouteImport } from './routes/graduates.index'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as GraduatesSlugRouteImport } from './routes/graduates.$slug'
 
@@ -44,11 +44,6 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ProgramsRoute = ProgramsRouteImport.update({
   id: '/programs',
   path: '/programs',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GraduatesRoute = GraduatesRouteImport.update({
-  id: '/graduates',
-  path: '/graduates',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GalleryRoute = GalleryRouteImport.update({
@@ -96,15 +91,20 @@ const NewsIndexRoute = NewsIndexRouteImport.update({
   path: '/news/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GraduatesIndexRoute = GraduatesIndexRouteImport.update({
+  id: '/graduates/',
+  path: '/graduates/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NewsSlugRoute = NewsSlugRouteImport.update({
   id: '/news/$slug',
   path: '/news/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GraduatesSlugRoute = GraduatesSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => GraduatesRoute,
+  id: '/graduates/$slug',
+  path: '/graduates/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -116,13 +116,13 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
-  '/graduates': typeof GraduatesRouteWithChildren
   '/programs': typeof ProgramsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/study-system': typeof StudySystemRoute
   '/visit': typeof VisitRoute
   '/graduates/$slug': typeof GraduatesSlugRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/graduates/': typeof GraduatesIndexRoute
   '/news/': typeof NewsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -134,13 +134,13 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
-  '/graduates': typeof GraduatesRouteWithChildren
   '/programs': typeof ProgramsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/study-system': typeof StudySystemRoute
   '/visit': typeof VisitRoute
   '/graduates/$slug': typeof GraduatesSlugRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/graduates': typeof GraduatesIndexRoute
   '/news': typeof NewsIndexRoute
 }
 export interface FileRoutesById {
@@ -153,13 +153,13 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
-  '/graduates': typeof GraduatesRouteWithChildren
   '/programs': typeof ProgramsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/study-system': typeof StudySystemRoute
   '/visit': typeof VisitRoute
   '/graduates/$slug': typeof GraduatesSlugRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/graduates/': typeof GraduatesIndexRoute
   '/news/': typeof NewsIndexRoute
 }
 export interface FileRouteTypes {
@@ -173,13 +173,13 @@ export interface FileRouteTypes {
     | '/contact'
     | '/faq'
     | '/gallery'
-    | '/graduates'
     | '/programs'
     | '/sitemap.xml'
     | '/study-system'
     | '/visit'
     | '/graduates/$slug'
     | '/news/$slug'
+    | '/graduates/'
     | '/news/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -191,13 +191,13 @@ export interface FileRouteTypes {
     | '/contact'
     | '/faq'
     | '/gallery'
-    | '/graduates'
     | '/programs'
     | '/sitemap.xml'
     | '/study-system'
     | '/visit'
     | '/graduates/$slug'
     | '/news/$slug'
+    | '/graduates'
     | '/news'
   id:
     | '__root__'
@@ -209,13 +209,13 @@ export interface FileRouteTypes {
     | '/contact'
     | '/faq'
     | '/gallery'
-    | '/graduates'
     | '/programs'
     | '/sitemap.xml'
     | '/study-system'
     | '/visit'
     | '/graduates/$slug'
     | '/news/$slug'
+    | '/graduates/'
     | '/news/'
   fileRoutesById: FileRoutesById
 }
@@ -228,12 +228,13 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
   GalleryRoute: typeof GalleryRoute
-  GraduatesRoute: typeof GraduatesRouteWithChildren
   ProgramsRoute: typeof ProgramsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StudySystemRoute: typeof StudySystemRoute
   VisitRoute: typeof VisitRoute
+  GraduatesSlugRoute: typeof GraduatesSlugRoute
   NewsSlugRoute: typeof NewsSlugRoute
+  GraduatesIndexRoute: typeof GraduatesIndexRoute
   NewsIndexRoute: typeof NewsIndexRoute
 }
 
@@ -265,13 +266,6 @@ declare module '@tanstack/react-router' {
       path: '/programs'
       fullPath: '/programs'
       preLoaderRoute: typeof ProgramsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/graduates': {
-      id: '/graduates'
-      path: '/graduates'
-      fullPath: '/graduates'
-      preLoaderRoute: typeof GraduatesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gallery': {
@@ -337,6 +331,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/graduates/': {
+      id: '/graduates/'
+      path: '/graduates'
+      fullPath: '/graduates/'
+      preLoaderRoute: typeof GraduatesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/news/$slug': {
       id: '/news/$slug'
       path: '/news/$slug'
@@ -346,25 +347,13 @@ declare module '@tanstack/react-router' {
     }
     '/graduates/$slug': {
       id: '/graduates/$slug'
-      path: '/$slug'
+      path: '/graduates/$slug'
       fullPath: '/graduates/$slug'
       preLoaderRoute: typeof GraduatesSlugRouteImport
-      parentRoute: typeof GraduatesRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface GraduatesRouteChildren {
-  GraduatesSlugRoute: typeof GraduatesSlugRoute
-}
-
-const GraduatesRouteChildren: GraduatesRouteChildren = {
-  GraduatesSlugRoute: GraduatesSlugRoute,
-}
-
-const GraduatesRouteWithChildren = GraduatesRoute._addFileChildren(
-  GraduatesRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -375,14 +364,25 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
   GalleryRoute: GalleryRoute,
-  GraduatesRoute: GraduatesRouteWithChildren,
   ProgramsRoute: ProgramsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StudySystemRoute: StudySystemRoute,
   VisitRoute: VisitRoute,
+  GraduatesSlugRoute: GraduatesSlugRoute,
   NewsSlugRoute: NewsSlugRoute,
+  GraduatesIndexRoute: GraduatesIndexRoute,
   NewsIndexRoute: NewsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

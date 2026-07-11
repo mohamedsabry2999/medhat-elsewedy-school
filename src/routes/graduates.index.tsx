@@ -9,7 +9,7 @@ import { SmartImage } from "@/components/ui/SmartImage";
 import { pageSeo } from "@/lib/seo";
 import { useContent } from "@/lib/content-store";
 
-export const Route = createFileRoute("/graduates")({
+export const Route = createFileRoute("/graduates/")({
   head: () =>
     pageSeo({
       title: "دفعات الخريجين | مدرسة مدحت السويدي للتكنولوجيا التطبيقية",
