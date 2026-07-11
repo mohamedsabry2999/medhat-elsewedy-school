@@ -37,6 +37,7 @@ import { isAdminAuthed, logoutAdmin } from "@/lib/admin-auth";
 import { FocalPointPicker } from "@/components/admin/FocalPointPicker";
 import { MediaLibraryTab } from "@/components/admin/MediaLibraryTab";
 import { PagesManagerTab } from "@/components/admin/PagesManagerTab";
+import { GraduatesTab } from "@/components/admin/GraduatesTab";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { toYouTubeEmbed } from "@/lib/youtube";
 
