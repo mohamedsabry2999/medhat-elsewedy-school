@@ -581,7 +581,7 @@ function GraduatesFuture() {
             <Sparkles className="h-4 w-4" /> مستقبل الخريجين
           </div>
           <h2 className="text-3xl md:text-5xl font-extrabold leading-tight">
-            فرص ومستقبل خريجي <span className="school-name-hl">مدرسة مدحت السويدي</span>
+            فرص ومستقبل خريجي مدرسة <span className="medhat-elsewedy-highlight">مدحت السويدي</span>
           </h2>
           <p className="mt-4 text-white/80 leading-8">
             بعد تخرج الطلاب من <SchoolName />، تتوفر أمامهم عدة مسارات مهنية وأكاديمية تؤهلهم لبناء مستقبل قوي في مجالات الطباعة والصناعات المرتبطة بها.

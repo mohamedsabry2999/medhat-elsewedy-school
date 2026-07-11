@@ -1,26 +1,27 @@
 import type { ReactNode } from "react";
 
 export const SCHOOL_NAME = "مدرسة مدحت السويدي للتكنولوجيا التطبيقية";
+const HIGHLIGHT_PHRASE = "مدحت السويدي";
+const HIGHLIGHT_CLASS = "medhat-elsewedy-highlight";
 
 type Props = {
   as?: keyof React.JSX.IntrinsicElements;
   className?: string;
+  children?: ReactNode;
 };
 
 /**
- * Renders the official school name with the unified highlight style.
- * Use this when you write the name directly in JSX.
+ * Renders text (defaults to the official school name) with the phrase
+ * "مدحت السويدي" wrapped in a highlight span.
  */
-export function SchoolName({ as: Tag = "span", className = "" }: Props) {
-  return (
-    <Tag className={`school-name-hl ${className}`.trim()}>{SCHOOL_NAME}</Tag>
-  );
+export function SchoolName({ as: Tag = "span", className = "", children }: Props) {
+  const text = typeof children === "string" ? children : SCHOOL_NAME;
+  return <Tag className={className || undefined}>{highlightString(text)}</Tag>;
 }
 
 /**
- * Scans a string (or ReactNode) and wraps every occurrence of the school
- * name in the highlight span. Use this when the text comes from the CMS
- * (useContent), site-data, or any dynamic source.
+ * Scans a string (or ReactNode) and wraps every occurrence of
+ * "مدحت السويدي" in the highlight span. Use for CMS / dynamic text.
  *
  * SEO-safe: never call this inside meta/title/description/alt/JSON-LD.
  */
@@ -33,15 +34,15 @@ export function hl(input: ReactNode): ReactNode {
 }
 
 function highlightString(text: string): ReactNode {
-  if (!text.includes(SCHOOL_NAME)) return text;
-  const parts = text.split(SCHOOL_NAME);
+  if (!text.includes(HIGHLIGHT_PHRASE)) return text;
+  const parts = text.split(HIGHLIGHT_PHRASE);
   const out: ReactNode[] = [];
   parts.forEach((part, i) => {
     if (part) out.push(<span key={`t-${i}`}>{part}</span>);
     if (i < parts.length - 1) {
       out.push(
-        <span key={`h-${i}`} className="school-name-hl">
-          {SCHOOL_NAME}
+        <span key={`h-${i}`} className={HIGHLIGHT_CLASS}>
+          {HIGHLIGHT_PHRASE}
         </span>,
       );
     }
