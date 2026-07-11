@@ -187,7 +187,7 @@ export async function updateBatch(id: string, patch: Partial<GraduateBatch>): Pr
   if (patch.featured_on_home !== undefined) payload.featured_on_home = patch.featured_on_home;
   if (patch.sort_order !== undefined) payload.sort_order = patch.sort_order;
   if (patch.published_at !== undefined) payload.published_at = patch.published_at;
-  const { error } = await supabase.from("graduate_batches").update(payload).eq("id", id);
+  const { error } = await supabase.from("graduate_batches").update(payload as never).eq("id", id);
   if (error) console.error("updateBatch", error);
   await refetchBatches();
 }
