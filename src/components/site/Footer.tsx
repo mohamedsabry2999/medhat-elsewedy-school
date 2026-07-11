@@ -24,7 +24,9 @@ export function Footer() {
           <div className="flex items-center gap-3">
             <img src={IMG.logo} alt="شعار مدرسة مدحت السويدي للتكنولوجيا التطبيقية" className="h-20 w-20 bg-white/95 rounded-xl p-1.5 shrink-0 object-contain" />
             <div>
-              <div className="font-extrabold text-lg">{brandFull}</div>
+              <div className="font-extrabold text-lg">
+                {brandFull === SCHOOL_NAME ? <SchoolName /> : hl(brandFull)}
+              </div>
               <div className="text-white/70 text-xs">{brandEn}</div>
             </div>
           </div>
