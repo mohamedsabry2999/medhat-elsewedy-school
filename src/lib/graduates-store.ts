@@ -222,7 +222,7 @@ export async function createMedia(input: Partial<GraduateMedia> & { batch_id: st
 }
 
 export async function updateMedia(id: string, patch: Partial<GraduateMedia>): Promise<void> {
-  const { error } = await supabase.from("graduate_batch_media").update(patch).eq("id", id);
+  const { error } = await supabase.from("graduate_batch_media").update(patch as never).eq("id", id);
   if (error) console.error("updateMedia", error);
   await refetchMedia();
 }
