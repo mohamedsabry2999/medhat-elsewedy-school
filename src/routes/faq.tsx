@@ -41,8 +41,8 @@ function FaqPage() {
           <Accordion type="single" collapsible className="bg-white rounded-2xl px-4 border">
             {FAQS.map((f, i) => (
               <AccordionItem key={i} value={`i-${i}`}>
-                <AccordionTrigger className="text-start font-bold text-brand">{f.q}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-7">{f.a}</AccordionContent>
+                <AccordionTrigger className="text-start font-bold text-brand">{hl(f.q)}</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground leading-7">{hl(f.a)}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
