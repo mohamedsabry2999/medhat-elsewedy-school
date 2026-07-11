@@ -60,7 +60,7 @@ function NewsPage() {
             </div>
             <div className="relative md:w-72">
               <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ابحث في الأخبار..." className="pr-9" />
+              <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={searchPlaceholder} className="pr-9" />
             </div>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -93,7 +93,7 @@ function NewsPage() {
             ))}
           </div>
           {list.length === 0 && (
-            <div className="text-center py-16 text-muted-foreground">لا توجد أخبار مطابقة.</div>
+            <div className="text-center py-16 text-muted-foreground">{empty}</div>
           )}
         </div>
       </section>
