@@ -56,8 +56,6 @@ function GraduatesPage() {
                     <SmartImage
                       src={b.cover_image_url}
                       alt={b.cover_image_alt || b.title}
-                      focalX={b.focal_x_pct}
-                      focalY={b.focal_y_pct}
                       imageType="article_cover"
                       fill
                     />
