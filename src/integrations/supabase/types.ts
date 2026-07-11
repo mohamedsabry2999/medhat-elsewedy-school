@@ -170,6 +170,125 @@ export type Database = {
         }
         Relationships: []
       }
+      graduate_batch_media: {
+        Row: {
+          alt_text: string | null
+          batch_id: string
+          category: string | null
+          created_at: string
+          description: string | null
+          embed_url: string | null
+          focal_x: number | null
+          focal_y: number | null
+          id: string
+          image_url: string | null
+          media_type: string
+          sort_order: number
+          status: string
+          title: string | null
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          alt_text?: string | null
+          batch_id: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          embed_url?: string | null
+          focal_x?: number | null
+          focal_y?: number | null
+          id?: string
+          image_url?: string | null
+          media_type?: string
+          sort_order?: number
+          status?: string
+          title?: string | null
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          alt_text?: string | null
+          batch_id?: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          embed_url?: string | null
+          focal_x?: number | null
+          focal_y?: number | null
+          id?: string
+          image_url?: string | null
+          media_type?: string
+          sort_order?: number
+          status?: string
+          title?: string | null
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "graduate_batch_media_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "graduate_batches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      graduate_batches: {
+        Row: {
+          cover_image_alt: string | null
+          cover_image_url: string | null
+          created_at: string
+          description: string | null
+          excerpt: string | null
+          featured_on_home: boolean
+          graduates_count: number | null
+          graduation_year: number | null
+          id: string
+          published_at: string | null
+          slug: string
+          sort_order: number
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_image_alt?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          excerpt?: string | null
+          featured_on_home?: boolean
+          graduates_count?: number | null
+          graduation_year?: number | null
+          id?: string
+          published_at?: string | null
+          slug: string
+          sort_order?: number
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cover_image_alt?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          excerpt?: string | null
+          featured_on_home?: boolean
+          graduates_count?: number | null
+          graduation_year?: number | null
+          id?: string
+          published_at?: string | null
+          slug?: string
+          sort_order?: number
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       media_assets: {
         Row: {
           alt_text: string
