@@ -54,16 +54,16 @@ export function Navbar() {
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-border shadow-sm">
       <TopBar />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 sm:gap-6 h-16 lg:h-20">
+        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 sm:gap-6 h-20 lg:h-24">
           {/* Right (logical): Logo + school name */}
           <Link to="/" className="flex items-center gap-3 min-w-0 shrink-0">
             <img
               src={IMG.logo}
               alt="شعار مدرسة مدحت السويدي للتكنولوجيا التطبيقية"
-              className="h-12 w-12 lg:h-14 lg:w-14 shrink-0 object-contain"
+              className="h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 shrink-0 object-contain"
             />
             <div className="hidden sm:flex flex-col min-w-0 leading-tight">
-              <span className="text-sm lg:text-base font-extrabold text-brand truncate">
+              <span className="text-sm lg:text-lg font-extrabold text-brand truncate">
                 مدرسة مدحت السويدي
               </span>
               <span className="text-[10px] lg:text-xs text-muted-foreground truncate">
@@ -72,8 +72,8 @@ export function Navbar() {
             </div>
           </Link>
 
-          {/* Middle: Nav links (desktop only, xl+) */}
-          <nav className="hidden xl:flex items-center justify-center gap-0.5 min-w-0">
+          {/* Middle: Nav links (desktop only, 2xl+) */}
+          <nav className="hidden 2xl:flex items-center justify-center gap-0.5 min-w-0">
             {NAV_LINKS.map((l) => {
               const active = pathname === l.to;
               return (
@@ -106,7 +106,7 @@ export function Navbar() {
               <Link to="/visit">سجل الآن</Link>
             </Button>
             <button
-              className="xl:hidden inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-secondary text-brand"
+              className="2xl:hidden inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-secondary text-brand"
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "إغلاق القائمة" : "فتح القائمة"}
               aria-expanded={open}
