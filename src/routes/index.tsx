@@ -62,6 +62,7 @@ function Home() {
       {isVisible("career-horizons") && <GlobalOpportunities />}
       {isVisible("student-features") && <BenefitsSection />}
       {isVisible("graduates-future") && <GraduatesFuture />}
+      <GraduateBatchesTeaser />
       {isVisible("education-paths") && <EducationPaths />}
       {isVisible("certificates") && <CertificatesSection />}
       {isVisible("admission-steps") && <AdmissionSteps />}
