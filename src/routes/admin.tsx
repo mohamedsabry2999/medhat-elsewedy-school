@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
-  LayoutDashboard, ClipboardList, Newspaper, Images, Settings, Search, Download, Plus, Home, LogOut, Eye, Trash2, Pencil, Star, EyeOff, Save, RefreshCw, CheckCircle2, AlertTriangle, Clock, Link2, ImageIcon,
+  LayoutDashboard, ClipboardList, Newspaper, Images, Settings, Search, Download, Plus, Home, LogOut, Eye, Trash2, Pencil, Star, EyeOff, Save, RefreshCw, CheckCircle2, AlertTriangle, Clock, Link2, ImageIcon, FileText,
 } from "lucide-react";
 import {
   listRegistrations, updateRegistrationStatus, cancelRegistration, resyncRegistration, resyncAllPending,
@@ -82,6 +82,7 @@ const STATUS_COLORS: Record<RegistrationStatus, string> = {
 
 const SECTIONS = [
   { id: "overview", label: "الرئيسية", icon: LayoutDashboard },
+  { id: "pages", label: "إدارة الصفحات", icon: FileText },
   { id: "registrations", label: "التسجيلات والندوات", icon: ClipboardList },
   { id: "articles", label: "إدارة المقالات", icon: Newspaper },
   { id: "gallery", label: "معرض الصور", icon: Images },
@@ -184,6 +185,7 @@ function AdminPage() {
 
         <div className="p-5 md:p-8">
           {section === "overview" && <Overview stats={stats} regs={regs.slice(0, 5)} />}
+          {section === "pages" && <PagesManagerTab />}
           {section === "registrations" && <RegistrationsTab regs={regs} onChange={refreshRegs} />}
           {section === "articles" && <ArticlesTab />}
           {section === "gallery" && <GalleryTab />}
