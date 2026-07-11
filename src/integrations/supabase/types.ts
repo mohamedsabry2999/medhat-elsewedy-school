@@ -113,6 +113,84 @@ export type Database = {
         }
         Relationships: []
       }
+      content_blocks: {
+        Row: {
+          content_key: string
+          created_at: string
+          current_value: string
+          default_value: string
+          draft_value: string | null
+          id: string
+          label: string
+          page_slug: string
+          section_key: string
+          sort_order: number
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          content_key: string
+          created_at?: string
+          current_value?: string
+          default_value?: string
+          draft_value?: string | null
+          id?: string
+          label?: string
+          page_slug?: string
+          section_key?: string
+          sort_order?: number
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          content_key?: string
+          created_at?: string
+          current_value?: string
+          default_value?: string
+          draft_value?: string | null
+          id?: string
+          label?: string
+          page_slug?: string
+          section_key?: string
+          sort_order?: number
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      content_versions: {
+        Row: {
+          content_key: string
+          created_at: string
+          id: string
+          new_value: string
+          old_value: string
+          status: string
+          updated_by: string | null
+        }
+        Insert: {
+          content_key: string
+          created_at?: string
+          id?: string
+          new_value?: string
+          old_value?: string
+          status?: string
+          updated_by?: string | null
+        }
+        Update: {
+          content_key?: string
+          created_at?: string
+          id?: string
+          new_value?: string
+          old_value?: string
+          status?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       gallery_images: {
         Row: {
           category: string
