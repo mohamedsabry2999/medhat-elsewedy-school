@@ -32,7 +32,7 @@ import {
 import { readSettings, saveSettings, type SiteSettings } from "@/lib/settings-store";
 import { useBranches, saveBranch, createBranch, deleteBranch, type Branch } from "@/lib/branches-store";
 
-import { VISIT_DAYS, VISIT_SLOTS, GALLERY_CATEGORIES } from "@/lib/site-data";
+import { VISIT_DAYS, VISIT_SLOTS, GALLERY_CATEGORIES, IMG } from "@/lib/site-data";
 import { isAdminAuthed, logoutAdmin } from "@/lib/admin-auth";
 import { FocalPointPicker } from "@/components/admin/FocalPointPicker";
 import { MediaLibraryTab } from "@/components/admin/MediaLibraryTab";
@@ -135,9 +135,12 @@ function AdminPage() {
   return (
     <div className="min-h-screen bg-secondary/40 flex" dir="rtl">
       <aside className="w-64 bg-brand text-white shrink-0 hidden md:flex flex-col">
-        <div className="p-5 border-b border-white/10">
-          <div className="font-extrabold">لوحة التحكم</div>
-          <div className="text-xs text-white/70">مدرسة مدحت السويدي</div>
+        <div className="p-5 border-b border-white/10 flex items-center gap-3">
+          <img src={IMG.logo} alt="شعار المدرسة" className="h-12 w-12 shrink-0 object-contain bg-white/95 rounded-lg p-1" />
+          <div className="min-w-0">
+            <div className="font-extrabold truncate">لوحة التحكم</div>
+            <div className="text-xs text-white/70 truncate">مدرسة مدحت السويدي</div>
+          </div>
         </div>
         <nav className="flex-1 p-3 space-y-1">
           {SECTIONS.map((s) => (
@@ -999,6 +1002,7 @@ function SettingsTab() {
             <SField label="رقم واتساب (رابط كامل)" value={s.whatsapp} onChange={(v) => setS({ ...s, whatsapp: v })} dir="ltr" />
             <SField label="وصف الفوتر" value={s.footerDescription} onChange={(v) => setS({ ...s, footerDescription: v })} textarea />
             <SField label="نص الدعوة الرئيسية" value={s.mainCta} onChange={(v) => setS({ ...s, mainCta: v })} />
+            <SField label="رابط فيديو المدرسة على يوتيوب (تعريفي — يظهر في الصفحة الرئيسية)" value={s.youtubeIntroUrl} onChange={(v) => setS({ ...s, youtubeIntroUrl: v })} dir="ltr" />
             <div className="grid gap-4 md:grid-cols-3">
               <SField label="فيسبوك" value={s.facebook} onChange={(v) => setS({ ...s, facebook: v })} dir="ltr" />
               <SField label="انستجرام" value={s.instagram} onChange={(v) => setS({ ...s, instagram: v })} dir="ltr" />

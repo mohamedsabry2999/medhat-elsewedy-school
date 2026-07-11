@@ -346,6 +346,7 @@ export type Database = {
           phone: string
           updated_at: string
           whatsapp_url: string
+          youtube_intro_url: string
           youtube_url: string
         }
         Insert: {
@@ -358,6 +359,7 @@ export type Database = {
           phone?: string
           updated_at?: string
           whatsapp_url?: string
+          youtube_intro_url?: string
           youtube_url?: string
         }
         Update: {
@@ -370,6 +372,7 @@ export type Database = {
           phone?: string
           updated_at?: string
           whatsapp_url?: string
+          youtube_intro_url?: string
           youtube_url?: string
         }
         Relationships: []

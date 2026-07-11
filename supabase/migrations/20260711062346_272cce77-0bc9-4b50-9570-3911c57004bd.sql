@@ -1,0 +1,1 @@
+ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS youtube_intro_url text NOT NULL DEFAULT '';

@@ -58,7 +58,7 @@ function AdminLoginPage() {
     <div dir="rtl" className="min-h-screen grid place-items-center bg-brand p-4">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-6 text-white">
-          <img src={IMG.logo} alt="شعار المدرسة" className="h-16 w-16 object-contain mb-3" />
+          <img src={IMG.logo} alt="شعار المدرسة" className="h-24 w-24 object-contain mb-3 bg-white/95 rounded-2xl p-2" />
           <div className="font-extrabold text-lg">مدرسة مدحت السويدي</div>
           <div className="text-xs text-white/70">للتكنولوجيا التطبيقية</div>
         </div>

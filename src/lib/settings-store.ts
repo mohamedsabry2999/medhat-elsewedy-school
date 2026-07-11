@@ -16,6 +16,7 @@ export type SiteSettings = {
   whatsapp: string;
   footerDescription: string;
   mainCta: string;
+  youtubeIntroUrl: string;
 };
 
 export const DEFAULT_SETTINGS: SiteSettings = {
@@ -31,6 +32,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   footerDescription:
     "مدرسة مدحت السويدي للتكنولوجيا التطبيقية — تعليم فني متخصص في تكنولوجيا الطباعة، بالشراكة مع دار مدحت السويدي للطباعة وباعتماد الغرفة الألمانية AHK Cairo.",
   mainCta: "سجل الآن لحضور الندوة التعريفية",
+  youtubeIntroUrl: "",
 };
 
 type DBRow = {
@@ -43,6 +45,7 @@ type DBRow = {
   whatsapp_url: string;
   footer_description: string;
   main_cta: string;
+  youtube_intro_url?: string | null;
 };
 
 function fromRow(r: DBRow): SiteSettings {
@@ -56,6 +59,7 @@ function fromRow(r: DBRow): SiteSettings {
     whatsapp: r.whatsapp_url || "",
     footerDescription: r.footer_description || DEFAULT_SETTINGS.footerDescription,
     mainCta: r.main_cta || DEFAULT_SETTINGS.mainCta,
+    youtubeIntroUrl: r.youtube_intro_url || "",
   };
 }
 
@@ -104,6 +108,7 @@ export function saveSettings(s: SiteSettings) {
     whatsapp_url: s.whatsapp ?? "",
     footer_description: s.footerDescription ?? DEFAULT_SETTINGS.footerDescription,
     main_cta: s.mainCta ?? DEFAULT_SETTINGS.mainCta,
+    youtube_intro_url: s.youtubeIntroUrl ?? "",
   }).eq("id", 1).then(({ error }) => {
     if (error) console.error("saveSettings", error);
   });
