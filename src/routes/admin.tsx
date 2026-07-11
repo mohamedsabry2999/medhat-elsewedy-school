@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
-  LayoutDashboard, ClipboardList, Newspaper, Images, Settings, Search, Download, Plus, Home, LogOut, Eye, Trash2, Pencil, Star, EyeOff, Save, RefreshCw, CheckCircle2, AlertTriangle, Clock, Link2, ImageIcon, FileText,
+  LayoutDashboard, ClipboardList, Newspaper, Images, Settings, Search, Download, Plus, Home, LogOut, Eye, Trash2, Pencil, Star, EyeOff, Save, RefreshCw, CheckCircle2, AlertTriangle, Clock, Link2, ImageIcon, FileText, GraduationCap,
 } from "lucide-react";
 import {
   listRegistrations, updateRegistrationStatus, cancelRegistration, resyncRegistration, resyncAllPending,
@@ -37,6 +37,7 @@ import { isAdminAuthed, logoutAdmin } from "@/lib/admin-auth";
 import { FocalPointPicker } from "@/components/admin/FocalPointPicker";
 import { MediaLibraryTab } from "@/components/admin/MediaLibraryTab";
 import { PagesManagerTab } from "@/components/admin/PagesManagerTab";
+import { GraduatesTab } from "@/components/admin/GraduatesTab";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { toYouTubeEmbed } from "@/lib/youtube";
 
@@ -88,6 +89,7 @@ const SECTIONS = [
   { id: "articles", label: "إدارة المقالات", icon: Newspaper },
   { id: "gallery", label: "معرض الصور", icon: Images },
   { id: "media", label: "مكتبة الصور والوسائط", icon: ImageIcon },
+  { id: "graduates", label: "دفعات الخريجين", icon: GraduationCap },
   { id: "settings", label: "إعدادات الموقع", icon: Settings },
 ] as const;
 
@@ -191,6 +193,7 @@ function AdminPage() {
           {section === "articles" && <ArticlesTab />}
           {section === "gallery" && <GalleryTab />}
           {section === "media" && <MediaLibraryTab />}
+          {section === "graduates" && <GraduatesTab />}
           {section === "settings" && <SettingsTab />}
         </div>
       </div>

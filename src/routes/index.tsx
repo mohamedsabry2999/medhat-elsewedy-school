@@ -18,6 +18,7 @@ import { toYouTubeEmbed } from "@/lib/youtube";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { MobileHeroSlider, type HeroSlide } from "@/components/site/MobileHeroSlider";
 import { usePageSections, useSection } from "@/lib/page-sections-store";
+import { GraduateBatchesTeaser } from "@/components/site/GraduateBatchesTeaser";
 
 import ahkLogo from "@/assets/ahk-cairo.png.asset.json";
 import moeLogo from "@/assets/moe-egypt.png.asset.json";
@@ -62,6 +63,7 @@ function Home() {
       {isVisible("career-horizons") && <GlobalOpportunities />}
       {isVisible("student-features") && <BenefitsSection />}
       {isVisible("graduates-future") && <GraduatesFuture />}
+      <GraduateBatchesTeaser />
       {isVisible("education-paths") && <EducationPaths />}
       {isVisible("certificates") && <CertificatesSection />}
       {isVisible("admission-steps") && <AdmissionSteps />}
