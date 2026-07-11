@@ -27,6 +27,7 @@ import {
 } from "@/lib/graduates-store";
 import { toYouTubeEmbed } from "@/lib/youtube";
 import { SmartImage } from "@/components/ui/SmartImage";
+import { FileUploader } from "@/components/admin/FileUploader";
 
 const STATUS_OPTIONS: BatchStatus[] = ["منشورة", "مسودة", "مخفية"];
 
