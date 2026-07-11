@@ -447,18 +447,31 @@ function MediaImagesEditor({ batchId, images }: { batchId: string; images: Gradu
 
 function MediaVideosEditor({ batchId, videos }: { batchId: string; videos: GraduateMedia[] }) {
   const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
+  const [ytUrl, setYtUrl] = useState("");
+  const [fileUrl, setFileUrl] = useState("");
   const [desc, setDesc] = useState("");
+  const [mode, setMode] = useState<"youtube" | "upload">("youtube");
+
+  const reset = () => { setTitle(""); setYtUrl(""); setFileUrl(""); setDesc(""); };
 
   const add = async () => {
-    const embed = toYouTubeEmbed(url);
-    if (!embed) { toast.error("رابط يوتيوب غير صالح"); return; }
-    await createMedia({
-      batch_id: batchId, media_type: "video",
-      title: title.trim(), description: desc, video_url: url.trim(), embed_url: embed,
-      sort_order: videos.length,
-    });
-    setTitle(""); setUrl(""); setDesc("");
+    if (mode === "youtube") {
+      const embed = toYouTubeEmbed(ytUrl);
+      if (!embed) { toast.error("رابط يوتيوب غير صالح"); return; }
+      await createMedia({
+        batch_id: batchId, media_type: "video",
+        title: title.trim(), description: desc, video_url: ytUrl.trim(), embed_url: embed,
+        sort_order: videos.length,
+      });
+    } else {
+      if (!fileUrl) { toast.error("يرجى رفع ملف الفيديو أولًا"); return; }
+      await createMedia({
+        batch_id: batchId, media_type: "video",
+        title: title.trim(), description: desc, video_url: fileUrl, embed_url: "",
+        sort_order: videos.length,
+      });
+    }
+    reset();
     toast.success("تمت إضافة الفيديو");
   };
 
@@ -476,8 +489,25 @@ function MediaVideosEditor({ batchId, videos }: { batchId: string; videos: Gradu
             <Input value={title} onChange={(e) => setTitle(e.target.value)} />
           </div>
           <div>
-            <Label>رابط YouTube</Label>
-            <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
+            <Label>مصدر الفيديو</Label>
+            <Tabs value={mode} onValueChange={(v) => setMode(v as "youtube" | "upload")} className="mt-2">
+              <TabsList>
+                <TabsTrigger value="youtube">رابط YouTube</TabsTrigger>
+                <TabsTrigger value="upload">رفع من الجهاز</TabsTrigger>
+              </TabsList>
+              <TabsContent value="youtube" className="pt-3">
+                <Input value={ytUrl} onChange={(e) => setYtUrl(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
+              </TabsContent>
+              <TabsContent value="upload" className="pt-3">
+                <FileUploader
+                  kind="video"
+                  folder={`graduates/${batchId}/videos`}
+                  currentUrl={fileUrl || undefined}
+                  onUploaded={(u) => setFileUrl(u)}
+                  onClear={() => setFileUrl("")}
+                />
+              </TabsContent>
+            </Tabs>
           </div>
           <div>
             <Label>وصف قصير (اختياري)</Label>
@@ -496,7 +526,11 @@ function MediaVideosEditor({ batchId, videos }: { batchId: string; videos: Gradu
           {videos.map((v) => (
             <Card key={v.id} className="overflow-hidden pt-0">
               <div className="relative w-full" style={{ aspectRatio: "16 / 9" }}>
-                <iframe src={v.embed_url} title={v.title} loading="lazy" allowFullScreen className="absolute inset-0 h-full w-full" />
+                {v.embed_url ? (
+                  <iframe src={v.embed_url} title={v.title} loading="lazy" allowFullScreen className="absolute inset-0 h-full w-full" />
+                ) : (
+                  <video src={v.video_url} controls className="absolute inset-0 h-full w-full bg-black" />
+                )}
               </div>
               <CardContent className="p-3 flex items-center justify-between gap-2">
                 <div className="min-w-0">
@@ -514,3 +548,4 @@ function MediaVideosEditor({ batchId, videos }: { batchId: string; videos: Gradu
     </div>
   );
 }
+
