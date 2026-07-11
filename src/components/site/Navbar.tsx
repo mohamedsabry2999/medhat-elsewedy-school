@@ -3,6 +3,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X, Phone, Mail, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IMG, NAV_LINKS } from "@/lib/site-data";
+import { useContent } from "@/lib/content-store";
 import { cn } from "@/lib/utils";
 
 function TopBar() {
@@ -37,6 +38,11 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
+  const brandLine1 = useContent("navbar.brand.line1", "مدرسة مدحت السويدي", { page: "navbar", section: "brand", label: "اسم المدرسة — سطر أول", type: "text" });
+  const brandLine2 = useContent("navbar.brand.line2", "للتكنولوجيا التطبيقية", { page: "navbar", section: "brand", label: "اسم المدرسة — سطر ثاني", type: "text" });
+  const ctaShort = useContent("navbar.cta.short", "سجل الآن", { page: "navbar", section: "cta", label: "زر التسجيل (شريط علوي)", type: "button" });
+  const ctaLong = useContent("navbar.cta.long", "سجل الآن لحضور الندوة التعريفية", { page: "navbar", section: "cta", label: "زر التسجيل (قائمة موبايل)", type: "button" });
+
   // Close mobile menu on route change
   useEffect(() => {
     setOpen(false);
@@ -67,10 +73,10 @@ export function Navbar() {
             />
             <div className="flex flex-col min-w-0 leading-tight">
               <span className="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-brand truncate">
-                مدرسة مدحت السويدي
+                {brandLine1}
               </span>
               <span className="text-[11px] sm:text-xs md:text-[13px] text-muted-foreground truncate">
-                للتكنولوجيا التطبيقية
+                {brandLine2}
               </span>
             </div>
           </Link>
@@ -106,7 +112,7 @@ export function Navbar() {
               size="sm"
               className="hidden sm:inline-flex bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white font-bold px-4 md:px-5 h-10"
             >
-              <Link to="/visit">سجل الآن</Link>
+              <Link to="/visit">{ctaShort}</Link>
             </Button>
             <button
               className="2xl:hidden inline-flex items-center justify-center h-11 w-11 rounded-md hover:bg-secondary text-brand border border-border/60"
@@ -150,7 +156,7 @@ export function Navbar() {
                 size="lg"
                 className="mt-3 bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white font-bold w-full"
               >
-                <Link to="/visit">سجل الآن لحضور الندوة التعريفية</Link>
+                <Link to="/visit">{ctaLong}</Link>
               </Button>
               <div className="mt-4 grid gap-2 pt-4 border-t border-border text-xs text-muted-foreground">
                 <a href="tel:01050360883" className="flex items-center gap-2 hover:text-brand">
