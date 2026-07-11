@@ -5,6 +5,7 @@ import { FAQS } from "@/lib/site-data";
 import { faqJsonLd } from "@/lib/seo";
 import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 import { useContent } from "@/lib/content-store";
+import { hl } from "@/components/site/SchoolName";
 
 export const Route = createFileRoute("/faq")({
   loader: cmsLoader("faq"),
