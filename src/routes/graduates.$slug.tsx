@@ -13,25 +13,13 @@ import { toYouTubeEmbed } from "@/lib/youtube";
 
 export const Route = createFileRoute("/graduates/$slug")({
   head: ({ params }) => {
-    const url = `${SITE_URL}/graduates/${params.slug}`;
     const title = `دفعة ${decodeURIComponent(params.slug)} — ${SITE_NAME}`;
     return pageSeo({
       title,
       description: "تفاصيل دفعة من خريجي مدرسة مدحت السويدي للتكنولوجيا التطبيقية، مع صور وفيديوهات حفل التخرج.",
       path: `/graduates/${params.slug}`,
       ogType: "article",
-    }) && {
-      meta: [
-        { title },
-        { name: "description", content: "تفاصيل دفعة من خريجي مدرسة مدحت السويدي للتكنولوجيا التطبيقية، مع صور وفيديوهات حفل التخرج." },
-        { property: "og:title", content: title },
-        { property: "og:url", content: url },
-        { property: "og:type", content: "article" },
-        { property: "og:locale", content: "ar_EG" },
-        { name: "twitter:card", content: "summary_large_image" },
-      ],
-      links: [{ rel: "canonical", href: url }],
-    };
+    });
   },
   component: BatchDetail,
 });

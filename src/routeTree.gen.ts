@@ -24,6 +24,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as NewsIndexRouteImport } from './routes/news.index'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
+import { Route as GraduatesSlugRouteImport } from './routes/graduates.$slug'
 
 const VisitRoute = VisitRouteImport.update({
   id: '/visit',
@@ -100,6 +101,11 @@ const NewsSlugRoute = NewsSlugRouteImport.update({
   path: '/news/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GraduatesSlugRoute = GraduatesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => GraduatesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -110,11 +116,12 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
-  '/graduates': typeof GraduatesRoute
+  '/graduates': typeof GraduatesRouteWithChildren
   '/programs': typeof ProgramsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/study-system': typeof StudySystemRoute
   '/visit': typeof VisitRoute
+  '/graduates/$slug': typeof GraduatesSlugRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news/': typeof NewsIndexRoute
 }
@@ -127,11 +134,12 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
-  '/graduates': typeof GraduatesRoute
+  '/graduates': typeof GraduatesRouteWithChildren
   '/programs': typeof ProgramsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/study-system': typeof StudySystemRoute
   '/visit': typeof VisitRoute
+  '/graduates/$slug': typeof GraduatesSlugRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news': typeof NewsIndexRoute
 }
@@ -145,11 +153,12 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
-  '/graduates': typeof GraduatesRoute
+  '/graduates': typeof GraduatesRouteWithChildren
   '/programs': typeof ProgramsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/study-system': typeof StudySystemRoute
   '/visit': typeof VisitRoute
+  '/graduates/$slug': typeof GraduatesSlugRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news/': typeof NewsIndexRoute
 }
@@ -169,6 +178,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/study-system'
     | '/visit'
+    | '/graduates/$slug'
     | '/news/$slug'
     | '/news/'
   fileRoutesByTo: FileRoutesByTo
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/study-system'
     | '/visit'
+    | '/graduates/$slug'
     | '/news/$slug'
     | '/news'
   id:
@@ -203,6 +214,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/study-system'
     | '/visit'
+    | '/graduates/$slug'
     | '/news/$slug'
     | '/news/'
   fileRoutesById: FileRoutesById
@@ -216,7 +228,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
   GalleryRoute: typeof GalleryRoute
-  GraduatesRoute: typeof GraduatesRoute
+  GraduatesRoute: typeof GraduatesRouteWithChildren
   ProgramsRoute: typeof ProgramsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StudySystemRoute: typeof StudySystemRoute
@@ -332,8 +344,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/graduates/$slug': {
+      id: '/graduates/$slug'
+      path: '/$slug'
+      fullPath: '/graduates/$slug'
+      preLoaderRoute: typeof GraduatesSlugRouteImport
+      parentRoute: typeof GraduatesRoute
+    }
   }
 }
+
+interface GraduatesRouteChildren {
+  GraduatesSlugRoute: typeof GraduatesSlugRoute
+}
+
+const GraduatesRouteChildren: GraduatesRouteChildren = {
+  GraduatesSlugRoute: GraduatesSlugRoute,
+}
+
+const GraduatesRouteWithChildren = GraduatesRoute._addFileChildren(
+  GraduatesRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -344,7 +375,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
   GalleryRoute: GalleryRoute,
-  GraduatesRoute: GraduatesRoute,
+  GraduatesRoute: GraduatesRouteWithChildren,
   ProgramsRoute: ProgramsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StudySystemRoute: StudySystemRoute,
