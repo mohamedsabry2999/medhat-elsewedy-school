@@ -654,6 +654,25 @@ function CertificatesSection() {
             </article>
           ))}
         </div>
+
+        {/* AHK highlight callout */}
+        <div className="mt-10 rounded-3xl bg-gradient-to-l from-brand to-[color-mix(in_oklab,var(--brand)_75%,black)] text-white p-6 md:p-8 grid md:grid-cols-[auto_1fr_auto] items-center gap-5 shadow-xl border border-white/10">
+          <div className="h-20 w-20 rounded-2xl bg-white grid place-items-center p-2 shrink-0 shadow-md">
+            <img src={ahkLogo.url} alt="الغرفة الألمانية AHK Cairo" className="max-h-full max-w-full object-contain" />
+          </div>
+          <div className="min-w-0">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent-red)] text-white text-[11px] font-bold px-2.5 py-1 mb-2">
+              <BadgeCheck className="h-3 w-3" /> اعتماد مهني دولي
+            </div>
+            <h3 className="font-extrabold text-lg md:text-xl leading-7">اعتماد الغرفة الألمانية AHK Cairo</h3>
+            <p className="mt-2 text-sm md:text-base text-white/85 leading-7">
+              اعتماد مهني يعزز جودة التأهيل الفني ويدعم جاهزية الخريج للمنافسة في سوق العمل المحلي والإقليمي والدولي، خاصة في المجالات الفنية والصناعية المرتبطة بتخصصه.
+            </p>
+          </div>
+          <span className="justify-self-start md:justify-self-end inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold px-3 py-2">
+            <Globe2 className="h-4 w-4" /> يدعم فرص الخريجين محليًا ودوليًا
+          </span>
+        </div>
       </div>
     </section>
   );
