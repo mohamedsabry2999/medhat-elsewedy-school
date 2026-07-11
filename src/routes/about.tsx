@@ -3,31 +3,36 @@ import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Eye, Flag, Target, Factory, GraduationCap, Handshake, BadgeCheck } from "lucide-react";
 import { IMG, CERTIFICATES } from "@/lib/site-data";
-import { pageSeo, breadcrumbJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd } from "@/lib/seo";
+import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 
 export const Route = createFileRoute("/about")({
-  head: () => {
-    const seo = pageSeo({
-      title: "عن مدرسة مدحت السويدي — نشأة، رؤية، وشراكة صناعية",
-      description:
-        "نشأة مدرسة مدحت السويدي للتكنولوجيا التطبيقية، رؤيتها ورسالتها، وشراكتها الصناعية مع دار مدحت السويدي للطباعة لتأهيل فنيين محترفين لسوق العمل.",
-      path: "/about",
-    });
-    return {
-      ...seo,
-      scripts: [
-        {
-          type: "application/ld+json",
-          children: JSON.stringify(
-            breadcrumbJsonLd([
-              { name: "الرئيسية", path: "/" },
-              { name: "عن المدرسة", path: "/about" },
-            ]),
-          ),
-        },
-      ],
-    };
-  },
+  loader: cmsLoader("about"),
+  head: ({ loaderData }) =>
+    buildCmsHead(
+      {
+        title: "عن مدرسة مدحت السويدي — نشأة، رؤية، وشراكة صناعية",
+        description:
+          "نشأة مدرسة مدحت السويدي للتكنولوجيا التطبيقية، رؤيتها ورسالتها، وشراكتها الصناعية مع دار مدحت السويدي للطباعة لتأهيل فنيين محترفين لسوق العمل.",
+        path: "/about",
+      },
+      loaderData,
+      {
+        scripts: [
+          {
+            type: "application/ld+json",
+            children: JSON.stringify(
+              breadcrumbJsonLd([
+                { name: "الرئيسية", path: "/" },
+                { name: "عن المدرسة", path: "/about" },
+              ]),
+            ),
+          },
+        ],
+      },
+    ),
+  errorComponent: DefaultError,
+  notFoundComponent: DefaultNotFound,
   component: AboutPage,
 });
 

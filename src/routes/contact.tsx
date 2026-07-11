@@ -15,18 +15,22 @@ import { useBranches } from "@/lib/branches-store";
 
 import { z } from "zod";
 
-import { pageSeo } from "@/lib/seo";
+import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 
 export const Route = createFileRoute("/contact")({
-  head: () => {
-    const seo = pageSeo({
-      title: "تواصل مع مدرسة مدحت السويدي — الفروع وأرقام التواصل",
-      description:
-        "قنوات التواصل مع مدرسة مدحت السويدي للتكنولوجيا التطبيقية: هاتف 01050360883، بريد school@elsewedyprint.com، وعناوين الفرعين بمدينة العاشر من رمضان.",
-      path: "/contact",
-    });
-    return { ...seo };
-  },
+  loader: cmsLoader("contact"),
+  head: ({ loaderData }) =>
+    buildCmsHead(
+      {
+        title: "تواصل مع مدرسة مدحت السويدي — الفروع وأرقام التواصل",
+        description:
+          "قنوات التواصل مع مدرسة مدحت السويدي للتكنولوجيا التطبيقية: هاتف 01050360883، بريد school@elsewedyprint.com، وعناوين الفرعين بمدينة العاشر من رمضان.",
+        path: "/contact",
+      },
+      loaderData,
+    ),
+  errorComponent: DefaultError,
+  notFoundComponent: DefaultNotFound,
   component: ContactPage,
 });
 
