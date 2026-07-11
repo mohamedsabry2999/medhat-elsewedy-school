@@ -121,14 +121,14 @@ function VisitPage() {
 
   return (
     <SiteLayout>
-      <PageHeader eyebrow="الندوات التعريفية" title="سجل حضور الندوة" subtitle="الحد الأدنى الحالي لحضور الندوات التعريفية: 190 درجة." />
+      <PageHeader eyebrow={eyebrow} title={title} subtitle={subtitle} />
       <section className="py-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="mb-6 rounded-lg border bg-secondary/50 p-4 text-sm text-brand flex items-start gap-2">
             <Info className="h-4 w-4 mt-0.5 shrink-0" />
             <div>
-              أيام الزيارة المتاحة: السبت، الإثنين، الأربعاء. الفترات: من 9:00 إلى 11:00 صباحًا، أو من 11:30 إلى 1:30 ظهرًا.
-              <div className="mt-1 text-muted-foreground">يرجى التأكد من مقر الزيارة المحدد في رسالة التأكيد قبل الحضور.</div>
+              {infoLine}
+              <div className="mt-1 text-muted-foreground">{infoWarn}</div>
             </div>
           </div>
 
@@ -137,11 +137,11 @@ function VisitPage() {
               <CardContent className="p-6 flex items-start gap-3">
                 <CheckCircle2 className="h-6 w-6 text-green-600 shrink-0" />
                 <div>
-                  <div className="font-bold text-green-800">تم تسجيل بياناتكم بنجاح</div>
+                  <div className="font-bold text-green-800">{successTitle}</div>
                   <div className="text-sm text-green-700 mt-1">
                     رقم الطلب: <b dir="ltr">{done.code}</b> — اليوم: <b>{done.day}</b> — التاريخ: <b>{done.date}</b> — الفترة: <b>{done.slot}</b>
                   </div>
-                  <div className="text-sm text-green-700 mt-1">ونتشرف بزيارتكم في الموعد المحدد.</div>
+                  <div className="text-sm text-green-700 mt-1">{successNote}</div>
                 </div>
               </CardContent>
             </Card>
