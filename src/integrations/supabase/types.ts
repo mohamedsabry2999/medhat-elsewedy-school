@@ -260,6 +260,117 @@ export type Database = {
         }
         Relationships: []
       }
+      page_sections: {
+        Row: {
+          content: string
+          created_at: string
+          cta_text: string
+          cta_text_2: string
+          cta_url: string
+          cta_url_2: string
+          data_json: Json
+          id: string
+          image_url: string
+          is_visible: boolean
+          page_slug: string
+          section_key: string
+          section_type: string
+          sort_order: number
+          subtitle: string
+          title: string
+          updated_at: string
+          video_url: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          cta_text?: string
+          cta_text_2?: string
+          cta_url?: string
+          cta_url_2?: string
+          data_json?: Json
+          id?: string
+          image_url?: string
+          is_visible?: boolean
+          page_slug: string
+          section_key: string
+          section_type?: string
+          sort_order?: number
+          subtitle?: string
+          title?: string
+          updated_at?: string
+          video_url?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          cta_text?: string
+          cta_text_2?: string
+          cta_url?: string
+          cta_url_2?: string
+          data_json?: Json
+          id?: string
+          image_url?: string
+          is_visible?: boolean
+          page_slug?: string
+          section_key?: string
+          section_type?: string
+          sort_order?: number
+          subtitle?: string
+          title?: string
+          updated_at?: string
+          video_url?: string
+        }
+        Relationships: []
+      }
+      pages: {
+        Row: {
+          created_at: string
+          id: string
+          is_published: boolean
+          keywords: string
+          meta_description: string
+          meta_title: string
+          og_description: string
+          og_image: string
+          og_title: string
+          robots: string
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          keywords?: string
+          meta_description?: string
+          meta_title?: string
+          og_description?: string
+          og_image?: string
+          og_title?: string
+          robots?: string
+          slug: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          keywords?: string
+          meta_description?: string
+          meta_title?: string
+          og_description?: string
+          og_image?: string
+          og_title?: string
+          robots?: string
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       registrations: {
         Row: {
           attendees: number
