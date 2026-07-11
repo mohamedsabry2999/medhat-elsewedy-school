@@ -9,9 +9,12 @@ import {
   Award, Factory, Users, Wrench, ShieldCheck, GraduationCap,
   Printer, Palette, TrendingUp, ArrowLeft, Calendar, CheckCircle2, ClipboardList, UserCheck, Megaphone,
   BadgeCheck, Globe2, Bus, HeartPulse, Shirt, Gift, Briefcase, Rocket, Lightbulb, Sparkles,
+  MapPin, Building2, School, PlayCircle,
 } from "lucide-react";
 import { IMG, PROGRAMS, NEWS, FAQS, ACCREDITATIONS, CERTIFICATES, BENEFITS } from "@/lib/site-data";
 import { useMediaByPosition } from "@/lib/media-store";
+import { useSiteSettings } from "@/lib/settings-store";
+import { toYouTubeEmbed } from "@/lib/youtube";
 import { SmartImage } from "@/components/ui/SmartImage";
 
 import ahkLogo from "@/assets/ahk-cairo.png.asset.json";
