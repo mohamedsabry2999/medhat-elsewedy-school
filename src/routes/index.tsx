@@ -68,12 +68,17 @@ function Hero() {
     { src: heroSide[3]?.imageUrl ?? IMG.students[3], focalX: heroSide[3]?.focalX ?? 50, focalY: heroSide[3]?.focalY ?? 22, alt: "طالبة" },
   ];
 
+  const mobileHero = heroMain[0] ?? heroSide[0];
+  const mobileHeroSrc = mobileHero?.imageUrl ?? IMG.students[0];
+  const mobileFocalX = mobileHero?.focalX ?? 50;
+  const mobileFocalY = mobileHero?.focalY ?? 22;
+
   return (
     <section className="relative overflow-hidden bg-brand text-white">
       <div className="absolute inset-0 opacity-25 bg-cover" style={{ backgroundImage: `url(${mainImg})`, backgroundPosition: mainFocal }} />
       <div className="absolute inset-0 bg-gradient-to-l from-brand/95 via-brand/85 to-brand/70" />
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-24 grid lg:grid-cols-2 gap-10 items-center">
-        <div className="min-w-0">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14 md:py-20 lg:py-24 grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+        <div className="min-w-0 order-2 lg:order-1">
           <Badge className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)] text-white border-0 mb-4">
             وزارة التربية والتعليم والتعليم الفني — رؤية مصر 2030
           </Badge>
@@ -84,10 +89,10 @@ function Hero() {
           <p className="mt-5 text-base sm:text-lg text-white/90 max-w-xl leading-8">
             أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر، تأسست في ضوء رؤية مصر 2030 لتطوير التعليم الفني وربط الدراسة باحتياجات سوق العمل.
           </p>
-          <p className="mt-3 text-white/75 max-w-xl leading-8 text-sm">
+          <p className="mt-3 text-white/75 max-w-xl leading-8 text-sm hidden sm:block">
             نموذج تعليمي يجمع بين الدراسة النظرية والتدريب العملي داخل بيئة صناعية حقيقية، لإعداد جيل من الفنيين المؤهلين والقادرين على المنافسة في سوق الطباعة المحلي والإقليمي والدولي.
           </p>
-          <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
+          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
             <Button asChild size="lg" className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white w-full sm:w-auto">
               <Link to="/visit">سجل لحضور الندوة التعريفية</Link>
             </Button>
@@ -99,7 +104,40 @@ function Hero() {
             </Button>
           </div>
         </div>
-        <div className="hidden lg:grid grid-cols-2 gap-4">
+
+        {/* Mobile hero image (single, prominent) */}
+        <div className="order-1 lg:hidden">
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+            <SmartImage
+              src={mobileHeroSrc}
+              alt="طلاب مدرسة مدحت السويدي للتكنولوجيا التطبيقية"
+              focalX={mobileFocalX}
+              focalY={mobileFocalY}
+              imageType="student_portrait"
+              aspectRatio="4 / 3"
+              className="w-full"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-brand/70 to-transparent pointer-events-none" />
+          </div>
+          {/* Small tablet grid preview (2 extra) */}
+          <div className="mt-3 hidden sm:grid grid-cols-3 gap-3 lg:hidden">
+            {sideSlots.slice(0, 3).map((s, i) => (
+              <SmartImage
+                key={i}
+                src={s.src}
+                alt={s.alt}
+                focalX={s.focalX}
+                focalY={s.focalY}
+                imageType="student_portrait"
+                aspectRatio="1 / 1"
+                className="rounded-xl shadow-lg"
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop grid */}
+        <div className="hidden lg:grid order-2 grid-cols-2 gap-4">
           {sideSlots.map((s, i) => (
             <div key={i} className={i % 2 === 1 ? "mt-8" : ""}>
               <SmartImage
@@ -114,7 +152,6 @@ function Hero() {
             </div>
           ))}
         </div>
-
       </div>
     </section>
   );
