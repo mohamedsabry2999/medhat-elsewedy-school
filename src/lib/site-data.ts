@@ -24,6 +24,7 @@ export const NAV_LINKS = [
   { to: "/study-system", label: "نظام الدراسة" },
   { to: "/admissions", label: "التقديم والقبول" },
   { to: "/visit", label: "الندوات التعريفية" },
+  { to: "/graduates", label: "دفعات الخريجين" },
   { to: "/news", label: "الأخبار" },
   { to: "/gallery", label: "معرض الصور" },
   { to: "/faq", label: "الأسئلة الشائعة" },
