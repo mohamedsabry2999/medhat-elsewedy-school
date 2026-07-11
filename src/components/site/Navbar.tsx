@@ -121,11 +121,11 @@ export function Navbar() {
       {open && (
         <>
           <div
-            className="xl:hidden fixed inset-0 top-16 lg:top-[calc(5rem+2.25rem)] bg-black/40 z-40"
+            className="2xl:hidden fixed inset-0 top-20 lg:top-[calc(6rem+2.25rem)] bg-black/40 z-40"
             onClick={() => setOpen(false)}
             aria-hidden
           />
-          <div className="xl:hidden fixed inset-x-0 top-16 lg:top-[calc(5rem+2.25rem)] z-50 bg-white border-t border-border shadow-xl max-h-[calc(100vh-4rem)] overflow-y-auto">
+          <div className="2xl:hidden fixed inset-x-0 top-20 lg:top-[calc(6rem+2.25rem)] z-50 bg-white border-t border-border shadow-xl max-h-[calc(100vh-5rem)] overflow-y-auto">
             <nav className="mx-auto max-w-7xl px-4 sm:px-6 py-4 grid gap-1">
               {NAV_LINKS.map((l) => (
                 <Link
