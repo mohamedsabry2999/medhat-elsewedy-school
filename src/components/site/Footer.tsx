@@ -13,7 +13,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 grid gap-10 md:grid-cols-4">
         <div className="md:col-span-2">
           <div className="flex items-center gap-3">
-            <img src={IMG.logo} alt="شعار مدرسة مدحت السويدي للتكنولوجيا التطبيقية" className="h-14 w-14 bg-white/95 rounded-lg p-1" />
+            <img src={IMG.logo} alt="شعار مدرسة مدحت السويدي للتكنولوجيا التطبيقية" className="h-20 w-20 bg-white/95 rounded-xl p-1.5 shrink-0 object-contain" />
             <div>
               <div className="font-extrabold text-lg">مدرسة مدحت السويدي للتكنولوجيا التطبيقية</div>
               <div className="text-white/70 text-xs">Medhat Elsewedy School for Applied Technology</div>
