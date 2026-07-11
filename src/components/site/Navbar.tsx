@@ -54,16 +54,14 @@ export function Navbar() {
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-border shadow-sm">
       <TopBar />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 sm:gap-6 h-[84px] md:h-[96px] lg:h-[112px]">
+        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 sm:gap-6 h-[92px] md:h-[108px] lg:h-[124px]">
           {/* Right (logical): Logo + school name */}
           <Link to="/" className="flex items-center gap-2.5 sm:gap-4 min-w-0 shrink-0">
-            <div className="shrink-0 flex items-center justify-center bg-white rounded-xl p-1 sm:p-1.5">
-              <img
-                src={IMG.logo}
-                alt="شعار مدرسة مدحت السويدي للتكنولوجيا التطبيقية"
-                className="h-[60px] w-[60px] sm:h-[72px] sm:w-[72px] md:h-20 md:w-20 lg:h-[92px] lg:w-[92px] object-contain"
-              />
-            </div>
+            <img
+              src={IMG.logo}
+              alt="شعار مدرسة مدحت السويدي للتكنولوجيا التطبيقية"
+              className="shrink-0 h-[72px] w-auto sm:h-20 md:h-[92px] lg:h-[108px] object-contain"
+            />
             <div className="flex flex-col min-w-0 leading-tight">
               <span className="text-[13px] sm:text-base md:text-lg lg:text-xl font-extrabold text-brand truncate">
                 مدرسة مدحت السويدي
