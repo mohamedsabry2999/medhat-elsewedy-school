@@ -274,8 +274,30 @@ function BatchEditDialog({ batch, onClose }: { batch: GraduateBatch; onClose: ()
                 <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={6} />
               </div>
               <div className="sm:col-span-2">
-                <Label>رابط صورة الغلاف</Label>
-                <Input value={form.cover_image_url} onChange={(e) => setForm({ ...form, cover_image_url: e.target.value })} placeholder="https://..." />
+                <Label>صورة الغلاف</Label>
+                <Tabs defaultValue={form.cover_image_url ? "url" : "upload"} className="mt-2">
+                  <TabsList>
+                    <TabsTrigger value="url">رابط خارجي</TabsTrigger>
+                    <TabsTrigger value="upload">رفع من الجهاز</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="url" className="pt-3">
+                    <Input
+                      value={form.cover_image_url}
+                      onChange={(e) => setForm({ ...form, cover_image_url: e.target.value })}
+                      placeholder="https://..."
+                    />
+                  </TabsContent>
+                  <TabsContent value="upload" className="pt-3">
+                    <FileUploader
+                      kind="image"
+                      folder="graduates/covers"
+                      currentUrl={form.cover_image_url || undefined}
+                      onUploaded={(url) => setForm({ ...form, cover_image_url: url })}
+                      onClear={() => setForm({ ...form, cover_image_url: "" })}
+                      label="اسحب صورة الغلاف هنا أو اضغط لاختيار ملف من جهازك"
+                    />
+                  </TabsContent>
+                </Tabs>
               </div>
               <div className="sm:col-span-2">
                 <Label>Alt Text لصورة الغلاف</Label>
