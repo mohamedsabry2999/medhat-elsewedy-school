@@ -112,18 +112,28 @@ function BatchDetail() {
             <div className="grid gap-6 md:grid-cols-2">
               {videos.map((v) => {
                 const embed = v.embed_url || toYouTubeEmbed(v.video_url) || "";
-                if (!embed) return null;
+                const isUploaded = !embed && !!v.video_url;
+                if (!embed && !isUploaded) return null;
                 return (
                   <Card key={v.id} className="overflow-hidden pt-0">
                     <div className="relative w-full" style={{ aspectRatio: "16 / 9" }}>
-                      <iframe
-                        src={embed}
-                        title={v.title || batch.title}
-                        loading="lazy"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        className="absolute inset-0 h-full w-full"
-                      />
+                      {embed ? (
+                        <iframe
+                          src={embed}
+                          title={v.title || batch.title}
+                          loading="lazy"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          className="absolute inset-0 h-full w-full"
+                        />
+                      ) : (
+                        <video
+                          src={v.video_url}
+                          controls
+                          preload="metadata"
+                          className="absolute inset-0 h-full w-full bg-black"
+                        />
+                      )}
                     </div>
                     {(v.title || v.description) && (
                       <CardContent className="p-4">
