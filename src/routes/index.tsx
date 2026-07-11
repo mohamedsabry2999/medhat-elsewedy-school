@@ -177,10 +177,36 @@ function Hero() {
     { src: heroSide[3]?.imageUrl ?? IMG.students[3], focalX: heroSide[3]?.focalX ?? 50, focalY: heroSide[3]?.focalY ?? 22, alt: "طالبة" },
   ];
 
-  const mobileHero = heroMain[0] ?? heroSide[0];
-  const mobileHeroSrc = mobileHero?.imageUrl ?? IMG.students[0];
-  const mobileFocalX = mobileHero?.focalX ?? 50;
-  const mobileFocalY = mobileHero?.focalY ?? 22;
+  // Build the mobile slider list — prefer CMS media, fall back to bundled student photos.
+  // Priority: Hero Side images (4) → Hero Main image → local student portraits.
+  const cmsSlides: HeroSlide[] = heroSide.slice(0, 4).map((m, i) => ({
+    src: m.imageUrl,
+    alt: m.altText || `طالب ${i + 1}`,
+    focalX: m.focalX ?? 50,
+    focalY: m.focalY ?? 22,
+  }));
+  const fallbackSlides: HeroSlide[] = [
+    { src: IMG.students[0], alt: "طالب من المدرسة", focalX: 50, focalY: 22 },
+    { src: IMG.students[3], alt: "طالبة من المدرسة", focalX: 50, focalY: 22 },
+    { src: IMG.students[4], alt: "طالب من المدرسة", focalX: 50, focalY: 22 },
+    { src: IMG.students[1], alt: "طالبة من المدرسة", focalX: 50, focalY: 22 },
+  ];
+  const mobileSlides: HeroSlide[] =
+    cmsSlides.length >= 2
+      ? cmsSlides
+      : cmsSlides.length === 1
+        ? [...cmsSlides, ...fallbackSlides.slice(0, 3)]
+        : heroMain[0]
+          ? [
+              {
+                src: heroMain[0].imageUrl,
+                alt: heroMain[0].altText || "طلاب المدرسة",
+                focalX: heroMain[0].focalX ?? 50,
+                focalY: heroMain[0].focalY ?? 22,
+              },
+              ...fallbackSlides.slice(0, 3),
+            ]
+          : fallbackSlides;
 
   return (
     <section className="relative overflow-hidden bg-brand text-white">
@@ -214,35 +240,9 @@ function Hero() {
           </div>
         </div>
 
-        {/* Mobile hero image (single, prominent) */}
+        {/* Mobile & tablet hero — slider with 4 student photos */}
         <div className="order-1 lg:hidden">
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-            <SmartImage
-              src={mobileHeroSrc}
-              alt="طلاب مدرسة مدحت السويدي للتكنولوجيا التطبيقية"
-              focalX={mobileFocalX}
-              focalY={mobileFocalY}
-              imageType="student_portrait"
-              aspectRatio="4 / 3"
-              className="w-full"
-            />
-            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-brand/70 to-transparent pointer-events-none" />
-          </div>
-          {/* Small tablet grid preview (2 extra) */}
-          <div className="mt-3 hidden sm:grid grid-cols-3 gap-3 lg:hidden">
-            {sideSlots.slice(0, 3).map((s, i) => (
-              <SmartImage
-                key={i}
-                src={s.src}
-                alt={s.alt}
-                focalX={s.focalX}
-                focalY={s.focalY}
-                imageType="student_portrait"
-                aspectRatio="1 / 1"
-                className="rounded-xl shadow-lg"
-              />
-            ))}
-          </div>
+          <MobileHeroSlider slides={mobileSlides} intervalMs={3800} />
         </div>
 
         {/* Desktop grid */}
