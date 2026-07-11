@@ -17,6 +17,7 @@ import { useSiteSettings } from "@/lib/settings-store";
 import { toYouTubeEmbed } from "@/lib/youtube";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { MobileHeroSlider, type HeroSlide } from "@/components/site/MobileHeroSlider";
+import { usePageSections, useSection } from "@/lib/page-sections-store";
 
 import ahkLogo from "@/assets/ahk-cairo.png.asset.json";
 import moeLogo from "@/assets/moe-egypt.png.asset.json";
@@ -38,27 +39,32 @@ export const Route = createFileRoute("/")({
 
 
 function Home() {
+  const sections = usePageSections("home");
+  const isVisible = (key: string) => {
+    const s = sections.find((x) => x.section_key === key);
+    return s ? s.is_visible : true;
+  };
   return (
     <SiteLayout>
-      <Hero />
-      <TrustBadges />
-      <QuickStats />
-      <YoutubeIntro />
-      <AccreditationSection />
-      <PartnersStrip />
-      <WhySection />
-      <StudySystem />
-      <ProgramsSection />
-      <GlobalOpportunities />
-      <BenefitsSection />
-      <GraduatesFuture />
-      <EducationPaths />
-      <CertificatesSection />
-      <AdmissionSteps />
-      <SeminarCTA />
-      <NewsSection />
-      <GalleryTeaser />
-      <FaqSection />
+      {isVisible("hero") && <Hero />}
+      {isVisible("trust-badges") && <TrustBadges />}
+      {isVisible("quick-stats") && <QuickStats />}
+      {isVisible("youtube-intro") && <YoutubeIntro />}
+      {isVisible("accreditation") && <AccreditationSection />}
+      {isVisible("partners") && <PartnersStrip />}
+      {isVisible("why-us") && <WhySection />}
+      {isVisible("study-system") && <StudySystem />}
+      {isVisible("programs") && <ProgramsSection />}
+      {isVisible("global-opportunities") && <GlobalOpportunities />}
+      {isVisible("benefits") && <BenefitsSection />}
+      {isVisible("graduates-future") && <GraduatesFuture />}
+      {isVisible("education-paths") && <EducationPaths />}
+      {isVisible("certificates") && <CertificatesSection />}
+      {isVisible("admission-steps") && <AdmissionSteps />}
+      {isVisible("seminar-cta") && <SeminarCTA />}
+      {isVisible("news") && <NewsSection />}
+      {isVisible("gallery-teaser") && <GalleryTeaser />}
+      {isVisible("faq") && <FaqSection />}
     </SiteLayout>
   );
 }
