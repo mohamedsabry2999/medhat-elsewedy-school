@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, Wrench, Factory, Globe2, Users, Lightbulb, ClipboardCheck, Briefcase, GraduationCap, BadgeCheck } from "lucide-react";
 import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 import { useContent } from "@/lib/content-store";
+import { hl } from "@/components/site/SchoolName";
 
 export const Route = createFileRoute("/study-system")({
   loader: cmsLoader("study-system"),
