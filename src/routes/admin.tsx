@@ -192,6 +192,7 @@ function AdminPage() {
           {section === "articles" && <ArticlesTab />}
           {section === "gallery" && <GalleryTab />}
           {section === "media" && <MediaLibraryTab />}
+          {section === "graduates" && <GraduatesTab />}
           {section === "settings" && <SettingsTab />}
         </div>
       </div>
