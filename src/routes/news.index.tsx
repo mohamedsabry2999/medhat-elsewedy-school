@@ -9,6 +9,7 @@ import { Search, Star } from "lucide-react";
 import { usePublishedArticles, ARTICLE_CATEGORIES } from "@/lib/articles-store";
 import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 import { SmartImage } from "@/components/ui/SmartImage";
+import { useContent } from "@/lib/content-store";
 
 
 export const Route = createFileRoute("/news/")({
@@ -40,10 +41,15 @@ function NewsPage() {
         (!q || n.title.includes(q) || n.excerpt.includes(q)),
     );
   }, [articles, cat, q]);
+  const eyebrow = useContent("news.header.eyebrow", "الأخبار", { page: "news", section: "header", label: "Eyebrow" });
+  const title = useContent("news.header.title", "آخر أخبار المدرسة", { page: "news", section: "header", label: "عنوان الصفحة" });
+  const subtitle = useContent("news.header.subtitle", "فعاليات، زيارات، تدريب ميداني، وإعلانات القبول.", { page: "news", section: "header", label: "Subtitle", type: "textarea" });
+  const empty = useContent("news.empty", "لا توجد أخبار مطابقة.", { page: "news", section: "state", label: "رسالة فارغة", type: "message" });
+  const searchPlaceholder = useContent("news.search.placeholder", "ابحث في الأخبار...", { page: "news", section: "search", label: "Placeholder البحث" });
 
   return (
     <SiteLayout>
-      <PageHeader eyebrow="الأخبار" title="آخر أخبار المدرسة" subtitle="فعاليات، زيارات، تدريب ميداني، وإعلانات القبول." />
+      <PageHeader eyebrow={eyebrow} title={title} subtitle={subtitle} />
       <section className="py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row gap-4 md:items-center md:justify-between mb-8">

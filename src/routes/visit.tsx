@@ -200,7 +200,7 @@ function VisitPage() {
                 </Field>
                 <div className="md:col-span-2 flex justify-end">
                   <Button type="submit" size="lg" disabled={submitting} className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white">
-                    {submitting ? "جارٍ التسجيل..." : "تأكيد التسجيل"}
+                    {submitting ? btnSubmitting : btnSubmit}
                   </Button>
                 </div>
               </form>
