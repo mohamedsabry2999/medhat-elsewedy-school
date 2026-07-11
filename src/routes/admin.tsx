@@ -38,6 +38,7 @@ import { FocalPointPicker } from "@/components/admin/FocalPointPicker";
 import { MediaLibraryTab } from "@/components/admin/MediaLibraryTab";
 import { PagesManagerTab } from "@/components/admin/PagesManagerTab";
 import { GraduatesTab } from "@/components/admin/GraduatesTab";
+import { TextContentTab } from "@/components/admin/TextContentTab";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { toYouTubeEmbed } from "@/lib/youtube";
 
@@ -90,6 +91,7 @@ const SECTIONS = [
   { id: "gallery", label: "معرض الصور", icon: Images },
   { id: "media", label: "مكتبة الصور والوسائط", icon: ImageIcon },
   { id: "graduates", label: "دفعات الخريجين", icon: GraduationCap },
+  { id: "text-content", label: "إدارة النصوص", icon: FileText },
   { id: "settings", label: "إعدادات الموقع", icon: Settings },
 ] as const;
 
@@ -194,6 +196,7 @@ function AdminPage() {
           {section === "gallery" && <GalleryTab />}
           {section === "media" && <MediaLibraryTab />}
           {section === "graduates" && <GraduatesTab />}
+          {section === "text-content" && <TextContentTab />}
           {section === "settings" && <SettingsTab />}
         </div>
       </div>

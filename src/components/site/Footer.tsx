@@ -3,10 +3,18 @@ import { Facebook, Instagram, Youtube, Phone, Mail, MapPin, MessageCircle } from
 import { IMG, NAV_LINKS } from "@/lib/site-data";
 import { useSiteSettings } from "@/lib/settings-store";
 import { useBranches } from "@/lib/branches-store";
+import { useContent } from "@/lib/content-store";
 
 export function Footer() {
   const s = useSiteSettings();
   const branches = useBranches();
+
+  const brandFull = useContent("footer.brand.name", "مدرسة مدحت السويدي للتكنولوجيا التطبيقية", { page: "footer", section: "brand", label: "اسم المدرسة (فوتر)", type: "text" });
+  const brandEn = useContent("footer.brand.name_en", "Medhat Elsewedy School for Applied Technology", { page: "footer", section: "brand", label: "اسم المدرسة (إنجليزي)", type: "text" });
+  const quickLinksTitle = useContent("footer.title.quicklinks", "روابط سريعة", { page: "footer", section: "titles", label: "عنوان: روابط سريعة" });
+  const contactTitle = useContent("footer.title.contact", "تواصل معنا", { page: "footer", section: "titles", label: "عنوان: تواصل معنا" });
+  const copyright = useContent("footer.copyright", "مدرسة مدحت السويدي للتكنولوجيا التطبيقية. جميع الحقوق محفوظة.", { page: "footer", section: "bottom", label: "نص حقوق الملكية" });
+  const ministry = useContent("footer.ministry", "وزارة التربية والتعليم — قطاع التعليم الفني منظومة التكنولوجيا التطبيقية", { page: "footer", section: "bottom", label: "نص الوزارة" });
 
   return (
     <footer className="bg-brand text-white mt-16">
@@ -15,8 +23,8 @@ export function Footer() {
           <div className="flex items-center gap-3">
             <img src={IMG.logo} alt="شعار مدرسة مدحت السويدي للتكنولوجيا التطبيقية" className="h-20 w-20 bg-white/95 rounded-xl p-1.5 shrink-0 object-contain" />
             <div>
-              <div className="font-extrabold text-lg">مدرسة مدحت السويدي للتكنولوجيا التطبيقية</div>
-              <div className="text-white/70 text-xs">Medhat Elsewedy School for Applied Technology</div>
+              <div className="font-extrabold text-lg">{brandFull}</div>
+              <div className="text-white/70 text-xs">{brandEn}</div>
             </div>
           </div>
           <p className="mt-4 text-white/75 text-sm leading-7 max-w-md">{s.footerDescription}</p>
@@ -24,7 +32,7 @@ export function Footer() {
 
 
         <div>
-          <div className="font-bold mb-3">روابط سريعة</div>
+          <div className="font-bold mb-3">{quickLinksTitle}</div>
           <ul className="space-y-2 text-sm text-white/80">
             {NAV_LINKS.slice(0, 6).map((l) => (
               <li key={l.to}>
@@ -35,7 +43,7 @@ export function Footer() {
         </div>
 
         <div>
-          <div className="font-bold mb-3">تواصل معنا</div>
+          <div className="font-bold mb-3">{contactTitle}</div>
           <ul className="space-y-3 text-sm text-white/80">
             <li className="flex gap-2" dir="ltr"><Phone className="h-4 w-4 mt-0.5" /> {s.phone}</li>
             <li className="flex gap-2"><Mail className="h-4 w-4 mt-0.5" /> {s.email}</li>
@@ -62,8 +70,8 @@ export function Footer() {
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 text-xs text-white/60 flex flex-wrap gap-2 justify-between">
-          <span>© {new Date().getFullYear()} مدرسة مدحت السويدي للتكنولوجيا التطبيقية. جميع الحقوق محفوظة.</span>
-          <span>وزارة التربية والتعليم — قطاع التعليم الفني منظومة التكنولوجيا التطبيقية</span>
+          <span>© {new Date().getFullYear()} {copyright}</span>
+          <span>{ministry}</span>
         </div>
       </div>
     </footer>
