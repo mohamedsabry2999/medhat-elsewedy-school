@@ -268,6 +268,11 @@ export function usePublishedBatches(): GraduateBatch[] {
   return list;
 }
 
+export function useFeaturedBatches(limit = 3): GraduateBatch[] {
+  const published = usePublishedBatches();
+  return published.filter((b) => b.featured_on_home).slice(0, limit);
+}
+
 export function useBatchMedia(batchId: string | undefined): GraduateMedia[] {
   const [list, setList] = useState<GraduateMedia[]>(() => (batchId ? mediaForBatch(batchId) : []));
   useEffect(() => {
