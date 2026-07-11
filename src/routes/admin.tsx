@@ -989,6 +989,57 @@ function SettingsTab() {
   return (
     <div className="grid gap-6 max-w-3xl">
       <SyncSettingsPanel />
+
+      <Card>
+        <CardContent className="p-6 md:p-8 space-y-5">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <h2 className="font-extrabold text-brand text-xl">فيديو تعريفي عن المدرسة</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                أضف رابط فيديو يوتيوب ليظهر داخل الصفحة الرئيسية. يقبل روابط youtube.com/watch, youtu.be, أو /embed.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch
+                id="youtube-intro-enabled"
+                checked={s.youtubeIntroEnabled}
+                onCheckedChange={(v) => setS({ ...s, youtubeIntroEnabled: v })}
+              />
+              <Label htmlFor="youtube-intro-enabled" className="text-sm">إظهار الفيديو في الصفحة الرئيسية</Label>
+            </div>
+          </div>
+
+          <div className="grid gap-4">
+            <SField
+              label="رابط فيديو اليوتيوب"
+              value={s.youtubeIntroUrl}
+              onChange={(v) => setS({ ...s, youtubeIntroUrl: v })}
+              dir="ltr"
+            />
+            <SField
+              label="عنوان قسم الفيديو"
+              value={s.youtubeIntroTitle}
+              onChange={(v) => setS({ ...s, youtubeIntroTitle: v })}
+            />
+            <SField
+              label="وصف قسم الفيديو"
+              value={s.youtubeIntroDescription}
+              onChange={(v) => setS({ ...s, youtubeIntroDescription: v })}
+              textarea
+            />
+            {s.youtubeIntroUrl && !toYouTubeEmbed(s.youtubeIntroUrl) && (
+              <p className="text-sm text-red-600">رابط يوتيوب غير صالح — تأكد من نسخ الرابط كاملاً.</p>
+            )}
+          </div>
+
+          <div className="flex justify-end">
+            <Button className="bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white" onClick={save}>
+              <Save className="h-4 w-4 ml-1" /> حفظ إعدادات الفيديو
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardContent className="p-6 md:p-8 space-y-5">
           <div>
@@ -1002,7 +1053,6 @@ function SettingsTab() {
             <SField label="رقم واتساب (رابط كامل)" value={s.whatsapp} onChange={(v) => setS({ ...s, whatsapp: v })} dir="ltr" />
             <SField label="وصف الفوتر" value={s.footerDescription} onChange={(v) => setS({ ...s, footerDescription: v })} textarea />
             <SField label="نص الدعوة الرئيسية" value={s.mainCta} onChange={(v) => setS({ ...s, mainCta: v })} />
-            <SField label="رابط فيديو المدرسة على يوتيوب (تعريفي — يظهر في الصفحة الرئيسية)" value={s.youtubeIntroUrl} onChange={(v) => setS({ ...s, youtubeIntroUrl: v })} dir="ltr" />
             <div className="grid gap-4 md:grid-cols-3">
               <SField label="فيسبوك" value={s.facebook} onChange={(v) => setS({ ...s, facebook: v })} dir="ltr" />
               <SField label="انستجرام" value={s.instagram} onChange={(v) => setS({ ...s, instagram: v })} dir="ltr" />
