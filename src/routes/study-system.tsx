@@ -37,7 +37,7 @@ function StudySystemPage() {
       <section className="py-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-muted-foreground leading-8">
-            {intro}
+            {hl(intro)}
           </p>
         </div>
       </section>

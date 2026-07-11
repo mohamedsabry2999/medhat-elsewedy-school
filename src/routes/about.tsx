@@ -6,6 +6,7 @@ import { IMG, CERTIFICATES } from "@/lib/site-data";
 import { breadcrumbJsonLd } from "@/lib/seo";
 import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 import { useContent } from "@/lib/content-store";
+import { SchoolName } from "@/components/site/SchoolName";
 
 export const Route = createFileRoute("/about")({
   loader: cmsLoader("about"),

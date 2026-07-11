@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { GraduationCap, ArrowLeft } from "lucide-react";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { useFeaturedBatches } from "@/lib/graduates-store";
+import { SchoolName } from "@/components/site/SchoolName";
 
 export function GraduateBatchesTeaser() {
   const batches = useFeaturedBatches(3);
@@ -17,7 +18,7 @@ export function GraduateBatchesTeaser() {
             </div>
             <h2 className="text-2xl md:text-3xl font-black text-brand">دفعات خريجينا</h2>
             <p className="text-muted-foreground mt-2 max-w-2xl">
-              نستعرض ذكريات وإنجازات دفعات مدرسة مدحت السويدي للتكنولوجيا التطبيقية.
+              نستعرض ذكريات وإنجازات دفعات <SchoolName />.
             </p>
           </div>
           <Link
