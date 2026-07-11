@@ -54,19 +54,21 @@ export function Navbar() {
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-border shadow-sm">
       <TopBar />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 sm:gap-6 h-20 lg:h-24">
+        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 sm:gap-6 h-[84px] md:h-[96px] lg:h-[112px]">
           {/* Right (logical): Logo + school name */}
-          <Link to="/" className="flex items-center gap-3 min-w-0 shrink-0">
-            <img
-              src={IMG.logo}
-              alt="شعار مدرسة مدحت السويدي للتكنولوجيا التطبيقية"
-              className="h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 shrink-0 object-contain"
-            />
-            <div className="hidden sm:flex flex-col min-w-0 leading-tight">
-              <span className="text-sm lg:text-lg font-extrabold text-brand truncate">
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-4 min-w-0 shrink-0">
+            <div className="shrink-0 flex items-center justify-center bg-white rounded-xl p-1 sm:p-1.5">
+              <img
+                src={IMG.logo}
+                alt="شعار مدرسة مدحت السويدي للتكنولوجيا التطبيقية"
+                className="h-[60px] w-[60px] sm:h-[72px] sm:w-[72px] md:h-20 md:w-20 lg:h-[92px] lg:w-[92px] object-contain"
+              />
+            </div>
+            <div className="flex flex-col min-w-0 leading-tight">
+              <span className="text-[13px] sm:text-base md:text-lg lg:text-xl font-extrabold text-brand truncate">
                 مدرسة مدحت السويدي
               </span>
-              <span className="text-[10px] lg:text-xs text-muted-foreground truncate">
+              <span className="text-[10px] sm:text-xs md:text-[13px] text-muted-foreground truncate">
                 للتكنولوجيا التطبيقية
               </span>
             </div>
