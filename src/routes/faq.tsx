@@ -2,23 +2,28 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { FAQS } from "@/lib/site-data";
-import { pageSeo, faqJsonLd } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/seo";
+import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 
 export const Route = createFileRoute("/faq")({
-  head: () => {
-    const seo = pageSeo({
-      title: "الأسئلة الشائعة — مدرسة مدحت السويدي للتكنولوجيا التطبيقية",
-      description:
-        "إجابات على أهم أسئلة أولياء الأمور والطلاب حول التقديم، المصروفات، مدة الدراسة، شهادة AHK، وفرص العمل بعد التخرج.",
-      path: "/faq",
-    });
-    return {
-      ...seo,
-      scripts: [
-        { type: "application/ld+json", children: JSON.stringify(faqJsonLd(FAQS)) },
-      ],
-    };
-  },
+  loader: cmsLoader("faq"),
+  head: ({ loaderData }) =>
+    buildCmsHead(
+      {
+        title: "الأسئلة الشائعة — مدرسة مدحت السويدي للتكنولوجيا التطبيقية",
+        description:
+          "إجابات على أهم أسئلة أولياء الأمور والطلاب حول التقديم، المصروفات، مدة الدراسة، شهادة AHK، وفرص العمل بعد التخرج.",
+        path: "/faq",
+      },
+      loaderData,
+      {
+        scripts: [
+          { type: "application/ld+json", children: JSON.stringify(faqJsonLd(FAQS)) },
+        ],
+      },
+    ),
+  errorComponent: DefaultError,
+  notFoundComponent: DefaultNotFound,
   component: FaqPage,
 });
 

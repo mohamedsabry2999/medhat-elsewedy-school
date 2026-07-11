@@ -14,18 +14,22 @@ import { submitRegistration } from "@/lib/registrations.functions";
 import { VISIT_SLOTS, BRANCHES } from "@/lib/site-data";
 import { z } from "zod";
 
-import { pageSeo } from "@/lib/seo";
+import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 
 export const Route = createFileRoute("/visit")({
-  head: () => {
-    const seo = pageSeo({
-      title: "سجل حضور الندوة التعريفية — مدرسة مدحت السويدي",
-      description:
-        "احجز مكانك في الندوة التعريفية لمدرسة مدحت السويدي للتكنولوجيا التطبيقية — تعرّف على التخصصات، نظام الدراسة، وشروط القبول من داخل المدرسة.",
-      path: "/visit",
-    });
-    return { ...seo };
-  },
+  loader: cmsLoader("visit"),
+  head: ({ loaderData }) =>
+    buildCmsHead(
+      {
+        title: "سجل حضور الندوة التعريفية — مدرسة مدحت السويدي",
+        description:
+          "احجز مكانك في الندوة التعريفية لمدرسة مدحت السويدي للتكنولوجيا التطبيقية — تعرّف على التخصصات، نظام الدراسة، وشروط القبول من داخل المدرسة.",
+        path: "/visit",
+      },
+      loaderData,
+    ),
+  errorComponent: DefaultError,
+  notFoundComponent: DefaultNotFound,
   component: VisitPage,
 });
 

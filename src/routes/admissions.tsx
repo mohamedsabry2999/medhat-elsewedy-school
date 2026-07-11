@@ -3,18 +3,22 @@ import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, GraduationCap, Info } from "lucide-react";
-import { pageSeo } from "@/lib/seo";
+import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 
 export const Route = createFileRoute("/admissions")({
-  head: () => {
-    const seo = pageSeo({
-      title: "شروط القبول والتقديم 2026 — مدرسة مدحت السويدي",
-      description:
-        "شروط الالتحاق بمدرسة مدحت السويدي للتكنولوجيا التطبيقية 2026: المتطلبات، الاختبارات، المصروفات الحكومية، وخطوات التقديم عبر وزارة التربية والتعليم.",
-      path: "/admissions",
-    });
-    return { ...seo };
-  },
+  loader: cmsLoader("admissions"),
+  head: ({ loaderData }) =>
+    buildCmsHead(
+      {
+        title: "شروط القبول والتقديم 2026 — مدرسة مدحت السويدي",
+        description:
+          "شروط الالتحاق بمدرسة مدحت السويدي للتكنولوجيا التطبيقية 2026: المتطلبات، الاختبارات، المصروفات الحكومية، وخطوات التقديم عبر وزارة التربية والتعليم.",
+        path: "/admissions",
+      },
+      loaderData,
+    ),
+  errorComponent: DefaultError,
+  notFoundComponent: DefaultNotFound,
   component: AdmissionsPage,
 });
 

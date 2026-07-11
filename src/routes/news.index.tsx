@@ -7,20 +7,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Star } from "lucide-react";
 import { usePublishedArticles, ARTICLE_CATEGORIES } from "@/lib/articles-store";
-import { pageSeo } from "@/lib/seo";
+import { buildCmsHead, cmsLoader, DefaultError, DefaultNotFound } from "@/lib/route-seo";
 import { SmartImage } from "@/components/ui/SmartImage";
 
 
 export const Route = createFileRoute("/news/")({
-  head: () => {
-    const seo = pageSeo({
-      title: "أخبار مدرسة مدحت السويدي — الفعاليات والزيارات والإنجازات",
-      description:
-        "آخر أخبار مدرسة مدحت السويدي للتكنولوجيا التطبيقية: الفعاليات، الزيارات الصناعية، والإنجازات الطلابية والأكاديمية.",
-      path: "/news",
-    });
-    return { ...seo };
-  },
+  loader: cmsLoader("news"),
+  head: ({ loaderData }) =>
+    buildCmsHead(
+      {
+        title: "أخبار مدرسة مدحت السويدي — الفعاليات والزيارات والإنجازات",
+        description:
+          "آخر أخبار مدرسة مدحت السويدي للتكنولوجيا التطبيقية: الفعاليات، الزيارات الصناعية، والإنجازات الطلابية والأكاديمية.",
+        path: "/news",
+      },
+      loaderData,
+    ),
+  errorComponent: DefaultError,
+  notFoundComponent: DefaultNotFound,
   component: NewsPage,
 });
 
