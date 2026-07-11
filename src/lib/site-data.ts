@@ -7,7 +7,7 @@ import p4 from "@/assets/HMZ02168.jpg.asset.json";
 import p5 from "@/assets/HMZ02189.jpg.asset.json";
 import p6 from "@/assets/HMZ02190.jpg.asset.json";
 import p7 from "@/assets/HMZ02198.jpg.asset.json";
-import logo from "@/assets/Logo_Medhat_Elsewedy_School_MEAT_-removebg-preview_2.png.asset.json";
+import logo from "@/assets/logo-meat.png.asset.json";
 
 export const IMG = {
   hero1: hero1.url,
