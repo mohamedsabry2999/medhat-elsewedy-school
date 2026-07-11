@@ -27,6 +27,7 @@ import {
 } from "@/lib/graduates-store";
 import { toYouTubeEmbed } from "@/lib/youtube";
 import { SmartImage } from "@/components/ui/SmartImage";
+import { FileUploader } from "@/components/admin/FileUploader";
 
 const STATUS_OPTIONS: BatchStatus[] = ["منشورة", "مسودة", "مخفية"];
 
@@ -273,8 +274,30 @@ function BatchEditDialog({ batch, onClose }: { batch: GraduateBatch; onClose: ()
                 <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={6} />
               </div>
               <div className="sm:col-span-2">
-                <Label>رابط صورة الغلاف</Label>
-                <Input value={form.cover_image_url} onChange={(e) => setForm({ ...form, cover_image_url: e.target.value })} placeholder="https://..." />
+                <Label>صورة الغلاف</Label>
+                <Tabs defaultValue={form.cover_image_url ? "url" : "upload"} className="mt-2">
+                  <TabsList>
+                    <TabsTrigger value="url">رابط خارجي</TabsTrigger>
+                    <TabsTrigger value="upload">رفع من الجهاز</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="url" className="pt-3">
+                    <Input
+                      value={form.cover_image_url}
+                      onChange={(e) => setForm({ ...form, cover_image_url: e.target.value })}
+                      placeholder="https://..."
+                    />
+                  </TabsContent>
+                  <TabsContent value="upload" className="pt-3">
+                    <FileUploader
+                      kind="image"
+                      folder="graduates/covers"
+                      currentUrl={form.cover_image_url || undefined}
+                      onUploaded={(url) => setForm({ ...form, cover_image_url: url })}
+                      onClear={() => setForm({ ...form, cover_image_url: "" })}
+                      label="اسحب صورة الغلاف هنا أو اضغط لاختيار ملف من جهازك"
+                    />
+                  </TabsContent>
+                </Tabs>
               </div>
               <div className="sm:col-span-2">
                 <Label>Alt Text لصورة الغلاف</Label>
@@ -352,11 +375,26 @@ function MediaImagesEditor({ batchId, images }: { batchId: string; images: Gradu
     <div className="space-y-4">
       <Card>
         <CardContent className="p-4 space-y-3">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="sm:col-span-2">
-              <Label>رابط الصورة</Label>
+          <Label>مصدر الصورة</Label>
+          <Tabs defaultValue="upload">
+            <TabsList>
+              <TabsTrigger value="upload">رفع من الجهاز</TabsTrigger>
+              <TabsTrigger value="url">رابط خارجي</TabsTrigger>
+            </TabsList>
+            <TabsContent value="upload" className="pt-3">
+              <FileUploader
+                kind="image"
+                folder={`graduates/${batchId}/images`}
+                currentUrl={url || undefined}
+                onUploaded={(u) => setUrl(u)}
+                onClear={() => setUrl("")}
+              />
+            </TabsContent>
+            <TabsContent value="url" className="pt-3">
               <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." />
-            </div>
+            </TabsContent>
+          </Tabs>
+          <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <Label>Alt Text</Label>
               <Input value={alt} onChange={(e) => setAlt(e.target.value)} />
@@ -409,18 +447,31 @@ function MediaImagesEditor({ batchId, images }: { batchId: string; images: Gradu
 
 function MediaVideosEditor({ batchId, videos }: { batchId: string; videos: GraduateMedia[] }) {
   const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
+  const [ytUrl, setYtUrl] = useState("");
+  const [fileUrl, setFileUrl] = useState("");
   const [desc, setDesc] = useState("");
+  const [mode, setMode] = useState<"youtube" | "upload">("youtube");
+
+  const reset = () => { setTitle(""); setYtUrl(""); setFileUrl(""); setDesc(""); };
 
   const add = async () => {
-    const embed = toYouTubeEmbed(url);
-    if (!embed) { toast.error("رابط يوتيوب غير صالح"); return; }
-    await createMedia({
-      batch_id: batchId, media_type: "video",
-      title: title.trim(), description: desc, video_url: url.trim(), embed_url: embed,
-      sort_order: videos.length,
-    });
-    setTitle(""); setUrl(""); setDesc("");
+    if (mode === "youtube") {
+      const embed = toYouTubeEmbed(ytUrl);
+      if (!embed) { toast.error("رابط يوتيوب غير صالح"); return; }
+      await createMedia({
+        batch_id: batchId, media_type: "video",
+        title: title.trim(), description: desc, video_url: ytUrl.trim(), embed_url: embed,
+        sort_order: videos.length,
+      });
+    } else {
+      if (!fileUrl) { toast.error("يرجى رفع ملف الفيديو أولًا"); return; }
+      await createMedia({
+        batch_id: batchId, media_type: "video",
+        title: title.trim(), description: desc, video_url: fileUrl, embed_url: "",
+        sort_order: videos.length,
+      });
+    }
+    reset();
     toast.success("تمت إضافة الفيديو");
   };
 
@@ -438,8 +489,25 @@ function MediaVideosEditor({ batchId, videos }: { batchId: string; videos: Gradu
             <Input value={title} onChange={(e) => setTitle(e.target.value)} />
           </div>
           <div>
-            <Label>رابط YouTube</Label>
-            <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
+            <Label>مصدر الفيديو</Label>
+            <Tabs value={mode} onValueChange={(v) => setMode(v as "youtube" | "upload")} className="mt-2">
+              <TabsList>
+                <TabsTrigger value="youtube">رابط YouTube</TabsTrigger>
+                <TabsTrigger value="upload">رفع من الجهاز</TabsTrigger>
+              </TabsList>
+              <TabsContent value="youtube" className="pt-3">
+                <Input value={ytUrl} onChange={(e) => setYtUrl(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
+              </TabsContent>
+              <TabsContent value="upload" className="pt-3">
+                <FileUploader
+                  kind="video"
+                  folder={`graduates/${batchId}/videos`}
+                  currentUrl={fileUrl || undefined}
+                  onUploaded={(u) => setFileUrl(u)}
+                  onClear={() => setFileUrl("")}
+                />
+              </TabsContent>
+            </Tabs>
           </div>
           <div>
             <Label>وصف قصير (اختياري)</Label>
@@ -458,7 +526,11 @@ function MediaVideosEditor({ batchId, videos }: { batchId: string; videos: Gradu
           {videos.map((v) => (
             <Card key={v.id} className="overflow-hidden pt-0">
               <div className="relative w-full" style={{ aspectRatio: "16 / 9" }}>
-                <iframe src={v.embed_url} title={v.title} loading="lazy" allowFullScreen className="absolute inset-0 h-full w-full" />
+                {v.embed_url ? (
+                  <iframe src={v.embed_url} title={v.title} loading="lazy" allowFullScreen className="absolute inset-0 h-full w-full" />
+                ) : (
+                  <video src={v.video_url} controls className="absolute inset-0 h-full w-full bg-black" />
+                )}
               </div>
               <CardContent className="p-3 flex items-center justify-between gap-2">
                 <div className="min-w-0">
@@ -476,3 +548,4 @@ function MediaVideosEditor({ batchId, videos }: { batchId: string; videos: Gradu
     </div>
   );
 }
+
