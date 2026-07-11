@@ -4,6 +4,7 @@ import { IMG, NAV_LINKS } from "@/lib/site-data";
 import { useSiteSettings } from "@/lib/settings-store";
 import { useBranches } from "@/lib/branches-store";
 import { useContent } from "@/lib/content-store";
+import { hl, SchoolName, SCHOOL_NAME } from "./SchoolName";
 
 export function Footer() {
   const s = useSiteSettings();
