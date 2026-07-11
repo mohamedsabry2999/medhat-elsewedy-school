@@ -17,7 +17,14 @@ export type SiteSettings = {
   footerDescription: string;
   mainCta: string;
   youtubeIntroUrl: string;
+  youtubeIntroTitle: string;
+  youtubeIntroDescription: string;
+  youtubeIntroEnabled: boolean;
 };
+
+export const DEFAULT_YOUTUBE_INTRO_TITLE = "تعرف على المدرسة عن قرب";
+export const DEFAULT_YOUTUBE_INTRO_DESCRIPTION =
+  "شاهد نبذة عن مدرسة مدحت السويدي للتكنولوجيا التطبيقية، ونظام الدراسة، والتدريب العملي، والفرص التي يحصل عليها الطلاب داخل بيئة تعليمية وصناعية متخصصة.";
 
 export const DEFAULT_SETTINGS: SiteSettings = {
   phone: "01050360883",
@@ -33,6 +40,9 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     "مدرسة مدحت السويدي للتكنولوجيا التطبيقية — تعليم فني متخصص في تكنولوجيا الطباعة، بالشراكة مع دار مدحت السويدي للطباعة وباعتماد الغرفة الألمانية AHK Cairo.",
   mainCta: "سجل الآن لحضور الندوة التعريفية",
   youtubeIntroUrl: "",
+  youtubeIntroTitle: DEFAULT_YOUTUBE_INTRO_TITLE,
+  youtubeIntroDescription: DEFAULT_YOUTUBE_INTRO_DESCRIPTION,
+  youtubeIntroEnabled: true,
 };
 
 type DBRow = {
@@ -46,6 +56,9 @@ type DBRow = {
   footer_description: string;
   main_cta: string;
   youtube_intro_url?: string | null;
+  youtube_intro_title?: string | null;
+  youtube_intro_description?: string | null;
+  youtube_intro_enabled?: boolean | null;
 };
 
 function fromRow(r: DBRow): SiteSettings {
@@ -60,6 +73,9 @@ function fromRow(r: DBRow): SiteSettings {
     footerDescription: r.footer_description || DEFAULT_SETTINGS.footerDescription,
     mainCta: r.main_cta || DEFAULT_SETTINGS.mainCta,
     youtubeIntroUrl: r.youtube_intro_url || "",
+    youtubeIntroTitle: r.youtube_intro_title || DEFAULT_YOUTUBE_INTRO_TITLE,
+    youtubeIntroDescription: r.youtube_intro_description || DEFAULT_YOUTUBE_INTRO_DESCRIPTION,
+    youtubeIntroEnabled: r.youtube_intro_enabled ?? true,
   };
 }
 
@@ -109,6 +125,9 @@ export function saveSettings(s: SiteSettings) {
     footer_description: s.footerDescription ?? DEFAULT_SETTINGS.footerDescription,
     main_cta: s.mainCta ?? DEFAULT_SETTINGS.mainCta,
     youtube_intro_url: s.youtubeIntroUrl ?? "",
+    youtube_intro_title: s.youtubeIntroTitle ?? DEFAULT_YOUTUBE_INTRO_TITLE,
+    youtube_intro_description: s.youtubeIntroDescription ?? DEFAULT_YOUTUBE_INTRO_DESCRIPTION,
+    youtube_intro_enabled: s.youtubeIntroEnabled,
   }).eq("id", 1).then(({ error }) => {
     if (error) console.error("saveSettings", error);
   });

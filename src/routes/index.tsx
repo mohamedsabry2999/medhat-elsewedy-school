@@ -66,7 +66,7 @@ function Home() {
 function YoutubeIntro() {
   const s = useSiteSettings();
   const embed = toYouTubeEmbed(s.youtubeIntroUrl);
-  if (!embed) return null;
+  if (!embed || !s.youtubeIntroEnabled) return null;
   return (
     <section className="py-16 bg-white">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
@@ -74,16 +74,14 @@ function YoutubeIntro() {
           <div className="inline-flex items-center gap-2 text-[var(--accent-red)] font-bold text-sm mb-2">
             <PlayCircle className="h-4 w-4" /> فيديو تعريفي
           </div>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-brand">تعرف على المدرسة عن قرب</h2>
-          <p className="mt-3 text-muted-foreground leading-8">
-            شاهد نبذة عن مدرسة مدحت السويدي للتكنولوجيا التطبيقية، ونظام الدراسة، والتدريب العملي، والفرص التي يحصل عليها الطلاب داخل بيئة تعليمية وصناعية متخصصة.
-          </p>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-brand">{s.youtubeIntroTitle}</h2>
+          <p className="mt-3 text-muted-foreground leading-8">{s.youtubeIntroDescription}</p>
         </div>
         <div className="relative rounded-3xl overflow-hidden shadow-2xl ring-1 ring-brand/10 bg-black">
           <div className="relative w-full" style={{ aspectRatio: "16 / 9" }}>
             <iframe
               src={embed}
-              title="فيديو تعريفي عن مدرسة مدحت السويدي للتكنولوجيا التطبيقية"
+              title={s.youtubeIntroTitle || "فيديو تعريفي عن مدرسة مدحت السويدي للتكنولوجيا التطبيقية"}
               className="absolute inset-0 h-full w-full"
               loading="lazy"
               referrerPolicy="strict-origin-when-cross-origin"

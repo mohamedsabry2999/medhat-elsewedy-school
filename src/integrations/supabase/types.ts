@@ -346,6 +346,9 @@ export type Database = {
           phone: string
           updated_at: string
           whatsapp_url: string
+          youtube_intro_description: string
+          youtube_intro_enabled: boolean
+          youtube_intro_title: string
           youtube_intro_url: string
           youtube_url: string
         }
@@ -359,6 +362,9 @@ export type Database = {
           phone?: string
           updated_at?: string
           whatsapp_url?: string
+          youtube_intro_description?: string
+          youtube_intro_enabled?: boolean
+          youtube_intro_title?: string
           youtube_intro_url?: string
           youtube_url?: string
         }
@@ -372,6 +378,9 @@ export type Database = {
           phone?: string
           updated_at?: string
           whatsapp_url?: string
+          youtube_intro_description?: string
+          youtube_intro_enabled?: boolean
+          youtube_intro_title?: string
           youtube_intro_url?: string
           youtube_url?: string
         }
