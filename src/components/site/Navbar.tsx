@@ -71,11 +71,11 @@ export function Navbar() {
               alt="شعار مدرسة مدحت السويدي للتكنولوجيا التطبيقية"
               className="shrink-0 h-[64px] w-auto sm:h-[76px] md:h-[92px] lg:h-[108px] object-contain"
             />
-            <div className="hidden sm:flex 2xl:flex flex-col min-w-0 leading-tight">
-              <span className="text-sm md:text-base lg:text-lg xl:text-xl font-extrabold text-brand truncate">
+            <div className="hidden lg:flex flex-col leading-tight shrink-0">
+              <span className="text-sm md:text-base lg:text-lg xl:text-xl font-extrabold text-brand whitespace-nowrap">
                 {brandLine1}
               </span>
-              <span className="text-[11px] md:text-xs lg:text-[13px] text-muted-foreground truncate">
+              <span className="text-[11px] md:text-xs lg:text-[13px] text-muted-foreground whitespace-nowrap">
                 {brandLine2}
               </span>
             </div>

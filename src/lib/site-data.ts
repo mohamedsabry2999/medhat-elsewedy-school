@@ -26,7 +26,7 @@ export const NAV_LINKS = [
   { to: "/visit", label: "الندوات التعريفية" },
   { to: "/graduates", label: "دفعات الخريجين" },
   { to: "/news", label: "الأخبار" },
-  { to: "/gallery", label: "معرض الصور" },
+  
   { to: "/faq", label: "الأسئلة الشائعة" },
   { to: "/contact", label: "تواصل معنا" },
 ] as const;
