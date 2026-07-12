@@ -220,8 +220,12 @@ function Hero() {
 
   // CMS overrides — fall back to originals when not set
   const badge = cms?.data_json?.badge || "وزارة التربية والتعليم والتعليم الفني — رؤية مصر 2030";
-  const titleMain = cms?.title || "مدرسة مدحت السويدي";
+  const rawTitle = cms?.title || "مدرسة مدحت السويدي";
   const titleHighlight = cms?.data_json?.titleHighlight || "للتكنولوجيا التطبيقية";
+  // Avoid duplicating the highlight phrase when the CMS title already contains it.
+  const titleMain = rawTitle.endsWith(titleHighlight)
+    ? rawTitle.slice(0, -titleHighlight.length).trim()
+    : rawTitle;
   const subtitle =
     cms?.subtitle ||
     "أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر، تأسست في ضوء رؤية مصر 2030 لتطوير التعليم الفني وربط الدراسة باحتياجات سوق العمل.";
@@ -245,7 +249,7 @@ function Hero() {
             {badge}
           </Badge>
           <h1 className="font-extrabold leading-tight text-[clamp(1.6rem,6.5vw,3rem)]">
-            {titleMain} <br />
+            {hl(titleMain)} <br />
             <span className="text-[var(--accent-red)]">{titleHighlight}</span>
           </h1>
           <p className="mt-5 text-base sm:text-lg text-white/90 max-w-xl leading-8">
