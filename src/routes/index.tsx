@@ -223,9 +223,7 @@ function Hero() {
   const rawTitle = cms?.title || "مدرسة مدحت السويدي";
   const titleHighlight = cms?.data_json?.titleHighlight || "للتكنولوجيا التطبيقية";
   // Avoid duplicating the highlight phrase when the CMS title already contains it.
-  const titleMain = rawTitle.endsWith(titleHighlight)
-    ? rawTitle.slice(0, -titleHighlight.length).trim()
-    : rawTitle;
+  const titleMain = rawTitle.split(titleHighlight).join("").replace(/\s+/g, " ").trim();
   const subtitle =
     cms?.subtitle ||
     "أول مدرسة تكنولوجيا تطبيقية متخصصة في مجال الطباعة في مصر، تأسست في ضوء رؤية مصر 2030 لتطوير التعليم الفني وربط الدراسة باحتياجات سوق العمل.";
